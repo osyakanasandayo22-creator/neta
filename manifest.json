@@ -3,8 +3,8 @@
     "short_name": "Neta",
     "start_url": "/index.html",
     "display": "standalone",
-    "background_color": "#F4F5F7",
-    "theme_color": "#800000",
+    "background_color": "#000000",
+    "theme_color": "#000000",
     "icons": [
       {
         "src": "images/icon-192.png",
