@@ -128,9 +128,10 @@ li button:hover {
 
 /* --- スマホ用レスポンシブ --- */
 /* スマホ向け調整（幅600px以下） */
+/* スマホ用レスポンシブ */
 @media screen and (max-width: 600px) {
     body {
-      padding: 20px 10px; /* 余白を少なく */
+      padding: 15px 10px;  /* 余白を少なく */
     }
   
     textarea,
@@ -138,13 +139,14 @@ li button:hover {
     #searchInput,
     #sortSelect,
     ul {
-      max-width: 100%;  /* 幅は画面いっぱいに */
-      box-sizing: border-box;
+      width: 100%;       /* 画面幅いっぱい */
+      max-width: 100%;   /* 横幅制限 */
+      box-sizing: border-box; /* パディング込みで幅を計算 */
     }
   
     li {
-      flex-direction: column;  /* ボタンが下に回る */
-      align-items: flex-start; /* 左寄せ */
+      flex-direction: column;    /* ボタンを下に回す */
+      align-items: flex-start;   /* 左寄せ */
     }
   
     li button {
@@ -153,6 +155,7 @@ li button:hover {
     }
   
     img {
-      max-width: 80%; /* 画像も画面に合わせる */
+      max-width: 90%;  /* 画面幅に合わせて縮小 */
+      height: auto;    /* 縦横比を維持 */
     }
   }
