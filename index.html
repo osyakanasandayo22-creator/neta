@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -58,4 +59,66 @@ const newJoke = {
     });
     </script>
 </body>
+=======
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ネタ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <img src="neta.png" alt="ネタ">
+  <textarea id="jokeInput" placeholder="書く"></textarea>
+  <button id="pastButton">過去のネタを見る</button>
+
+  <script>
+    const input = document.getElementById('jokeInput');
+    const pastButton = document.getElementById('pastButton');
+    
+    // --- 高さ自動調整用 ---
+    function adjustHeight(el) {
+      el.style.height = 'auto';
+      el.style.height = el.scrollHeight + 'px';
+    }
+    
+    // 初期高さ調整
+    adjustHeight(input);
+    
+    // 入力ごとに高さ調整
+    input.addEventListener('input', () => {
+      adjustHeight(input);
+    });
+    
+    // --- Enterでネタを保存 ---
+    input.addEventListener('keypress', e => {
+  if (e.key === 'Enter' && input.value.trim() !== '') {
+    e.preventDefault(); // ← これを追加。Enterの改行を防ぐ
+
+    let jokes = JSON.parse(localStorage.getItem('jokes') || '[]');
+
+// index.html
+const newJoke = {
+  id: Date.now(),      // ユニークID
+  text: input.value.trim(),
+  date: new Date().toLocaleString(),
+  likes: 0
+};
+
+    jokes.push(newJoke);
+    localStorage.setItem('jokes', JSON.stringify(jokes));
+    input.value = '';
+
+    adjustHeight(input); // 高さリセット
+    alert('ネタを保存しました！');
+  }
+});
+    
+    // --- 過去ページへ ---
+    pastButton.addEventListener('click', () => {
+      window.location.href = 'past.html';
+    });
+    </script>
+</body>
+>>>>>>> 78d94a4fb0e7c0fe5b67cddaa70d7721e18195a1
 </html>
