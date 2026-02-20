@@ -76,7 +76,7 @@
   </style>
 </head>
 <body>
-  <h1>過去のネタ</h1>
+  <img src="neta.png" alt="ネタ">
 
   <!-- 検索フォーム -->
   <input type="text" id="searchInput" placeholder="検索ワードを入力">
@@ -112,43 +112,50 @@
       }
 
       jokes.forEach((j, index) => {
-        const li = document.createElement('li');
+  const li = document.createElement('li');
 
-        // ネタと日付
-        const textSpan = document.createElement('span');
-        textSpan.textContent = `${j.text} （${j.date}）`;
-        li.appendChild(textSpan);
+  // ネタと日付
+  const textSpan = document.createElement('span');
+  textSpan.textContent = `${j.text} （${j.date}）`;
+  li.appendChild(textSpan);
 
-        // いいねボタン
-        const likeBtn = document.createElement('button');
-        likeBtn.textContent = `🤷‍♂️ ${j.likes || 0}`;
-// いいねボタン
-likeBtn.addEventListener('click', () => {
-  const allJokes = JSON.parse(localStorage.getItem('jokes') || '[]');
-  const target = allJokes.find(item => item.id === j.id); // IDで元データを取得
-  if (target) {
-    target.likes = (target.likes || 0) + 1;
-    localStorage.setItem('jokes', JSON.stringify(allJokes));
-    loadJokes(searchInput.value, sortSelect.value); // 再描画
-  }
-});
-        li.appendChild(likeBtn);
+  // いいねボタン
+  const likeBtn = document.createElement('button');
+  likeBtn.textContent = `🤷‍♂️ ${j.likes || 0}`;
 
-        // 削除ボタン
-        const delBtn = document.createElement('button');
-        delBtn.textContent = '削除';
-        delBtn.addEventListener('click', () => {
-  let allJokes = JSON.parse(localStorage.getItem('jokes') || '[]');
-  allJokes = allJokes.filter(item => item.id !== j.id); // ID以外を残す
-  localStorage.setItem('jokes', JSON.stringify(allJokes));
-  loadJokes(searchInput.value, sortSelect.value);
-});
-        li.appendChild(delBtn);
-
-        jokeList.appendChild(li);
-      });
+  likeBtn.addEventListener('click', () => {
+    const allJokes = JSON.parse(localStorage.getItem('jokes') || '[]');
+    const target = allJokes.find(item => item.id === j.id);
+    if (target) {
+      target.likes = (target.likes || 0) + 1;
+      localStorage.setItem('jokes', JSON.stringify(allJokes));
+      loadJokes(searchInput.value, sortSelect.value);
     }
+  });
 
+  // 削除ボタン
+  const delBtn = document.createElement('button');
+  delBtn.textContent = '削除';
+
+  delBtn.addEventListener('click', () => {
+    let allJokes = JSON.parse(localStorage.getItem('jokes') || '[]');
+    allJokes = allJokes.filter(item => item.id !== j.id);
+    localStorage.setItem('jokes', JSON.stringify(allJokes));
+    loadJokes(searchInput.value, sortSelect.value);
+  });
+
+  // ★ ボタンをまとめるラッパー
+  const btnWrap = document.createElement('div');
+  btnWrap.className = 'btnWrap';
+
+  btnWrap.appendChild(likeBtn);
+  btnWrap.appendChild(delBtn);
+
+  li.appendChild(btnWrap);
+
+  jokeList.appendChild(li);
+});
+}
     // 初期表示
     loadJokes();
 

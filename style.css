@@ -89,7 +89,6 @@ li {
     padding: 10px;
     border-bottom: 1px solid #ccc;
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
 }
@@ -101,7 +100,6 @@ li button {
     background: #fff;
     color: #222;
     transition: background 0.2s, border-color 0.2s, color 0.2s;
-    margin-top: 5px; /* 折り返し時に余白 */
 }
 
 li button:hover {
@@ -125,6 +123,31 @@ li button:hover {
     background: #fff;
     cursor: pointer;
 }
+.btnWrap {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  #toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 9999;
+  }
+  
+  #toast.show {
+    opacity: 1;
+  }
 
 /* --- スマホ用レスポンシブ --- */
 /* スマホ向け調整（幅600px以下） */

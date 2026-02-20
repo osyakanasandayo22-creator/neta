@@ -48,7 +48,12 @@ const newJoke = {
     input.value = '';
 
     adjustHeight(input); // 高さリセット
-    alert('ネタを保存しました！');
+    const toast = document.getElementById('toast');
+toast.classList.add('show');
+
+setTimeout(() => {
+  toast.classList.remove('show');
+}, 2000);
   }
 });
     
@@ -57,5 +62,6 @@ const newJoke = {
       window.location.href = 'past.html';
     });
     </script>
+  <div id="toast">投稿が完了しました。</div>
 </body>
 </html>
