@@ -5,6 +5,9 @@
   <title>Neta.</title>
   <link rel="stylesheet" href="style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 追加 -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#800000">
   <style>
     #searchInput {
       width: 100%;
@@ -168,6 +171,18 @@
     sortSelect.addEventListener('change', () => {
       loadJokes(searchInput.value, sortSelect.value);
     });
+    // 追加
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then((registration) => {
+        console.log('SW registered:', registration);
+      })
+      .catch((error) => {
+        console.log('SW registration failed:', error);
+      });
+  });
+}
   </script>
 </body>
 </html>
