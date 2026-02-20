@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>過去のネタ</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    #searchInput {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #222;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+    }
+
+    #sortSelect {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #222;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    li {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    li span {
+      flex: 1 1 auto;
+      word-break: break-word;
+    }
+
+    li button {
+      padding: 6px 12px;
+      font-size: 14px;
+      border: 1px solid #222;
+      background: #fff;
+      color: #222;
+      margin-left: 5px;
+      margin-top: 5px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+
+    li button:hover {
+      background: #007acc;
+      color: #fff;
+    }
+
+    #addButton {
+      margin-top: 20px;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: 500;
+      border: 2px solid #222;
+      background: #222;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+
+    #addButton:hover {
+      background: #007acc;
+      border-color: #007acc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Neta.</h1>
+
+  <!-- 検索フォーム -->
+  <input type="text" id="searchInput" placeholder="検索ワードを入力">
+
+  <!-- ソートセレクト -->
+  <select id="sortSelect">
+    <option value="latest">最新順</option>
+    <option value="popular">人気順</option>
+  </select>
+
+  <ul id="jokeList"></ul>
+  <button id="addButton" onclick="window.location.href='index.html'">ネタを追加する</button>
+
+  <script>
+    const jokeList = document.getElementById('jokeList');
+    const searchInput = document.getElementById('searchInput');
+    const sortSelect = document.getElementById('sortSelect');
+
+    function loadJokes(filter = '', sort = 'latest') {
+      jokeList.innerHTML = '';
+      let jokes = JSON.parse(localStorage.getItem('jokes') || '[]');
+
+      // 検索フィルター
+      if (filter) {
+        jokes = jokes.filter(j => j.text.includes(filter));
+      }
+
+      // ソート
+      if (sort === 'latest') {
+        jokes.sort((a, b) => new Date(b.date) - new Date(a.date));
+      } else if (sort === 'popular') {
+        jokes.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+      }
+
+      jokes.forEach((j, index) => {
+        const li = document.createElement('li');
+
+        // ネタと日付
+        const textSpan = document.createElement('span');
+        textSpan.textContent = `${j.text} （${j.date}）`;
+        li.appendChild(textSpan);
+
+        // いいねボタン
+        const likeBtn = document.createElement('button');
+        likeBtn.textContent = `🤷‍♂️ ${j.likes || 0}`;
+// いいねボタン
+likeBtn.addEventListener('click', () => {
+  const allJokes = JSON.parse(localStorage.getItem('jokes') || '[]');
+  const target = allJokes.find(item => item.id === j.id); // IDで元データを取得
+  if (target) {
+    target.likes = (target.likes || 0) + 1;
+    localStorage.setItem('jokes', JSON.stringify(allJokes));
+    loadJokes(searchInput.value, sortSelect.value); // 再描画
+  }
+});
+        li.appendChild(likeBtn);
+
+        // 削除ボタン
+        const delBtn = document.createElement('button');
+        delBtn.textContent = '削除';
+        delBtn.addEventListener('click', () => {
+  let allJokes = JSON.parse(localStorage.getItem('jokes') || '[]');
+  allJokes = allJokes.filter(item => item.id !== j.id); // ID以外を残す
+  localStorage.setItem('jokes', JSON.stringify(allJokes));
+  loadJokes(searchInput.value, sortSelect.value);
+});
+        li.appendChild(delBtn);
+
+        jokeList.appendChild(li);
+      });
+    }
+
+    // 初期表示
+    loadJokes();
+
+    // 検索入力ごとに更新
+    searchInput.addEventListener('input', () => {
+      loadJokes(searchInput.value, sortSelect.value);
+    });
+
+    // ソート変更
+    sortSelect.addEventListener('change', () => {
+      loadJokes(searchInput.value, sortSelect.value);
+    });
+  </script>
+</body>
+</html>
