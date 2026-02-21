@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>Neta.</title>
+  <title>BARI</title>
   <link rel="stylesheet" href="style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- 追加 -->
@@ -218,21 +218,29 @@ delBtn.addEventListener('click', () => {
   }
 });
 
-          const btnWrap = document.createElement('div');
-          btnWrap.className = 'btnWrap';
+const btnWrap = document.createElement('div');
+btnWrap.className = 'btnWrap';
 
-          // 日付（いいねの左）
-          const dateSpan = document.createElement('span');
-          dateSpan.textContent = formatDate(j.date);
-          dateSpan.style.marginRight = "8px";
+// 左側：日付
+const leftDiv = document.createElement('div');
+leftDiv.className = 'left';
+const dateSpan = document.createElement('span');
+dateSpan.textContent = formatDate(j.date);
+leftDiv.appendChild(dateSpan);
 
-          btnWrap.appendChild(dateSpan);
-          btnWrap.appendChild(likeBtn);
-          btnWrap.appendChild(delBtn);
+// 右側：いいね・削除ボタン
+const rightDiv = document.createElement('div');
+rightDiv.className = 'right';
+rightDiv.appendChild(likeBtn);
+rightDiv.appendChild(delBtn);
 
-          li.appendChild(span);
-          li.appendChild(btnWrap);
-          jokeList.appendChild(li);
+// btnWrap に左右を追加
+btnWrap.appendChild(leftDiv);
+btnWrap.appendChild(rightDiv);
+
+li.appendChild(span);
+li.appendChild(btnWrap);
+jokeList.appendChild(li);
         });
         displayIndex += 10;
         if (displayIndex >= mixedJokes.length) {
