@@ -73,7 +73,7 @@
 </head>
 <body class="pastPage">
   <div class="topBar">
-    <button id="addButton" onclick="window.location.href='index.html'">雑言</button>
+    <button id="addButton" onclick="window.location.href='index.html'">罵詈</button>
     <input type="text" id="searchInput" placeholder="検索ワードを入力">
   </div>
   <ul id="jokeList"></ul>
@@ -155,7 +155,7 @@
           // いいねボタン
           const likeBtn = document.createElement('button');
           likeBtn.className = 'likeBtn';
-          likeBtn.textContent = `雑言 ${j.likes||0}`;
+          likeBtn.textContent = `👿 ${j.likes||0}`;
           likeBtn.addEventListener('click', () => {
   let allJokes = JSON.parse(localStorage.getItem('jokes') || '[]');
   const target = allJokes.find(item => item.id === j.id);
@@ -165,12 +165,12 @@
       localStorage.setItem('jokes', JSON.stringify(allJokes));
 
       // ボタン表示更新
-      likeBtn.textContent = `雑言 ${target.likes}`;
+      likeBtn.textContent = `👿 ${target.likes}`;
 
       // ハート演出
       const heart = document.createElement('span');
       heart.className = 'heart';
-      heart.textContent = '🤷‍♂️';
+      heart.textContent = '🖤';
 
       // ボタンの座標を取得してスクロール位置を加味
       const rect = likeBtn.getBoundingClientRect();

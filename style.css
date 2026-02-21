@@ -332,7 +332,7 @@ li button:hover {
     }
   
     img {
-      max-width: 90%;  /* 画面幅に合わせて縮小 */
+      max-width: 60%;  /* 画面幅に合わせて縮小 */
       height: auto;    /* 縦横比を維持 */
     }
   }
