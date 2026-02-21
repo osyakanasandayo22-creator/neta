@@ -6,8 +6,8 @@
   <link rel="stylesheet" href="style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- 追加 -->
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#000000">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#000000">
   <style>
     #searchInput {
       width: 100%;
@@ -17,7 +17,6 @@
       margin-bottom: 15px;
       box-sizing: border-box;
     }
-
     #sortSelect {
       width: 100%;
       padding: 10px;
@@ -28,7 +27,6 @@
       background: #fff;
       cursor: pointer;
     }
-
     li {
       padding: 10px;
       border-bottom: 1px solid #ccc;
@@ -37,12 +35,10 @@
       justify-content: space-between;
       align-items: center;
     }
-
     li span {
       flex: 1 1 auto;
       word-break: break-word;
     }
-
     li button {
       padding: 6px 12px;
       font-size: 14px;
@@ -54,12 +50,10 @@
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s, color 0.2s;
     }
-
     li button:hover {
       background: #007acc;
       color: #fff;
     }
-
     #addButton {
       margin-top: 20px;
       padding: 12px 20px;
@@ -71,118 +65,219 @@
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s, color 0.2s;
     }
-
     #addButton:hover {
       background: #007acc;
       border-color: #007acc;
     }
   </style>
 </head>
-<body>
-  <img src="./images/neta.png" alt="ネタ">
-
-  <!-- 検索フォーム -->
-  <input type="text" id="searchInput" placeholder="検索ワードを入力">
-
-  <!-- ソートセレクト -->
-  <select id="sortSelect">
-    <option value="latest">最新順</option>
-    <option value="popular">人気順</option>
-  </select>
-
+<body class="pastPage">
+  <div class="topBar">
+    <button id="addButton" onclick="window.location.href='index.html'">雑言</button>
+    <input type="text" id="searchInput" placeholder="検索ワードを入力">
+  </div>
   <ul id="jokeList"></ul>
-  <button id="addButton" onclick="window.location.href='index.html'">ネタを追加する</button>
-
+  <div id="loader">読み込み中...</div>
   <script>
     const jokeList = document.getElementById('jokeList');
+    const loader = document.getElementById('loader');
     const searchInput = document.getElementById('searchInput');
-    const sortSelect = document.getElementById('sortSelect');
+    let displayIndex = 0;
+    let mixedJokes = [];
+    let isLoading = false;
 
-    function loadJokes(filter = '', sort = 'latest') {
-      jokeList.innerHTML = '';
-      let jokes = JSON.parse(localStorage.getItem('jokes') || '[]');
-
-      // 検索フィルター
-      if (filter) {
-        jokes = jokes.filter(j => j.text.includes(filter));
-      }
-
-      // ソート
-      if (sort === 'latest') {
-        jokes.sort((a, b) => new Date(b.date) - new Date(a.date));
-      } else if (sort === 'popular') {
-        jokes.sort((a, b) => (b.likes || 0) - (a.likes || 0));
-      }
-
-      jokes.forEach((j, index) => {
-  const li = document.createElement('li');
-
-  // ネタと日付
-  const textSpan = document.createElement('span');
-  textSpan.textContent = `${j.text} （${j.date}）`;
-  li.appendChild(textSpan);
-
-  // いいねボタン
-  const likeBtn = document.createElement('button');
-  likeBtn.textContent = `🤷‍♂️ ${j.likes || 0}`;
-
-  likeBtn.addEventListener('click', () => {
-    const allJokes = JSON.parse(localStorage.getItem('jokes') || '[]');
-    const target = allJokes.find(item => item.id === j.id);
-    if (target) {
-      target.likes = (target.likes || 0) + 1;
-      localStorage.setItem('jokes', JSON.stringify(allJokes));
-      loadJokes(searchInput.value, sortSelect.value);
+    // =======================
+    // 日付フォーマット
+    // =======================
+    function formatDate(value) {
+      if (!value) return "";
+      const d = new Date(value);
+      if (isNaN(d)) return "";
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
     }
-  });
 
-  // 削除ボタン
-  const delBtn = document.createElement('button');
-  delBtn.textContent = '削除';
+    // =======================
+    // 人気ベース＋ランダム混合＋検索対応
+    // =======================
+    function prepareJokes(filter = '') {
+      let jokes = JSON.parse(localStorage.getItem('jokes') || '[]');
+      if (filter) {
+        jokes = jokes.filter(j => j.text.toLowerCase().includes(filter.toLowerCase()));
+      }
+      if (!jokes.length) {
+        mixedJokes = [];
+        return;
+      }
 
-  delBtn.addEventListener('click', () => {
+      // =======================
+      // 重み付きランダムシャッフル
+      // =======================
+      const pool = jokes.map(j => ({ ...j, weight: Math.sqrt((j.likes || 0) + 1) }));
+      mixedJokes = [];
+      while (pool.length > 0) {
+        const totalWeight = pool.reduce((sum, j) => sum + j.weight, 0);
+        let r = Math.random() * totalWeight;
+        let selectedIndex = 0;
+        for (let i = 0; i < pool.length; i++) {
+          r -= pool[i].weight;
+          if (r <= 0) {
+            selectedIndex = i;
+            break;
+          }
+        }
+        mixedJokes.push(pool[selectedIndex]);
+        pool.splice(selectedIndex, 1);
+      }
+    }
+
+    // =======================
+    // 30件ずつロード
+    // =======================
+    function loadMore(isInitial = false) {
+      if (isLoading) return;
+      if (displayIndex >= mixedJokes.length) return;
+      isLoading = true;
+      if (!isInitial) {
+        loader.style.display = 'block';
+        loader.textContent = "読み込み中...";
+      }
+      const executeLoad = () => {
+        const nextItems = mixedJokes.slice(displayIndex, displayIndex + 30);
+        nextItems.forEach(j => {
+          const li = document.createElement('li');
+          const span = document.createElement('span');
+          // 改行を <br> に変換して HTML として表示
+          span.innerHTML = j.text.replace(/\n/g, '<br>');
+
+          // いいねボタン
+          const likeBtn = document.createElement('button');
+          likeBtn.className = 'likeBtn';
+          likeBtn.textContent = `雑言 ${j.likes||0}`;
+          likeBtn.addEventListener('click', () => {
     let allJokes = JSON.parse(localStorage.getItem('jokes') || '[]');
-    allJokes = allJokes.filter(item => item.id !== j.id);
-    localStorage.setItem('jokes', JSON.stringify(allJokes));
-    loadJokes(searchInput.value, sortSelect.value);
-  });
+    const target = allJokes.find(item => item.id === j.id);
 
-  // ★ ボタンをまとめるラッパー
-  const btnWrap = document.createElement('div');
-  btnWrap.className = 'btnWrap';
+    if (target) {
+        target.likes = (target.likes||0) + 1;
+        localStorage.setItem('jokes', JSON.stringify(allJokes));
 
-  btnWrap.appendChild(likeBtn);
-  btnWrap.appendChild(delBtn);
+        // ボタン表示更新
+        likeBtn.textContent = `雑言 ${target.likes}`;
 
-  li.appendChild(btnWrap);
+        // ハート演出
+        const heart = document.createElement('span');
+        heart.className = 'heart';
+        heart.textContent = '🤷‍♂️';
+        
+        // ボタンの位置から出現
+        const rect = likeBtn.getBoundingClientRect();
+        heart.style.left = rect.left + rect.width/2 + 'px';
+        heart.style.top = rect.top + 'px';
 
-  jokeList.appendChild(li);
+        document.body.appendChild(heart);
+
+        // アニメーション終了後に削除
+        setTimeout(() => {
+            heart.remove();
+        }, 1000);
+    }
 });
-}
-    // 初期表示
-    loadJokes();
 
-    // 検索入力ごとに更新
+          // 削除ボタン
+          const delBtn = document.createElement('button');
+          delBtn.className = 'delBtn';
+          delBtn.textContent = "削除";
+          delBtn.addEventListener('click', () => {
+            const ok = confirm("本当にこの投稿を削除しますか？");
+            if (!ok) return;
+            let allJokes = JSON.parse(localStorage.getItem('jokes') || '[]');
+            allJokes = allJokes.filter(item => item.id !== j.id);
+            localStorage.setItem('jokes', JSON.stringify(allJokes));
+            resetAndReload();
+          });
+
+          const btnWrap = document.createElement('div');
+          btnWrap.className = 'btnWrap';
+
+          // 日付（いいねの左）
+          const dateSpan = document.createElement('span');
+          dateSpan.textContent = formatDate(j.date);
+          dateSpan.style.marginRight = "8px";
+
+          btnWrap.appendChild(dateSpan);
+          btnWrap.appendChild(likeBtn);
+          btnWrap.appendChild(delBtn);
+
+          li.appendChild(span);
+          li.appendChild(btnWrap);
+          jokeList.appendChild(li);
+        });
+        displayIndex += 30;
+        if (displayIndex >= mixedJokes.length) {
+          loader.style.display = 'block';
+          loader.textContent = "これ以上ありません";
+        } else {
+          loader.style.display = 'none';
+        }
+        isLoading = false;
+      };
+      if (isInitial) {
+        executeLoad();
+      } else {
+        setTimeout(executeLoad, 1000);
+      }
+    }
+
+    // =======================
+    // リセット処理
+    // =======================
+    function resetAndReload() {
+      jokeList.innerHTML = '';
+      displayIndex = 0;
+      prepareJokes(searchInput.value);
+      loadMore(true);
+    }
+
+    // =======================
+    // スクロール検知
+    // =======================
+    window.addEventListener('scroll', () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+        loadMore();
+      }
+    });
+
+    // =======================
+    // 検索イベント
+    // =======================
     searchInput.addEventListener('input', () => {
-      loadJokes(searchInput.value, sortSelect.value);
+      resetAndReload();
     });
 
-    // ソート変更
-    sortSelect.addEventListener('change', () => {
-      loadJokes(searchInput.value, sortSelect.value);
+    let lastScrollY = window.scrollY;
+    const topBar = document.querySelector('.topBar');
+    window.addEventListener('scroll', () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY < lastScrollY) {
+        // 上スクロール → 表示
+        topBar.style.transform = 'translateY(0)';
+      } else if (currentScrollY > lastScrollY) {
+        // 下スクロール → 隠す
+        topBar.style.transform = 'translateY(-100%)';
+      }
+      lastScrollY = currentScrollY;
     });
-    // 追加
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then((registration) => {
-        console.log('SW registered:', registration);
-      })
-      .catch((error) => {
-        console.log('SW registration failed:', error);
-      });
-  });
-}
+
+    // 初期化
+    prepareJokes();
+    // ロード表示を2秒挟む
+    loader.style.display = 'block';
+    loader.textContent = "読み込み中...";
+    setTimeout(() => { loadMore(true); }, 2000);
+    loadMore(true);
   </script>
 </body>
 </html>

@@ -10,70 +10,70 @@
 </head>
 <body>
   <img src="./images/neta.png" alt="ネタ">
-  <textarea id="jokeInput" placeholder="書く"></textarea>
-  <button id="pastButton">過去のネタを見る</button>
+  <div class="inputWrapper">
+    <textarea id="jokeInput" placeholder="書く"></textarea>
+    <button id="submitButton">投稿</button>
+  </div>
+  <button id="pastButton">雑言ったー</button>
 
   <script>
-    const input = document.getElementById('jokeInput');
-    const pastButton = document.getElementById('pastButton');
-    
-    // --- 高さ自動調整用 ---
-    function adjustHeight(el) {
-      el.style.height = 'auto';
-      el.style.height = el.scrollHeight + 'px';
-    }
-    
-    // 初期高さ調整
-    adjustHeight(input);
-    
-    // 入力ごとに高さ調整
-    input.addEventListener('input', () => {
-      adjustHeight(input);
-    });
-    
-    // --- Enterでネタを保存 ---
-    input.addEventListener('keypress', e => {
-  if (e.key === 'Enter' && input.value.trim() !== '') {
-    e.preventDefault(); // ← これを追加。Enterの改行を防ぐ
+const input = document.getElementById('jokeInput');
+const pastButton = document.getElementById('pastButton');
 
-    let jokes = JSON.parse(localStorage.getItem('jokes') || '[]');
+// --- 高さ自動調整 ---
+function adjustHeight(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
 
-// index.html
-const newJoke = {
-  id: Date.now(),      // ユニークID
-  text: input.value.trim(),
-  date: new Date().toLocaleString(),
-  likes: 0
-};
+adjustHeight(input);
 
-    jokes.push(newJoke);
-    localStorage.setItem('jokes', JSON.stringify(jokes));
-    input.value = '';
-
-    adjustHeight(input); // 高さリセット
-    const toast = document.getElementById('toast');
-toast.classList.add('show');
-
-setTimeout(() => {
-  toast.classList.remove('show');
-}, 2000);
-  }
+input.addEventListener('input', () => {
+  adjustHeight(input);
 });
-    
-    // --- 過去ページへ ---
-    pastButton.addEventListener('click', () => {
-      window.location.href = 'past.html';
-    });
-    // 追加
+
+function saveJoke() {
+  const text = input.value.trim();
+  if (!text) return;
+
+  let jokes = JSON.parse(localStorage.getItem('jokes') || '[]');
+
+  const newJoke = {
+    id: Date.now(),
+    text: text,
+    date: Date.now(),
+    likes: 0
+  };
+
+  jokes.push(newJoke);
+  try {
+    localStorage.setItem('jokes', JSON.stringify(jokes));
+  } catch (e) {
+    alert("容量オーバーです");
+    return;
+  }
+
+  input.value = '';
+  adjustHeight(input);
+
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+const submitButton = document.getElementById('submitButton'); // ← 修正
+submitButton.addEventListener('click', saveJoke);
+
+// --- 過去ページへ ---
+pastButton.addEventListener('click', () => {
+  window.location.href = 'past.html';
+});
+
+// --- Service Worker ---
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js')
-      .then((registration) => {
-        console.log('SW registered:', registration);
-      })
-      .catch((error) => {
-        console.log('SW registration failed:', error);
-      });
+      .then(reg => console.log('SW registered:', reg))
+      .catch(err => console.log('SW registration failed:', err));
   });
 }
     </script>
