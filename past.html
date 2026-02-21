@@ -134,7 +134,7 @@
     }
 
     // =======================
-    // 30件ずつロード
+    // 10件ずつロード
     // =======================
     function loadMore(isInitial = false) {
       if (isLoading) return;
@@ -145,7 +145,7 @@
         loader.textContent = "読み込み中...";
       }
       const executeLoad = () => {
-        const nextItems = mixedJokes.slice(displayIndex, displayIndex + 30);
+        const nextItems = mixedJokes.slice(displayIndex, displayIndex + 10);
         nextItems.forEach(j => {
           const li = document.createElement('li');
           const span = document.createElement('span');
@@ -157,47 +157,66 @@
           likeBtn.className = 'likeBtn';
           likeBtn.textContent = `雑言 ${j.likes||0}`;
           likeBtn.addEventListener('click', () => {
-    let allJokes = JSON.parse(localStorage.getItem('jokes') || '[]');
-    const target = allJokes.find(item => item.id === j.id);
+  let allJokes = JSON.parse(localStorage.getItem('jokes') || '[]');
+  const target = allJokes.find(item => item.id === j.id);
 
-    if (target) {
-        target.likes = (target.likes||0) + 1;
-        localStorage.setItem('jokes', JSON.stringify(allJokes));
+  if (target) {
+      target.likes = (target.likes||0) + 1;
+      localStorage.setItem('jokes', JSON.stringify(allJokes));
 
-        // ボタン表示更新
-        likeBtn.textContent = `雑言 ${target.likes}`;
+      // ボタン表示更新
+      likeBtn.textContent = `雑言 ${target.likes}`;
 
-        // ハート演出
-        const heart = document.createElement('span');
-        heart.className = 'heart';
-        heart.textContent = '🤷‍♂️';
-        
-        // ボタンの位置から出現
-        const rect = likeBtn.getBoundingClientRect();
-        heart.style.left = rect.left + rect.width/2 + 'px';
-        heart.style.top = rect.top + 'px';
+      // ハート演出
+      const heart = document.createElement('span');
+      heart.className = 'heart';
+      heart.textContent = '🤷‍♂️';
 
-        document.body.appendChild(heart);
+      // ボタンの座標を取得してスクロール位置を加味
+      const rect = likeBtn.getBoundingClientRect();
+      heart.style.left = (rect.left + rect.width / 2 + window.scrollX - 10) + 'px';
+      heart.style.top = (rect.top + window.scrollY - 20) + 'px';
 
-        // アニメーション終了後に削除
-        setTimeout(() => {
-            heart.remove();
-        }, 1000);
-    }
+      document.body.appendChild(heart);
+
+      // アニメーション終了後に削除
+      setTimeout(() => {
+          heart.remove();
+      }, 1000);
+  }
 });
 
           // 削除ボタン
           const delBtn = document.createElement('button');
           delBtn.className = 'delBtn';
           delBtn.textContent = "削除";
-          delBtn.addEventListener('click', () => {
-            const ok = confirm("本当にこの投稿を削除しますか？");
-            if (!ok) return;
-            let allJokes = JSON.parse(localStorage.getItem('jokes') || '[]');
-            allJokes = allJokes.filter(item => item.id !== j.id);
-            localStorage.setItem('jokes', JSON.stringify(allJokes));
-            resetAndReload();
-          });
+// 削除ボタン
+delBtn.addEventListener('click', () => {
+  const ok = confirm("本当にこの投稿を削除しますか？");
+  if (!ok) return;
+
+  // localStorageから削除
+  let allJokes = JSON.parse(localStorage.getItem('jokes') || '[]');
+  allJokes = allJokes.filter(item => item.id !== j.id);
+  localStorage.setItem('jokes', JSON.stringify(allJokes));
+
+  // mixedJokesからも削除
+  mixedJokes = mixedJokes.filter(item => item.id !== j.id);
+
+  // DOMからも削除
+  li.remove();
+
+  // displayIndex を更新（削除分だけ）
+  displayIndex = Math.min(displayIndex, mixedJokes.length);
+
+  // loaderの表示調整
+  if (displayIndex >= mixedJokes.length) {
+    loader.style.display = 'block';
+    loader.textContent = "これ以上ありません";
+  } else {
+    loader.style.display = 'none';
+  }
+});
 
           const btnWrap = document.createElement('div');
           btnWrap.className = 'btnWrap';
@@ -215,7 +234,7 @@
           li.appendChild(btnWrap);
           jokeList.appendChild(li);
         });
-        displayIndex += 30;
+        displayIndex += 10;
         if (displayIndex >= mixedJokes.length) {
           loader.style.display = 'block';
           loader.textContent = "これ以上ありません";
@@ -253,23 +272,32 @@
     // =======================
     // 検索イベント
     // =======================
-    searchInput.addEventListener('input', () => {
-      resetAndReload();
-    });
+    searchInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    // エンターが押されたら検索
+    resetAndReload();
+  }
+});
 
     let lastScrollY = window.scrollY;
-    const topBar = document.querySelector('.topBar');
-    window.addEventListener('scroll', () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY < lastScrollY) {
-        // 上スクロール → 表示
-        topBar.style.transform = 'translateY(0)';
-      } else if (currentScrollY > lastScrollY) {
-        // 下スクロール → 隠す
-        topBar.style.transform = 'translateY(-100%)';
-      }
-      lastScrollY = currentScrollY;
-    });
+const topBar = document.querySelector('.topBar');
+
+window.addEventListener('scroll', () => {
+  const currentScrollY = window.scrollY;
+
+  if (currentScrollY === 0) {
+    // ページトップでは必ず表示
+    topBar.style.transform = 'translateY(0)';
+  } else if (currentScrollY < lastScrollY) {
+    // 上スクロール → 表示
+    topBar.style.transform = 'translateY(0)';
+  } else if (currentScrollY > lastScrollY) {
+    // 下スクロール → 隠す
+    topBar.style.transform = 'translateY(-100%)';
+  }
+
+  lastScrollY = currentScrollY;
+});
 
     // 初期化
     prepareJokes();
