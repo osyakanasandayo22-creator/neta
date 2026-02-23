@@ -1,14 +1,14 @@
 <!DOCTYPE html>
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
   <title>BARI</title>
   <link rel="stylesheet" href="style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- 追加 -->
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#000000">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#000000">
 </head>
-<body>
+<body class="indexPage">
   <img src="./images/neta.png" alt="ネタ">
   <div class="inputWrapper">
     <textarea id="jokeInput" placeholder="思いつきを書こう"></textarea>
@@ -16,67 +16,8 @@
   </div>
   <button id="pastButton">Baritter</button>
 
-  <script>
-const input = document.getElementById('jokeInput');
-const pastButton = document.getElementById('pastButton');
-
-// --- 高さ自動調整 ---
-function adjustHeight(el) {
-  el.style.height = 'auto';
-  el.style.height = el.scrollHeight + 'px';
-}
-
-adjustHeight(input);
-
-input.addEventListener('input', () => {
-  adjustHeight(input);
-});
-
-function saveJoke() {
-  const text = input.value.trim();
-  if (!text) return;
-
-  let jokes = JSON.parse(localStorage.getItem('jokes') || '[]');
-
-  const newJoke = {
-    id: Date.now(),
-    text: text,
-    date: Date.now(),
-    likes: 0
-  };
-
-  jokes.push(newJoke);
-  try {
-    localStorage.setItem('jokes', JSON.stringify(jokes));
-  } catch (e) {
-    alert("容量オーバーです");
-    return;
-  }
-
-  input.value = '';
-  adjustHeight(input);
-
-  const toast = document.getElementById('toast');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2000);
-}
-const submitButton = document.getElementById('submitButton'); // ← 修正
-submitButton.addEventListener('click', saveJoke);
-
-// --- 過去ページへ ---
-pastButton.addEventListener('click', () => {
-  window.location.href = 'past.html';
-});
-
-// --- Service Worker ---
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(reg => console.log('SW registered:', reg))
-      .catch(err => console.log('SW registration failed:', err));
-  });
-}
-    </script>
   <div id="toast">投稿が完了しました。</div>
+
+  <script src="script.js"></script>
 </body>
 </html>

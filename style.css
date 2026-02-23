@@ -1,365 +1,369 @@
-/* 全体設定 */
+/* ==========================================
+   Design Concept: Dark Underground / "BARI"
+   ========================================== */
+
+/* 基本設定 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  background: #f5f5f5;
-  color: #222;
-    margin: 0;
-    padding: 40px 20px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  /* 漆黒の背景にわずかなグラデーション */
+  background: radial-gradient(circle at top, #1a1a1a 0%, #0f0f0f 100%);
+  color: #e0e0e0;
+  font-family: 'JetBrains Mono', 'Menlo', 'Monaco', 'Courier New', 'BIZ UDPGothic', sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* 画像（タイトル用など） */
+/* タイトル画像 */
 img {
-    max-width: 300px;
-    width: 100%;
-    display: block;
-    margin: 0 auto 30px auto; /* 上下余白＋中央揃え */
-}
-
-/* テキストエリア */
-textarea {
-    width: 100%;
-    max-width: 600px;
-    min-height: 40px;
-    max-height: 500px;
-    padding: 10px;
-    font-size: 16px;
-    line-height: 1.5;
-    border: 2px solid #222;
-    background: #fff;
-    resize: none;
-    overflow-y: hidden;
-    box-sizing: border-box;
-    display: block;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-textarea:focus {
-    border-color: #007acc;
-    box-shadow: 0 0 4px #007acc;
-    outline: none;
-}
-
-/* ボタン */
-button {
-    display: inline-block;
-    padding: 12px 20px;
-    font-size: 16px;
-    font-weight: 500;
-    border: 2px solid #222;
-    background: #222;
-    color: #fff;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: background 0.2s, border-color 0.2s, color 0.2s;
-}
-#jokeList {
-  max-width: 600px;       /* 投稿リストの中央幅 */
-  margin: 25px auto 0 auto; /* 中央寄せ＋上余白 */
+  max-width: 240px;
   width: 100%;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+  margin-bottom: 40px;
+  transition: transform 0.5s ease;
+}
+img:hover {
+  transform: scale(1.05) rotate(-2deg);
 }
 
-
-button:hover {
-    background: #007acc;
-    border-color: #007acc;
+/* 入力エリアのラッパー */
+.inputWrapper {
+  width: 100%;
+  max-width: 650px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* 入力フォームと過去ボタン */
-#jokeInput, #pastButton {
-    max-width: 600px;
-    width: 100%;
+/* テキストエリア (裏Twitter風) */
+textarea {
+  width: 100%;
+  min-height: 120px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  resize: none;
+  outline: none;
+  padding: 10px;
+}
+textarea::placeholder {
+  color: #555;
+  font-style: italic;
 }
 
+/* メインボタン */
+#submitButton {
+  align-self: flex-end;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 25px;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+#submitButton:hover {
+  background: #007acc; /* ネオンブルー */
+  color: #fff;
+  box-shadow: 0 0 20px rgba(0, 122, 204, 0.6);
+  transform: translateY(-2px);
+}
+
+/* サブボタン (Baritter) */
 #pastButton {
-    margin-top: 15px;
-    display: block;
+  margin-top: 25px;
+  width: 100%;
+  max-width: 650px;
+  background: transparent;
+  border: 1px solid #444;
+  color: #888;
+  border-radius: 12px;
+  padding: 15px;
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+#pastButton:hover {
+  border-color: #fff;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
 }
 
-/* 過去のネタリスト */
-ul {
-    margin-top: 25px;
-    padding-left: 0;
-    list-style: none;
-    max-width: 600px;
-    width: 100%;
-}
-
-/* --- 投稿カード風 --- */
-li {
-  display: flex;
-  flex-direction: column;   /* 上下に配置 */
-  align-items: flex-start;
-  background: #fff;         /* 白背景 */
-  border: 1px solid #ddd;   /* 薄い枠線 */
-  border-radius: 4px;       /* 角丸 */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* 軽い影 */
-  padding: 12px 16px;       /* 内側余白 */
-  margin-bottom: 12px;      /* 下余白 */
-  word-break: break-word;
-  white-space: pre-wrap;    /* 改行をそのまま反映 */
-}
-
-/* 投稿テキスト */
-li span {
+/* --- タイムライン (past.html) --- */
+body.pastPage {
   display: block;
-  margin-bottom: 8px;
-  line-height: 1.5;
+  padding: 90px 20px 40px 20px;
 }
 
-/* ボタン配置 */
-li .btnWrap {
-  display: flex;
-  justify-content: space-between; /* 左右に振り分け */
-  align-items: center;
-  width: 100%;                    /* カード幅いっぱいに */
-  margin-top: 8px;
-}
-
-li .btnWrap .left {
+.topBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 15px;
+  padding: 0 20px;
+  background: rgba(15, 15, 15, 0.8);
+  backdrop-filter: blur(15px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 1000;
+  transition: transform 0.4s ease;
 }
 
-li .btnWrap .right {
+#addButton {
+  background: #fff;
+  color: #000;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: bold;
+  height: 36px;
+}
+
+#searchInput {
+  flex: 1;
+  background: #202020;
+  border: 1px solid #333;
+  border-radius: 20px;
+  padding: 0 20px;
+  color: #fff;
+  height: 40px;
+  font-size: 14px;
+}
+#searchInput:focus {
+  border-color: #007acc;
+  outline: none;
+}
+
+/* 投稿カード */
+#jokeList {
+  max-width: 600px;
+  margin: 0 auto;
+  list-style: none;
+}
+
+li {
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 20px;
+  transition: background 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+li:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* ネタのテキスト */
+li span:first-child {
+  font-size: 16px;
+  color: #efefef;
+  margin-bottom: 15px;
+  white-space: pre-wrap;
+}
+
+/* アクションエリア */
+.btnWrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left span {
+  color: #555;
+  font-size: 12px;
+}
+
+.right {
+  display: flex;
+  gap: 15px;
+}
+
+/* いいねボタン (👿アイコン) */
+.likeBtn {
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 14px;
   display: flex;
   align-items: center;
   gap: 5px;
+  padding: 5px;
 }
-li .btnWrap .left span {
-  color: #999;        /* 薄いグレー */
-  font-size: 12px;    /* 必要ならフォントサイズも調整 */
-}
-
-/* ボタン間隔 */
-li .btnWrap button {
-  margin-left: 8px;
-}
-/* いいね・削除ボタン */
-li button {
-  padding: 6px 12px;
-  font-size: 14px;
-  border: none;               /* 枠を消す */
-  border-radius: 12px;        /* 角を丸く */
-  background: #ffd6d6;        /* 柔らかいピンク系 */
-  color: #222;
-  margin-left: 5px;
-  margin-top: 5px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-li button:hover {
-  background: #ffbaba;       /* ホバー時に少し濃く */
-  transform: scale(1.05);    /* 少し拡大して可愛さ演出 */
-}
-.inputWrapper {
-  display: flex;
-  max-width: 600px;
-  width: 100%;
-  gap: 10px;          /* textarea とボタンの間隔 */
-}
-
-.inputWrapper textarea {
-  flex: 1;             /* textarea が残り幅を使う */
-  min-height: 40px;
-}
-
-#submitButton {
-  height: 40px;        /* textarea と高さ揃え */
-  padding: 0 16px;
-  font-size: 16px;
-  border: 2px solid #222;
-  background: #222;
-  color: #fff;
-  cursor: pointer;
-}
-/* 検索フォームとソートセレクト */
-#searchInput, #sortSelect {
-    max-width: 300px;
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 2px solid #222;
-    margin-bottom: 6px;
-    box-sizing: border-box;
-    display: block;
-}
-.topBar #searchInput {
-  max-width: none;     /* ← 300px制限解除 */
-  width: auto;
-  flex: 1;
-  height: 40px;
-  padding: 0 10px;
-  margin-bottom: 0;    /* ← 下余白削除 */
-}
-.topBar #addButton {
-  margin: 0;
-}
-#sortSelect {
-    background: #fff;
-    cursor: pointer;
-}
-.btnWrap {
-    display: flex;
-    gap: 5px;
-    flex-shrink: 0;
-  }
-
-  #toast {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #222;
-    color: #fff;
-    padding: 12px 20px;
-    border-radius: 6px;
-    font-size: 14px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-    z-index: 9999;
-  }
-  
-  #toast.show {
-    opacity: 1;
-  }
-  
-  #loader {
-    text-align: center;
-    padding: 20px;
-    font-size: 14px;
-    color: #666;
-    display: none;
-  }
-  .topBar {
-    margin: 0 auto;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    align-items: center;     /* ← 縦中央揃え */
-    gap: 10px;
-    padding: 10px;
-    background: #fff;
-    border-bottom: 2px solid #222;
-    z-index: 1000;
-    box-sizing: border-box;
-  }
-  
-  #addButton {
-    height: 40px;            /* ← 高さ固定 */
-    padding: 0 16px;         /* ← 上下padding削除 */
-    font-size: 14px;
-    border: 2px solid #222;
-    background: #222;
-    color: #fff;
-    cursor: pointer;
-    display: flex;
-    align-items: center;     /* ← ボタン内文字も中央 */
-  }
-  
-  #searchInput {
-    flex: 1;
-    height: 40px;            /* ← 高さをボタンと統一 */
-    padding: 0 10px;         /* ← 上下padding削除 */
-    font-size: 16px;
-    border: 2px solid #222;
-    box-sizing: border-box;
-  }
-  body.pastPage {
-    display: block;        /* flex解除 */
-    padding: 70px 20px 40px 20px;  /* 上だけ確保 */
-  }
-  .topBar {
-    transition: transform 0.3s ease;
-  }
-  /* アニメーション用ハート */
-.heart {
-  position: absolute;
-  font-size: 20px;
-  color: #ff4d6d;
-  pointer-events: none;
-  animation: floatUp 1s forwards;
-  z-index: 1000;
-}
-
-@keyframes floatUp {
-  0% { transform: scale(1) translateY(0); opacity: 1; }
-  50% { transform: scale(1.3) translateY(-20px); opacity: 0.8; }
-  100% { transform: scale(1.6) translateY(-50px); opacity: 0; }
-}
-/* いいねボタン */
-.likeBtn {
-  background-color: #222;  /* 黒 */
-  color: #fff;
-  border: 2px solid #222;
-  padding: 6px 12px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-  border-radius: 6px; /* 少し丸くしてかわいく */
-}
-
 .likeBtn:hover {
-  background-color: #444;
+  color: #ff2d55; /* 闇に映える赤 */
+  background: transparent;
 }
 
 /* 削除ボタン */
 .delBtn {
-  background-color: #ff4d4d;  /* 赤 */
+  background: transparent;
+  border: none;
+  color: #333;
+  font-size: 12px;
+}
+.delBtn:hover {
   color: #fff;
-  border: 2px solid #ff4d4d;
-  padding: 6px 12px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-  border-radius: 6px; /* 丸くする */
+  background: #aa0000;
+  border-radius: 4px;
 }
 
-.delBtn:hover {
-  background-color: #ff1a1a;
+/* トースト通知 */
+#toast {
+  position: fixed;
+  bottom: 30px;
+  background: #007acc;
+  color: #fff;
+  padding: 12px 25px;
+  border-radius: 50px;
+  font-weight: bold;
+  box-shadow: 0 5px 15px rgba(0, 122, 204, 0.4);
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform: translateX(-50%) translateY(20px);
 }
-/* --- スマホ用レスポンシブ --- */
-/* スマホ向け調整（幅600px以下） */
-/* スマホ用レスポンシブ */
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ハート(闇の演出) */
+.heart {
+  position: absolute;
+  pointer-events: none;
+  font-size: 24px;
+  z-index: 2000;
+  filter: drop-shadow(0 0 8px #ff2d55);
+  animation: darkFloat 1s ease-out forwards;
+}
+
+@keyframes darkFloat {
+  0% { transform: scale(0.5) translateY(0); opacity: 1; }
+  100% { transform: scale(1.5) translateY(-60px); opacity: 0; }
+}
+
+/* ローダー */
+#loader {
+  text-align: center;
+  padding: 40px;
+  color: #444;
+  font-size: 13px;
+}
+
+/* スマホ対応 */
 @media screen and (max-width: 600px) {
-    body {
-      padding: 15px 10px;  /* 余白を少なく */
-    }
-  
-    textarea,
-    #pastButton,
-    #searchInput,
-    #sortSelect,
-    ul {
-      width: 100%;       /* 画面幅いっぱい */
-      max-width: 100%;   /* 横幅制限 */
-      box-sizing: border-box; /* パディング込みで幅を計算 */
-    }
-  
-    li {
-      flex-direction: column;    /* ボタンを下に回す */
-      align-items: flex-start;   /* 左寄せ */
-    }
-  
-    li button {
-      margin-left: 0;
-      margin-top: 5px;
-    }
-  
-    img {
-      max-width: 60%;  /* 画面幅に合わせて縮小 */
-      height: auto;    /* 縦横比を維持 */
-    }
+  body { padding: 20px 10px; }
+  .inputWrapper { border-radius: 0; border-left: none; border-right: none; background: transparent; }
+  textarea { font-size: 16px; }
+  li { padding: 15px; }
+}
+/* --- 返信セクションのデザイン --- */
+
+/* 返信ボタン(💬)のスタイル */
+.replyBtn {
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.replyBtn:hover {
+  color: #007acc; /* 返信はブルー */
+}
+
+/* 返信エリア全体 */
+.replySection {
+  background: rgba(0, 0, 0, 0.2); /* メインより一段暗く */
+  border-radius: 8px;
+  margin-top: 15px;
+  padding: 12px;
+  animation: slideDown 0.3s ease-out;
+}
+
+/* 返信ひとつひとつの塊 */
+.replyList > div {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 8px 0;
+}
+
+.replyList > div:last-child {
+  border-bottom: none;
+}
+
+/* 返信内の日付 */
+.replyList small {
+  display: block;
+  margin-bottom: 4px;
+  letter-spacing: 1px;
+}
+
+/* 返信入力エリア */
+.replyInputArea {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 12px;
+}
+
+.replyTextarea {
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.replyTextarea:focus {
+  border-color: #007acc !important;
+  outline: none;
+}
+
+/* 返信送信ボタン */
+.replySubmit {
+  background: #333;
+  color: #fff;
+  border: 1px solid #444;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.replySubmit:hover {
+  background: #007acc;
+  border-color: #007acc;
+}
+
+/* アニメーション */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* スマホでの返信欄の調整 */
+@media screen and (max-width: 600px) {
+  .replySection {
+      margin-left: 5px;
+      padding: 10px;
   }
+}

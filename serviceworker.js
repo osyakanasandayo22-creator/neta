@@ -1,4 +1,4 @@
-const CACHE_NAME = 'Neta';
+const CACHE_NAME = 'BARI';
 const urlsToCache = [
   '/',
   '/index.html',
