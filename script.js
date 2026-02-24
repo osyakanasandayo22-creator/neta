@@ -192,19 +192,64 @@ function initPastPage() {
                 const replySubmit = li.querySelector('.replySubmit');
                 const replyTextarea = li.querySelector('.replyTextarea');
 
-                // 返信一覧の描画 [5]
                 const renderReplies = (replies) => {
-                    replyList.innerHTML = '';
-                    (replies || []).forEach(r => {
-                        const div = document.createElement('div');
-                        div.style.marginBottom = "8px";
-                        div.style.fontSize = "14px";
-                        div.style.color = "#ccc";
-                        div.innerHTML = `<small style="display:block; color:#666;">${formatDate(r.date)}</small>
-                                         <div>${r.text.replace(/\n/g, '<br>')}</div>`;
-                        replyList.appendChild(div);
-                    });
-                };
+                  replyList.innerHTML = '';
+                  (replies || []).forEach((r) => {
+                      const div = document.createElement('div');
+                      div.style.marginBottom = "8px";
+                      div.style.fontSize = "14px";
+                      div.style.color = "#ccc";
+                      div.style.borderBottom = "1px solid rgba(255, 255, 255, 0.05)";
+                      div.style.paddingBottom = "8px";
+              
+                      // HTML構造：日付、本文、アクションボタン
+                      div.innerHTML = `
+                          <div style="font-size: 11px; color: #555;">${formatDate(r.date)}</div>
+                          <div style="margin: 4px 0;">${r.text.replace(/\n/g, '<br>')}</div>
+                          <div style="display: flex; gap: 10px;">
+                              <button class="replyLikeBtn" style="background:none; border:none; color:#666; cursor:pointer; font-size:12px;">
+                                  👿 ${r.likes || 0}
+                              </button>
+                              <button class="replyDelBtn" style="background:none; border:none; color:#333; cursor:pointer; font-size:11px;">
+                                  削除
+                              </button>
+                          </div>
+                      `;
+              
+                      // --- 返信のいいね処理 ---
+                      const rlBtn = div.querySelector('.replyLikeBtn');
+                      rlBtn.addEventListener('click', async () => {
+                          try {
+                              r.likes = (r.likes || 0) + 1; // ローカルの値を更新
+                              const jokeRef = doc(db, "jokes", j.id);
+                              await updateDoc(jokeRef, { replies: j.replies }); // 配列全体を保存
+                              rlBtn.textContent = `👿 ${r.likes}`;
+                              // 既存のcreateHeart関数があれば利用可能 [4]
+                              if (typeof createHeart === 'function') createHeart(rlBtn); 
+                          } catch (e) {
+                              console.error("Error updating reply likes: ", e);
+                          }
+                      });
+              
+                      // --- 返信の削除処理 ---
+                      div.querySelector('.replyDelBtn').addEventListener('click', async () => {
+                          if (!confirm("この返信を消去しますか？")) return;
+                          try {
+                              // IDが一致しないものだけを残す（＝特定のIDを削除）
+                              j.replies = j.replies.filter(reply => reply.id !== r.id);
+                              const jokeRef = doc(db, "jokes", j.id);
+                              await updateDoc(jokeRef, { replies: j.replies });
+                              
+                              renderReplies(j.replies); // リストを再描画
+                              replyBtn.textContent = `💬 ${j.replies.length}`; // 親投稿のカウント更新
+                          } catch (e) {
+                              console.error("Error deleting reply: ", e);
+                          }
+                      });
+              
+                      replyList.appendChild(div);
+                  });
+              };
 
                 renderReplies(j.replies);
 
@@ -214,29 +259,35 @@ function initPastPage() {
                 });
 
                 // 返信実行 (Firebase) [8-10]
-                replySubmit.addEventListener('click', async () => {
-                    const rText = replyTextarea.value.trim();
-                    if (!rText) return;
+                // 返信実行 (Firebase) [1, 2] を修正
+replySubmit.addEventListener('click', async () => {
+  const rText = replyTextarea.value.trim();
+  if (!rText) return;
 
-                    try {
-                        const jokeRef = doc(db, "jokes", j.id);
-                        const newReply = { text: rText, date: Date.now() };
+  try {
+      const jokeRef = doc(db, "jokes", j.id);
+      // 新しい返信オブジェクトに id と likes を追加
+      const newReply = { 
+          id: Date.now().toString(), // 簡易的なIDとしてタイムスタンプを使用
+          text: rText, 
+          date: Date.now(),
+          likes: 0 
+      };
 
-                        // Firestoreの配列フィールドを更新
-                        await updateDoc(jokeRef, {
-                            replies: arrayUnion(newReply)
-                        });
+      await updateDoc(jokeRef, {
+          replies: arrayUnion(newReply)
+      });
 
-                        if (!j.replies) j.replies = [];
-                        j.replies.push(newReply);
-                        renderReplies(j.replies);
+      if (!j.replies) j.replies = [];
+      j.replies.push(newReply);
+      renderReplies(j.replies); // 再描画
 
-                        replyTextarea.value = '';
-                        replyBtn.textContent = `💬 ${j.replies.length}`;
-                    } catch (e) {
-                        console.error("Error updating replies: ", e);
-                    }
-                });
+      replyTextarea.value = '';
+      replyBtn.textContent = `💬 ${j.replies.length}`;
+  } catch (e) {
+      console.error("Error updating replies: ", e);
+  }
+});
 
                 // いいね実行 (Firebase) [9, 11]
                 const lBtn = li.querySelector('.likeBtn');
