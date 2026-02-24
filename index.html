@@ -9,15 +9,25 @@
   <meta name="theme-color" content="#000000">
 </head>
 <body class="indexPage">
+  <!-- タイトル画像: ソースの指示通り維持 [1] -->
   <img src="./images/neta.png" alt="ネタ">
+
+  <!-- 入力エリア: ソースのIDやクラスを維持 [1, 2] -->
   <div class="inputWrapper">
     <textarea id="jokeInput" placeholder="思いつきを書こう"></textarea>
     <button id="submitButton">放つ</button>
   </div>
+
+  <!-- 過去ログへのボタン [2, 3] -->
   <button id="pastButton">Baritter</button>
 
+  <!-- トースト通知 [2, 4] -->
   <div id="toast">投稿が完了しました。</div>
 
-  <script src="script.js"></script>
+  <!-- 
+    Firebase SDK を使用する script.js を読み込むため、
+    type="module" を指定しています。 
+  -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>

@@ -9,14 +9,25 @@
   <meta name="theme-color" content="#000000">
 </head>
 <body class="pastPage">
+  <!-- 
+    上部バー: ソースのIDやonclick属性を維持。
+    Firebase版 script.js 内の検索ロジックと連動します。
+  -->
   <div class="topBar">
     <button id="addButton" onclick="window.location.href='index.html'">罵詈</button>
     <input type="text" id="searchInput" placeholder="検索ワードを入力">
   </div>
 
+  <!-- 投稿リストを表示するコンテナ: script.js から動的に生成されます -->
   <ul id="jokeList"></ul>
+
+  <!-- ローダー: データの読み込み状態を表示 -->
   <div id="loader">読み込み中...</div>
 
-  <script src="script.js"></script>
+  <!-- 
+    Firebase版の script.js は import 構文を使用しているため、
+    必ず type="module" を指定する必要があります。
+  -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>
