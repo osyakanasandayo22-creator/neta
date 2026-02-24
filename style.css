@@ -326,13 +326,23 @@ li span:first-child {
 
 /* 返信入力エリア */
 .replyInputArea {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* ボタンを右寄せにする */
+  gap: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 12px;
 }
 
 .replyTextarea {
-  font-family: inherit;
-  transition: border-color 0.2s;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  padding: 8px;
+  font-size: 14px;
+  resize: none;
 }
 
 .replyTextarea:focus {
@@ -342,16 +352,22 @@ li span:first-child {
 
 /* 返信送信ボタン */
 .replySubmit {
-  background: #333;
-  color: #fff;
-  border: 1px solid #444;
+  background: #fff; /* メインボタンに合わせた白 [1] */
+  color: #000;
+  border: none;
+  border-radius: 20px; /* 角丸でモダンに [1] */
+  padding: 6px 18px;
+  font-size: 13px;
+  font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1); /* スムーズな動き [1] */
 }
 
 .replySubmit:hover {
-  background: #007acc;
-  border-color: #007acc;
+  background: #007acc; /* ネオンブルー [3] */
+  color: #fff;
+  box-shadow: 0 0 15px rgba(0, 122, 204, 0.5); /* 発光エフェクト [3] */
+  transform: translateY(-1px); /* わずかに浮き上がる [3] */
 }
 
 /* アニメーション */
