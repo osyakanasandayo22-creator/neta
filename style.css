@@ -147,7 +147,7 @@ body.pastPage {
   padding: 0 20px;
   color: #fff;
   height: 40px;
-  font-size: 14px;
+  font-size: 16px; /* 14pxから16pxに変更 */
 }
 #searchInput:focus {
   border-color: #007acc;
@@ -420,4 +420,13 @@ li span:first-child {
   color: #fff;
   background: #aa0000; /* 投稿の削除ボタンと同じ赤 [3] */
   border-radius: 4px;
+}
+@media screen and (max-width: 600px) {
+  /* 検索欄、返信欄、投稿欄すべてを16px以上に強制する */
+  input, 
+  textarea, 
+  .replyTextarea, 
+  #searchInput {
+      font-size: 16px !important;
+  }
 }
