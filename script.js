@@ -1,59 +1,104 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, arrayUnion, increment
+  getFirestore, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, 
+  arrayUnion, arrayRemove, increment, query, where 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { 
+  getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 // --- Firebase 設定 ---
 const firebaseConfig = {
-    apiKey: "AIzaSyCtI2PRlZ9pN_ZB7aD60iKQvVEraQGSf6o",
-    authDomain: "bari-11449.firebaseapp.com",
-    projectId: "bari-11449",
-    storageBucket: "bari-11449.firebasestorage.app",
-    messagingSenderId: "875722454310",
-    appId: "1:875722454310:web:22ad7e5dbe27d70d5cbde7",
-    measurementId: "G-98KQQ913QV"
-  };
+  apiKey: "AIzaSyCtI2PRlZ9pN_ZB7aD60iKQvVEraQGSf6o",
+  authDomain: "bari-11449.firebaseapp.com",
+  projectId: "bari-11449",
+  storageBucket: "bari-11449.firebasestorage.app",
+  messagingSenderId: "875722454310",
+  appId: "1:875722454310:web:22ad7e5dbe27d70d5cbde7",
+  measurementId: "G-98KQQ913QV"
+};
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
-document.addEventListener('DOMContentLoaded', () => {
-  // 両方の初期化を実行
-  initIndexPage();
-  initPastPage();
-
-  // --- オーバーレイ制御ロジック (統合のための新規追加) ---
-  const fab = document.getElementById('fab');
-  const overlay = document.getElementById('postOverlay');
-  const closeBtn = document.getElementById('closeOverlay');
-
-  if (fab && overlay && closeBtn) {
-    fab.addEventListener('click', () => {
-      // ボタン自体の演出：一瞬小さくする
-      fab.style.transform = 'scale(0.8)';
-      
-      setTimeout(() => {
-        overlay.classList.add('open');
-        document.getElementById('jokeInput').focus();
-        fab.style.transform = ''; // スタイルを戻す
-      }, 100);
-    });
-    
-    // 閉じるボタンの演出も強化
-    closeBtn.addEventListener('click', () => {
-      overlay.classList.remove('open');
-    });
-  }
-
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/service-worker.js').catch(err => console.log(err));
-    });
-  }
-});
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+let currentUser = null;
 
 // ==========================================
-// 投稿管理 (旧 index.html の全機能)
+// ログイン状態の監視
+// ==========================================
+onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+    const loginBtn = document.getElementById('loginBtn');
+    if (loginBtn) {
+      loginBtn.textContent = user ? "Logout" : "Login";
+    }
+  });
+  
+  // ==========================================
+  // 初期化・イベント登録
+  // ==========================================
+  document.addEventListener('DOMContentLoaded', () => {
+    initIndexPage();
+    initPastPage();
+  
+    // --- ログイン・ログアウト処理 (確実なイベント登録) ---
+    const loginBtn = document.getElementById('loginBtn');
+    if (loginBtn) {
+      loginBtn.addEventListener('click', async () => {
+        if (currentUser) {
+          try {
+            await signOut(auth);
+            console.log("Logged out");
+          } catch (err) {
+            console.error("Sign out error:", err);
+          }
+        } else {
+          try {
+            const result = await signInWithPopup(auth, provider);
+            console.log("Logged in as:", result.user.displayName);
+          } catch (err) {
+            console.error("Login error:", err.code, err.message);
+            // ポップアップブロック対策の警告
+            if (err.code === 'auth/popup-blocked') {
+              alert("ポップアップがブロックされました。ブラウザの設定で許可してください。");
+            }
+          }
+        }
+      });
+    }
+  
+    // --- オーバーレイ制御ロジック ---
+    const fab = document.getElementById('fab');
+    const overlay = document.getElementById('postOverlay');
+    const closeBtn = document.getElementById('closeOverlay');
+  
+    if (fab && overlay && closeBtn) {
+      fab.addEventListener('click', () => {
+        fab.style.transform = 'scale(0.8)';
+        setTimeout(() => {
+          overlay.classList.add('open');
+          const input = document.getElementById('jokeInput');
+          if (input) input.focus();
+          fab.style.transform = '';
+        }, 100);
+      });
+  
+      closeBtn.addEventListener('click', () => {
+        overlay.classList.remove('open');
+      });
+    }
+  
+    // サービスワーカー
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js').catch(err => console.log(err));
+      });
+    }
+  });
+
+// ==========================================
+// 投稿管理 (1人1投稿制限)
 // ==========================================
 function initIndexPage() {
   const input = document.getElementById('jokeInput');
@@ -67,29 +112,41 @@ function initIndexPage() {
     el.style.height = 'auto';
     el.style.height = el.scrollHeight + 'px';
   }
+
   input.addEventListener('input', () => adjustHeight(input));
 
   submitButton.addEventListener('click', async () => {
+    if (!currentUser) return alert("ログインが必要です。");
     const text = input.value.trim();
     if (!text) return;
+
     try {
+      // 既に投稿があるかチェック (1人1投稿制限)
+      const q = query(collection(db, "jokes"), where("uid", "==", currentUser.uid));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        alert("記憶は一人一つまでしか放てません。");
+        return;
+      }
+
       await addDoc(collection(db, "jokes"), {
         text: text,
         date: Date.now(),
+        uid: currentUser.uid, // 投稿者ID
         likes: 0,
+        likedBy: [], // いいねした人のIDリスト
         replies: []
       });
+
       input.value = '';
       adjustHeight(input);
-      
-      // 統合用：投稿後にオーバーレイを閉じる
       if (overlay) overlay.classList.remove('open');
-      
       toast.classList.add('show');
       setTimeout(() => {
         toast.classList.remove('show');
-        location.reload(); // タイムライン更新のためリロード
+        location.reload();
       }, 1500);
+
     } catch (e) {
       console.error("Error adding document: ", e);
       alert("投稿に失敗しました。");
@@ -98,13 +155,14 @@ function initIndexPage() {
 }
 
 // ==========================================
-// 閲覧・アルゴリズム・返信 (旧 past.html の全機能)
+// 閲覧・アルゴリズム (1人1いいね・削除制限)
 // ==========================================
 function initPastPage() {
   const jokeList = document.getElementById('jokeList');
   const loader = document.getElementById('loader');
   const searchInput = document.getElementById('searchInput');
   const topBar = document.querySelector('.topBar');
+
   if (!jokeList) return;
 
   let displayIndex = 0;
@@ -117,7 +175,6 @@ function initPastPage() {
     return isNaN(d) ? "" : `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
 
-  // --- 自己共感アルゴリズム [1, 2] ---
   async function prepareJokes(filter = '') {
     try {
       const querySnapshot = await getDocs(collection(db, "jokes"));
@@ -169,7 +226,11 @@ function initPastPage() {
       nextItems.forEach(j => {
         const li = document.createElement('li');
         li.setAttribute('data-id', j.id);
-        // HTML構造の維持 [3, 4]
+
+        // 自分の投稿かどうかで削除ボタンの表示を切り替え
+        const isOwner = currentUser && j.uid === currentUser.uid;
+        const deleteBtnHtml = isOwner ? `<button class="delBtn">削除</button>` : '';
+
         li.innerHTML = `
           <span>${j.text.replace(/\n/g, '<br>')}</span>
           <div class="btnWrap">
@@ -177,15 +238,13 @@ function initPastPage() {
             <div class="right">
               <button class="replyBtn">💬 ${j.replies ? j.replies.length : 0}</button>
               <button class="likeBtn">👿 ${j.likes || 0}</button>
-              <button class="delBtn">削除</button>
+              ${deleteBtnHtml}
             </div>
           </div>
           <div class="replySection" style="display:none;">
             <div class="replyList"></div>
-            <div class="replyInputArea">
-              <textarea class="replyTextarea" placeholder="自分自身に返信..."></textarea>
-              <button class="replySubmit">放つ</button>
-            </div>
+            <textarea class="replyTextarea" placeholder="共鳴を返す"></textarea>
+            <button class="replySubmit">放つ</button>
           </div>
         `;
 
@@ -195,38 +254,18 @@ function initPastPage() {
         const replySubmit = li.querySelector('.replySubmit');
         const replyTextarea = li.querySelector('.replyTextarea');
 
-        // --- 返信描画ロジック [4, 5] ---
+        // --- 返信ロジック ---
         const renderReplies = (replies) => {
           replyList.innerHTML = '';
           (replies || []).forEach((r) => {
             const div = document.createElement('div');
             div.innerHTML = `
-              <small>${formatDate(r.date)}</small>
-              <p>${r.text.replace(/\n/g, '<br>')}</p>
-              <div class="replyActions">
-                <button class="replyLikeBtn">👿 ${r.likes || 0}</button>
-                <button class="replyDelBtn">削除</button>
-              </div>
+              <div style="font-size:11px; color:#555;">${formatDate(r.date)}</div>
+              <p style="font-size:14px; margin:5px 0;">${r.text.replace(/\n/g, '<br>')}</p>
             `;
-            
-            div.querySelector('.replyLikeBtn').addEventListener('click', async (e) => {
-              r.likes = (r.likes || 0) + 1;
-              await updateDoc(doc(db, "jokes", j.id), { replies: j.replies });
-              e.target.textContent = `👿 ${r.likes}`;
-              createHeart(e.target);
-            });
-
-            div.querySelector('.replyDelBtn').addEventListener('click', async () => {
-              if (!confirm("この返信を消去しますか？")) return;
-              j.replies = j.replies.filter(reply => reply.id !== r.id);
-              await updateDoc(doc(db, "jokes", j.id), { replies: j.replies });
-              renderReplies(j.replies);
-              replyBtn.textContent = `💬 ${j.replies.length}`;
-            });
             replyList.appendChild(div);
           });
         };
-
         renderReplies(j.replies);
 
         replyBtn.addEventListener('click', () => {
@@ -234,9 +273,10 @@ function initPastPage() {
         });
 
         replySubmit.addEventListener('click', async () => {
+          if (!currentUser) return alert("ログインが必要です。");
           const rText = replyTextarea.value.trim();
           if (!rText) return;
-          const newReply = { id: Date.now().toString(), text: rText, date: Date.now(), likes: 0 };
+          const newReply = { id: Date.now().toString(), text: rText, date: Date.now(), uid: currentUser.uid };
           await updateDoc(doc(db, "jokes", j.id), { replies: arrayUnion(newReply) });
           if (!j.replies) j.replies = [];
           j.replies.push(newReply);
@@ -245,26 +285,45 @@ function initPastPage() {
           replyBtn.textContent = `💬 ${j.replies.length}`;
         });
 
+        // --- いいねロジック (1人1いいね制限) ---
         li.querySelector('.likeBtn').addEventListener('click', async (e) => {
-          await updateDoc(doc(db, "jokes", j.id), { likes: increment(1) });
-          j.likes = (j.likes || 0) + 1;
+          if (!currentUser) return alert("ログインが必要です。");
+          const jokeRef = doc(db, "jokes", j.id);
+          
+          if (j.likedBy && j.likedBy.includes(currentUser.uid)) {
+            // 解除
+            await updateDoc(jokeRef, { likedBy: arrayRemove(currentUser.uid), likes: increment(-1) });
+            j.likes--;
+            j.likedBy = j.likedBy.filter(id => id !== currentUser.uid);
+          } else {
+            // 付与
+            await updateDoc(jokeRef, { likedBy: arrayUnion(currentUser.uid), likes: increment(1) });
+            j.likes = (j.likes || 0) + 1;
+            if (!j.likedBy) j.likedBy = [];
+            j.likedBy.push(currentUser.uid);
+            createHeart(e.target);
+          }
           e.target.textContent = `👿 ${j.likes}`;
-          createHeart(e.target);
         });
 
-        li.querySelector('.delBtn').addEventListener('click', async () => {
-          if (!confirm("この記憶を消去しますか？")) return;
-          await deleteDoc(doc(db, "jokes", j.id));
-          li.remove();
-        });
+        // --- 削除ロジック (自投稿のみ) ---
+        if (isOwner) {
+          li.querySelector('.delBtn').addEventListener('click', async () => {
+            if (!confirm("この記憶を消去しますか？")) return;
+            await deleteDoc(doc(db, "jokes", j.id));
+            li.remove();
+          });
+        }
 
         jokeList.appendChild(li);
       });
+
       displayIndex += 10;
       loader.style.display = (displayIndex >= mixedJokes.length) ? 'block' : 'none';
       if (displayIndex >= mixedJokes.length) loader.textContent = "これ以上、記憶はありません";
       isLoading = false;
     };
+
     isInitial ? executeLoad() : setTimeout(executeLoad, 500);
   }
 
