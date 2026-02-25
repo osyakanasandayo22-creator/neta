@@ -239,7 +239,7 @@ function initPastPage() {
             <div class="left"><span>${formatDate(j.date)}</span></div>
             <div class="right">
               <button class="replyBtn">💬 ${j.replies ? j.replies.length : 0}</button>
-              <button class="likeBtn">👿 ${j.likes || 0}</button>
+              <button class="likeBtn">👏 ${j.likes || 0}</button>
               <button class="dislikeBtn">👎 ${j.dislikes || 0}</button> <!-- 追加 -->
               ${deleteBtnHtml}
             </div>
@@ -306,7 +306,7 @@ function initPastPage() {
             j.likedBy.push(currentUser.uid);
             createHeart(e.target);
           }
-          e.target.textContent = `👿 ${j.likes}`;
+          e.target.textContent = `👏 ${j.likes}`;
         });
 
         li.querySelector('.dislikeBtn').addEventListener('click', async (e) => {
@@ -379,7 +379,7 @@ function initPastPage() {
 
 function createHeart(btn) {
   const h = document.createElement('span');
-  h.className = 'heart'; h.textContent = '🖤';
+  h.className = 'heart'; h.textContent = '👏';
   const r = btn.getBoundingClientRect();
   h.style.left = (r.left + r.width / 2 + window.scrollX - 10) + 'px';
   h.style.top = (r.top + window.scrollY - 20) + 'px';
