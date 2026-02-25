@@ -30,9 +30,55 @@ let currentUser = null;
 // ==========================================
 onAuthStateChanged(auth, (user) => {
     currentUser = user;
-    const loginBtn = document.getElementById('loginBtn');
-    if (loginBtn) {
-        loginBtn.textContent = user ? "Logout" : "Login";
+// --- ログインボタンの処理変更 ---
+const loginBtn = document.getElementById('loginBtn');
+const userMenu = document.getElementById('userMenu');
+
+if (loginBtn) {
+    loginBtn.addEventListener('click', async () => {
+        if (currentUser) {
+            // ログイン中ならメニューをトグル表示
+            userMenu.classList.toggle('open');
+        } else {
+            // 未ログインならポップアップログインを実行
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    });
+}
+});
+
+// --- メニュー内：過去の自分の投稿を表示 ---
+document.getElementById('myPostsBtn')?.addEventListener('click', () => {
+    if (!currentUser) return;
+    const jokeList = document.getElementById('jokeList');
+    jokeList.innerHTML = ''; // リストを一旦クリア
+    
+    // 全データから自分のUIDのものだけをフィルタリングして表示 (ソース[7]のロジックを活用)
+    prepareJokes().then(() => {
+        mixedJokes = mixedJokes.filter(j => j.uid === currentUser.uid);
+        loadMore(true);
+        userMenu.classList.remove('open');
+    });
+});
+
+// --- メニュー内：ログアウト ---
+document.getElementById('menuLogoutBtn')?.addEventListener('click', async () => {
+    try {
+        await signOut(auth);
+        location.reload(); // 状態リセット
+    } catch (err) {
+        console.error(err);
+    }
+});
+
+// メニューの外をクリックしたら閉じる
+window.addEventListener('click', (e) => {
+    if (userMenu && !userMenu.contains(e.target) && e.target !== loginBtn) {
+        userMenu.classList.remove('open');
     }
 });
 

@@ -367,6 +367,47 @@ li span:first-child {
     font-size: 12px;
   }
 }
+
+/* ソース[4]の#loginBtn付近に追加 */
+.user-container {
+  position: relative;
+}
+
+.user-menu {
+  display: none; /* 初期状態は非表示 */
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 180px;
+  background: rgba(15, 15, 15, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(15px); /* ソース[2]の統一感 */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  overflow: hidden;
+}
+
+.user-menu.open {
+  display: block;
+}
+
+.menu-item {
+  padding: 12px 20px;
+  font-size: 14px;
+  color: #efefef;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+#menuLogoutBtn {
+  color: #ff2d55; /* ログアウトは警告色 */
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
 /* CSSに追加 */
 .dislikeBtn {
   background: transparent;
