@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 投稿管理 (1人1投稿制限)
+// 投稿管理 (回数制限なしに修正)
 // ==========================================
 function initIndexPage() {
     const input = document.getElementById('jokeInput');
@@ -121,12 +121,7 @@ function initIndexPage() {
         if (!text) return;
 
         try {
-            const q = query(collection(db, "jokes"), where("uid", "==", currentUser.uid));
-            const querySnapshot = await getDocs(q);
-            if (!querySnapshot.empty) {
-                alert("記憶は一人一つまでしか放てません。");
-                return;
-            }
+            // ★【修正】1人1投稿制限のチェック処理(queryとif文)を削除しました
 
             await addDoc(collection(db, "jokes"), {
                 text: text,
@@ -156,7 +151,7 @@ function initIndexPage() {
 }
 
 // ==========================================
-// 閲覧・アルゴリズム (1人1いいね・削除制限)
+// 閲覧・アルゴリズム
 // ==========================================
 function initPastPage() {
     const jokeList = document.getElementById('jokeList');
@@ -230,7 +225,6 @@ function initPastPage() {
                 const li = document.createElement('li');
                 li.setAttribute('data-id', j.id);
 
-                // いいね > 低評価 ならクラスを追加
                 if ((j.likes || 0) > (j.dislikes || 0)) {
                     li.classList.add('white-post');
                 }
@@ -264,7 +258,6 @@ function initPastPage() {
                 const replySubmit = li.querySelector('.replySubmit');
                 const replyTextarea = li.querySelector('.replyTextarea');
 
-                // --- 返信ロジック ---
                 const renderReplies = (replies) => {
                     replyList.innerHTML = '';
                     (replies || []).forEach((r) => {
@@ -297,7 +290,6 @@ function initPastPage() {
                     replyBtn.textContent = `💬 ${j.replies.length}`;
                 });
 
-                // --- いいねロジック ---
                 li.querySelector('.likeBtn').addEventListener('click', async (e) => {
                     if (!currentUser) return alert("ログインが必要です。");
                     const jokeRef = doc(db, "jokes", j.id);
@@ -317,7 +309,6 @@ function initPastPage() {
                     updatePostStyle(li, j.likes, (j.dislikes || 0));
                 });
 
-                // --- 低評価ロジック ---
                 li.querySelector('.dislikeBtn').addEventListener('click', async (e) => {
                     if (!currentUser) return alert("ログインが必要です。");
                     const jokeRef = doc(db, "jokes", j.id);
@@ -336,7 +327,6 @@ function initPastPage() {
                     updatePostStyle(li, (j.likes || 0), j.dislikes);
                 });
 
-                // --- 削除ロジック ---
                 if (isOwner) {
                     li.querySelector('.delBtn').addEventListener('click', async () => {
                         if (!confirm("この記憶を消去しますか？")) return;
