@@ -10,10 +10,13 @@
 </head>
 <body class="pastPage">
   <!-- タイムライン上部バー [1-3] -->
-  <div class="topBar">
-    <div class="logoText" style="font-weight: bold; color: #fff; margin-left: 10px;">BARI</div>
-    <input type="text" id="searchInput" placeholder="検索ワードを入力">
-  </div>
+<!-- index.html の topBar 内に追加 -->
+<div class="topBar">
+  <div class="logoText" style="font-weight: bold; color: #fff; margin-left: 10px;">BARI</div>
+  <input type="text" id="searchInput" placeholder="検索ワードを入力">
+  <!-- ログイン・ログアウトボタン -->
+  <button id="loginBtn" style="background:none; border:1px solid #fff; color:#fff; border-radius:5px; padding:5px 10px; cursor:pointer;">Login</button>
+</div>
 
   <!-- 投稿リストを表示するコンテナ [2, 4] -->
   <ul id="jokeList"></ul>
