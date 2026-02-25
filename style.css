@@ -199,21 +199,51 @@ li span:first-child {
 }
 
 /* フローティングボタン (新規追加) */
+/* フローティングボタンのアップデート */
 #fab {
   position: fixed;
   bottom: 30px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
+  right: 25px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
-  background: #fff;
-  color: #000;
-  font-size: 30px;
-  font-weight: bold;
-  border: none;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  /* サイトの基本背景色に合わせた透過とぼかし */
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  font-size: 32px;
+  font-weight: 300; /* 細めのフォントで洗練さを出す */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 
+              inset 0 0 10px rgba(255, 255, 255, 0.05);
   cursor: pointer;
   z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  /* 常に浮遊しているようなアニメーション */
+  animation: fabFloat 3s ease-in-out infinite;
+}
+
+/* ホバー時のアクション */
+#fab:hover {
+  background: #fff;
+  color: #000;
+  transform: scale(1.1) rotate(90deg); /* 拡大して回転 */
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+  animation-play-state: paused; /* ホバー時は浮遊を止める */
+}
+
+/* クリック時の微かな反応 */
+#fab:active {
+  transform: scale(0.9);
+}
+
+/* 浮遊アニメーションの定義 */
+@keyframes fabFloat {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-10px) rotate(5deg); }
 }
 
 /* 投稿用オーバーレイ (新規追加) */

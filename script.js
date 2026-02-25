@@ -29,10 +29,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (fab && overlay && closeBtn) {
     fab.addEventListener('click', () => {
-      overlay.classList.add('open');
-      document.getElementById('jokeInput').focus();
+      // ボタン自体の演出：一瞬小さくする
+      fab.style.transform = 'scale(0.8)';
+      
+      setTimeout(() => {
+        overlay.classList.add('open');
+        document.getElementById('jokeInput').focus();
+        fab.style.transform = ''; // スタイルを戻す
+      }, 100);
     });
-
+    
+    // 閉じるボタンの演出も強化
     closeBtn.addEventListener('click', () => {
       overlay.classList.remove('open');
     });
