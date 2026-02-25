@@ -24,10 +24,10 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
 let currentUser = null;
-let mixedJokes = []; // グローバルで管理
+let mixedJokes = []; 
 
 // ==========================================
-// ログイン状態の監視 (UIの表示切り替えのみ)
+// ログイン状態の監視
 // ==========================================
 onAuthStateChanged(auth, (user) => {
     currentUser = user;
@@ -36,10 +36,8 @@ onAuthStateChanged(auth, (user) => {
     
     if (loginBtn) {
         if (user) {
-            // ログイン中：アイコンを表示
             loginBtn.textContent = `👤 ${user.displayName || 'Menu'}`;
         } else {
-            // 未ログイン：Loginボタンを表示
             loginBtn.textContent = "Login";
             if (userMenu) userMenu.classList.remove('open');
         }
@@ -56,17 +54,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginBtn = document.getElementById('loginBtn');
     const userMenu = document.getElementById('userMenu');
 
-    // --- ログイン・メニュー操作 (一箇所に集約) ---
     if (loginBtn) {
         loginBtn.addEventListener('click', async () => {
             if (currentUser) {
-                // ログイン済みならメニューの開閉
                 userMenu.classList.toggle('open');
             } else {
-                // 未ログインならログイン実行
                 try {
                     await signInWithPopup(auth, provider);
-                    console.log("Logged in");
                 } catch (err) {
                     console.error("Login error:", err);
                     if (err.code === 'auth/popup-blocked') {
@@ -77,23 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // メニュー項目：自分の投稿を表示
-    document.getElementById('myPostsBtn')?.addEventListener('click', () => {
-        if (!currentUser) return;
-        const jokeList = document.getElementById('jokeList');
-        jokeList.innerHTML = '';
-        // 自分のUIDに一致するものだけフィルタリング
-        mixedJokes = mixedJokes.filter(j => j.uid === currentUser.uid);
-        // loadMoreを呼び出す(initPastPage内の関数に依存するため、グローバルな管理が必要な場合は調整)
-        // 今回は簡易的に再描画ロジックを期待
-        const loader = document.getElementById('loader');
-        if (loader) loader.textContent = "自分の記憶を表示中...";
-        userMenu.classList.remove('open');
-        location.hash = "my-posts"; // 簡易的なフラグ
-        location.reload(); // 自分の投稿のみを取得するようリロード、または再取得ロジック
-    });
-
-    // メニュー項目：ログアウト
+    // ログアウト処理
     document.getElementById('menuLogoutBtn')?.addEventListener('click', async () => {
         try {
             await signOut(auth);
@@ -103,14 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // メニューの外をクリックしたら閉じる
     window.addEventListener('click', (e) => {
         if (userMenu && !userMenu.contains(e.target) && e.target !== loginBtn) {
             userMenu.classList.remove('open');
         }
     });
 
-    // --- オーバーレイ制御ロジック ---
     const fab = document.getElementById('fab');
     const overlay = document.getElementById('postOverlay');
     const closeBtn = document.getElementById('closeOverlay');
@@ -125,16 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 fab.style.transform = '';
             }, 100);
         });
-
         closeBtn.addEventListener('click', () => {
             overlay.classList.remove('open');
-        });
-    }
-
-    // サービスワーカー
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/service-worker.js').catch(err => console.log(err));
         });
     }
 });
@@ -197,6 +165,7 @@ function initPastPage() {
     const loader = document.getElementById('loader');
     const searchInput = document.getElementById('searchInput');
     const topBar = document.querySelector('.topBar');
+    const userMenu = document.getElementById('userMenu');
 
     if (!jokeList) return;
 
@@ -209,6 +178,27 @@ function initPastPage() {
         return isNaN(d) ? "" : `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     }
 
+    // 自分の投稿ボタンのイベント（ここに追加）
+    document.getElementById('myPostsBtn')?.addEventListener('click', () => {
+        if (!currentUser) return;
+        
+        // 1. メニューを閉じる
+        userMenu.classList.remove('open');
+        
+        // 2. 自分の投稿だけを抽出し、日付の降順（最新順）にソート
+        mixedJokes = mixedJokes
+            .filter(j => j.uid === currentUser.uid)
+            .sort((a, b) => b.date - a.date);
+        
+        // 3. 表示をリセット
+        jokeList.innerHTML = '';
+        displayIndex = 0;
+        
+        // 4. 再描画
+        if (loader) loader.textContent = "自分の記憶を表示中...";
+        loadMore(true);
+    });
+
     async function prepareJokes(filter = '') {
         try {
             const querySnapshot = await getDocs(collection(db, "jokes"));
@@ -219,7 +209,6 @@ function initPastPage() {
 
             if (filter) jokes = jokes.filter(j => j.text.toLowerCase().includes(filter.toLowerCase()));
 
-            // 重み付けアルゴリズム
             const now = Date.now();
             const pool = jokes.map(j => {
                 const daysSince = (now - j.date) / (1000 * 60 * 60 * 24);
@@ -264,7 +253,6 @@ function initPastPage() {
                 const li = document.createElement('li');
                 li.setAttribute('data-id', j.id);
 
-                // いいね > 低評価なら白背景クラス付与
                 if ((j.likes || 0) > (j.dislikes || 0)) {
                     li.classList.add('white-post');
                 }
@@ -290,7 +278,6 @@ function initPastPage() {
                     </div>
                 `;
 
-                // ボタンのイベント
                 const replySection = li.querySelector('.replySection');
                 const replyList = li.querySelector('.replyList');
                 const replyBtn = li.querySelector('.replyBtn');
