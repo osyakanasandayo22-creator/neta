@@ -382,3 +382,25 @@ li span:first-child {
 .dislikeBtn:hover {
   color: #888; /* もしくは低評価らしい色 */
 }
+
+/* 白いデザイン用のスタイル定義 */
+li.white-post {
+  background: rgba(255, 255, 255, 0.95); /* 白背景 [1] */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+}
+
+li.white-post span:first-child {
+  color: #1a1a1a; /* 投稿文を黒に [2] */
+}
+
+li.white-post .left span,
+li.white-post .likeBtn,
+li.white-post .dislikeBtn,
+li.white-post .replyBtn {
+  color: #444; /* ボタンや日付の文字色を暗く [2] */
+}
+
+li.white-post .delBtn {
+  color: #888; /* 削除ボタン [3] */
+}

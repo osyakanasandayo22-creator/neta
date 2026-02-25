@@ -223,15 +223,20 @@ function initPastPage() {
       loader.textContent = "記憶を深掘り中...";
     }
 
-    const executeLoad = () => {
-      const nextItems = mixedJokes.slice(displayIndex, displayIndex + 10);
-      nextItems.forEach(j => {
-        const li = document.createElement('li');
-        li.setAttribute('data-id', j.id);
+// script.js の loadMore 関数内
+    nextItems.forEach(j => {
+    const li = document.createElement('li');
+    li.setAttribute('data-id', j.id);
+
+    // ★条件判定: いいね > 低評価 ならクラスを追加
+    if ((j.likes || 0) > (j.dislikes || 0)) {
+        li.classList.add('white-post');
+    }
 
         // 自分の投稿かどうかで削除ボタンの表示を切り替え
         const isOwner = currentUser && j.uid === currentUser.uid;
         const deleteBtnHtml = isOwner ? `<button class="delBtn">削除</button>` : '';
+        
 
         li.innerHTML = `
           <span>${j.text.replace(/\n/g, '<br>')}</span>
@@ -386,3 +391,28 @@ function createHeart(btn) {
   document.body.appendChild(h);
   setTimeout(() => h.remove(), 1000);
 }
+
+// クラスを更新するための補助関数
+function updatePostStyle(li, likes, dislikes) {
+    if (likes > dislikes) {
+        li.classList.add('white-post');
+    } else {
+        li.classList.remove('white-post');
+    }
+}
+
+// いいねボタンのリスナー内 [5]
+li.querySelector('.likeBtn').addEventListener('click', async (e) => {
+    // ... (既存のカウント処理) ...
+    
+    // スタイルの更新
+    updatePostStyle(li, j.likes, (j.dislikes || 0));
+});
+
+// 低評価ボタンのリスナー内 (前回提示のコードに追加)
+li.querySelector('.dislikeBtn').addEventListener('click', async (e) => {
+    // ... (既存のカウント処理) ...
+    
+    // スタイルの更新
+    updatePostStyle(li, (j.likes || 0), j.dislikes);
+});
