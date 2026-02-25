@@ -367,3 +367,18 @@ li span:first-child {
     font-size: 12px;
   }
 }
+/* CSSに追加 */
+.dislikeBtn {
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+  cursor: pointer;
+}
+.dislikeBtn:hover {
+  color: #888; /* もしくは低評価らしい色 */
+}

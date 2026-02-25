@@ -135,6 +135,8 @@ function initIndexPage() {
         uid: currentUser.uid, // 投稿者ID
         likes: 0,
         likedBy: [], // いいねした人のIDリスト
+        dislikes: 0,       // 追加
+        dislikedBy: [],     
         replies: []
       });
 
@@ -238,6 +240,7 @@ function initPastPage() {
             <div class="right">
               <button class="replyBtn">💬 ${j.replies ? j.replies.length : 0}</button>
               <button class="likeBtn">👿 ${j.likes || 0}</button>
+              <button class="dislikeBtn">👎 ${j.dislikes || 0}</button> <!-- 追加 -->
               ${deleteBtnHtml}
             </div>
           </div>
@@ -304,6 +307,36 @@ function initPastPage() {
             createHeart(e.target);
           }
           e.target.textContent = `👿 ${j.likes}`;
+        });
+
+        li.querySelector('.dislikeBtn').addEventListener('click', async (e) => {
+            // ログイン必須のチェック
+            if (!currentUser) return alert("ログインが必要です。");
+        
+            const jokeRef = doc(db, "jokes", j.id);
+        
+            // 1人1低評価制限のロジック
+            if (j.dislikedBy && j.dislikedBy.includes(currentUser.uid)) {
+                // すでに押されている場合は解除
+                await updateDoc(jokeRef, { 
+                    dislikedBy: arrayRemove(currentUser.uid), 
+                    dislikes: increment(-1) 
+                });
+                j.dislikes--;
+                j.dislikedBy = j.dislikedBy.filter(id => id !== currentUser.uid);
+            } else {
+                // 新しく付与
+                await updateDoc(jokeRef, { 
+                    dislikedBy: arrayUnion(currentUser.uid), 
+                    dislikes: increment(1) 
+                });
+                j.dislikes = (j.dislikes || 0) + 1;
+                if (!j.dislikedBy) j.dislikedBy = [];
+                j.dislikedBy.push(currentUser.uid);
+            }
+        
+            // 表示を更新
+            e.target.textContent = `👎 ${j.dislikes}`;
         });
 
         // --- 削除ロジック (自投稿のみ) ---
