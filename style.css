@@ -1,8 +1,8 @@
 /* ==========================================
-   Design Concept: Dark Underground / "BARI"
-   ========================================== */
+Design Concept: Dark Underground / "BARI"
+========================================== */
 
-/* 基本設定 */
+/* 基本設定 [11] */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -10,19 +10,22 @@
 }
 
 body {
-  /* 漆黒の背景にわずかなグラデーション */
   background: radial-gradient(circle at top, #1a1a1a 0%, #0f0f0f 100%);
   color: #e0e0e0;
   font-family: 'JetBrains Mono', 'Menlo', 'Monaco', 'Courier New', 'BIZ UDPGothic', sans-serif;
   line-height: 1.6;
   min-height: 100vh;
-  padding: 40px 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
-/* タイトル画像 */
+/* タイムライン表示用設定 [1] */
+body.pastPage {
+  display: block;
+  padding: 90px 20px 40px 20px;
+}
+
+/* タイトル画像 [8] */
 img {
   max-width: 240px;
   width: 100%;
@@ -30,11 +33,12 @@ img {
   margin-bottom: 40px;
   transition: transform 0.5s ease;
 }
+
 img:hover {
   transform: scale(1.05) rotate(-2deg);
 }
 
-/* 入力エリアのラッパー */
+/* 入力エリアのラッパー [8] */
 .inputWrapper {
   width: 100%;
   max-width: 650px;
@@ -49,7 +53,7 @@ img:hover {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* テキストエリア (裏Twitter風) */
+/* テキストエリア [13] */
 textarea {
   width: 100%;
   min-height: 120px;
@@ -61,12 +65,13 @@ textarea {
   outline: none;
   padding: 10px;
 }
+
 textarea::placeholder {
   color: #555;
   font-style: italic;
 }
 
-/* メインボタン */
+/* メインボタン [13, 14] */
 #submitButton {
   align-self: flex-end;
   background: #fff;
@@ -81,37 +86,13 @@ textarea::placeholder {
 }
 
 #submitButton:hover {
-  background: #007acc; /* ネオンブルー */
+  background: #007acc;
   color: #fff;
   box-shadow: 0 0 20px rgba(0, 122, 204, 0.6);
   transform: translateY(-2px);
 }
 
-/* サブボタン (Baritter) */
-#pastButton {
-  margin-top: 25px;
-  width: 100%;
-  max-width: 650px;
-  background: transparent;
-  border: 1px solid #444;
-  color: #888;
-  border-radius: 12px;
-  padding: 15px;
-  font-size: 14px;
-  letter-spacing: 2px;
-}
-#pastButton:hover {
-  border-color: #fff;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-/* --- タイムライン (past.html) --- */
-body.pastPage {
-  display: block;
-  padding: 90px 20px 40px 20px;
-}
-
+/* タイムライン UI [1, 2] */
 .topBar {
   position: fixed;
   top: 0;
@@ -129,16 +110,6 @@ body.pastPage {
   transition: transform 0.4s ease;
 }
 
-#addButton {
-  background: #fff;
-  color: #000;
-  border-radius: 20px;
-  padding: 6px 16px;
-  font-size: 13px;
-  font-weight: bold;
-  height: 36px;
-}
-
 #searchInput {
   flex: 1;
   background: #202020;
@@ -147,14 +118,15 @@ body.pastPage {
   padding: 0 20px;
   color: #fff;
   height: 40px;
-  font-size: 16px; /* 14pxから16pxに変更 */
+  font-size: 16px;
 }
+
 #searchInput:focus {
   border-color: #007acc;
   outline: none;
 }
 
-/* 投稿カード */
+/* 投稿カード [2, 15] */
 #jokeList {
   max-width: 600px;
   margin: 0 auto;
@@ -165,7 +137,6 @@ li {
   background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   padding: 20px;
-  transition: background 0.2s;
   display: flex;
   flex-direction: column;
 }
@@ -174,7 +145,6 @@ li:hover {
   background: rgba(255, 255, 255, 0.04);
 }
 
-/* ネタのテキスト */
 li span:first-child {
   font-size: 16px;
   color: #efefef;
@@ -182,7 +152,6 @@ li span:first-child {
   white-space: pre-wrap;
 }
 
-/* アクションエリア */
 .btnWrap {
   display: flex;
   justify-content: space-between;
@@ -199,8 +168,8 @@ li span:first-child {
   gap: 15px;
 }
 
-/* いいねボタン (👿アイコン) */
-.likeBtn {
+/* 各種ボタン [9, 15, 16] */
+.likeBtn, .replyBtn {
   background: transparent;
   border: none;
   color: #666;
@@ -209,46 +178,85 @@ li span:first-child {
   align-items: center;
   gap: 5px;
   padding: 5px;
-}
-.likeBtn:hover {
-  color: #ff2d55; /* 闇に映える赤 */
-  background: transparent;
+  cursor: pointer;
 }
 
-/* 削除ボタン */
+.likeBtn:hover { color: #ff2d55; }
+.replyBtn:hover { color: #007acc; }
+
 .delBtn {
   background: transparent;
   border: none;
   color: #333;
   font-size: 12px;
+  cursor: pointer;
 }
+
 .delBtn:hover {
   color: #fff;
   background: #aa0000;
   border-radius: 4px;
 }
 
-/* トースト通知 */
+/* フローティングボタン (新規追加) */
+#fab {
+  position: fixed;
+  bottom: 30px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #fff;
+  color: #000;
+  font-size: 30px;
+  font-weight: bold;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  z-index: 1100;
+}
+
+/* 投稿用オーバーレイ (新規追加) */
+#postOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top, #1a1a1a 0%, #0f0f0f 100%);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  padding: 20px;
+}
+
+#postOverlay.open { transform: translateY(0); }
+
+.overlayHeader { display: flex; justify-content: flex-end; }
+#closeOverlay { background: transparent; border: none; color: #fff; font-size: 40px; cursor: pointer; }
+.overlayBody { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+/* トースト通知 [5, 9] */
 #toast {
   position: fixed;
   bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
   background: #007acc;
   color: #fff;
   padding: 12px 25px;
   border-radius: 50px;
   font-weight: bold;
-  box-shadow: 0 5px 15px rgba(0, 122, 204, 0.4);
-  pointer-events: none;
   opacity: 0;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  transform: translateX(-50%) translateY(20px);
-}
-#toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  transition: all 0.4s;
+  z-index: 3000;
 }
 
-/* ハート(闇の演出) */
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ハート演出 [5] */
 .heart {
   position: absolute;
   pointer-events: none;
@@ -257,176 +265,32 @@ li span:first-child {
   filter: drop-shadow(0 0 8px #ff2d55);
   animation: darkFloat 1s ease-out forwards;
 }
-
 @keyframes darkFloat {
   0% { transform: scale(0.5) translateY(0); opacity: 1; }
   100% { transform: scale(1.5) translateY(-60px); opacity: 0; }
 }
 
-/* ローダー */
-#loader {
-  text-align: center;
-  padding: 40px;
-  color: #444;
-  font-size: 13px;
-}
-
-/* スマホ対応 */
-@media screen and (max-width: 600px) {
-  body { padding: 20px 10px; }
-  .inputWrapper { border-radius: 0; border-left: none; border-right: none; background: transparent; }
-  textarea { font-size: 16px; }
-  li { padding: 15px; }
-}
-/* --- 返信セクションのデザイン --- */
-
-/* 返信ボタン(💬)のスタイル */
-.replyBtn {
-  background: transparent;
-  border: none;
-  color: #666;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.replyBtn:hover {
-  color: #007acc; /* 返信はブルー */
-}
-
-/* 返信エリア全体 */
+/* 返信セクション [12, 17-20] */
 .replySection {
-  background: rgba(0, 0, 0, 0.2); /* メインより一段暗く */
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 8px;
   margin-top: 15px;
   padding: 12px;
   animation: slideDown 0.3s ease-out;
 }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* 返信ひとつひとつの塊 */
-.replyList > div {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 8px 0;
-}
+.replyList > div { border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding: 8px 0; }
+.replyTextarea { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #fff; padding: 8px; font-size: 16px; resize: none; }
+.replySubmit { background: #fff; color: #000; border: none; border-radius: 20px; padding: 6px 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+.replySubmit:hover { background: #007acc; color: #fff; }
 
-.replyList > div:last-child {
-  border-bottom: none;
-}
+/* ローダー [5, 16] */
+#loader { text-align: center; padding: 40px; color: #444; font-size: 13px; }
 
-/* 返信内の日付 */
-.replyList small {
-  display: block;
-  margin-bottom: 4px;
-  letter-spacing: 1px;
-}
-
-/* 返信入力エリア */
-.replyInputArea {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end; /* ボタンを右寄せにする */
-  gap: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 12px;
-}
-
-.replyTextarea {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  color: #fff;
-  padding: 8px;
-  font-size: 14px;
-  resize: none;
-}
-
-.replyTextarea:focus {
-  border-color: #007acc !important;
-  outline: none;
-}
-
-/* 返信送信ボタン */
-.replySubmit {
-  background: #fff; /* メインボタンに合わせた白 [1] */
-  color: #000;
-  border: none;
-  border-radius: 20px; /* 角丸でモダンに [1] */
-  padding: 6px 18px;
-  font-size: 13px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1); /* スムーズな動き [1] */
-}
-
-.replySubmit:hover {
-  background: #007acc; /* ネオンブルー [3] */
-  color: #fff;
-  box-shadow: 0 0 15px rgba(0, 122, 204, 0.5); /* 発光エフェクト [3] */
-  transform: translateY(-1px); /* わずかに浮き上がる [3] */
-}
-
-/* アニメーション */
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* スマホでの返信欄の調整 */
+/* スマホ対応 [12, 16] */
 @media screen and (max-width: 600px) {
-  .replySection {
-      margin-left: 5px;
-      padding: 10px;
-  }
-}
-/* 返信内のアクションエリア */
-.replyActions {
-  display: flex;
-  gap: 12px;
-  margin-top: 6px;
-}
-
-/* 返信のいいねボタン */
-.replyLikeBtn {
-  background: transparent;
-  border: none;
-  color: #666;
-  font-size: 12px;
-  cursor: pointer;
-  padding: 2px 5px;
-  transition: color 0.2s;
-}
-
-.replyLikeBtn:hover {
-  color: #ff2d55; /* 投稿と同じ「闇に映える赤」 [2] */
-}
-
-/* 返信の削除ボタン */
-.replyDelBtn {
-  background: transparent;
-  border: none;
-  color: #333;
-  font-size: 11px;
-  cursor: pointer;
-  padding: 2px 5px;
-  transition: all 0.2s;
-}
-
-.replyDelBtn:hover {
-  color: #fff;
-  background: #aa0000; /* 投稿の削除ボタンと同じ赤 [3] */
-  border-radius: 4px;
-}
-@media screen and (max-width: 600px) {
-  /* 検索欄、返信欄、投稿欄すべてを16px以上に強制する */
-  input, 
-  textarea, 
-  .replyTextarea, 
-  #searchInput {
-      font-size: 16px !important;
-  }
+  body { padding: 20px 10px; }
+  body.pastPage { padding-top: 80px; }
+  input, textarea, .replyTextarea { font-size: 16px !important; }
 }

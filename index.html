@@ -8,26 +8,40 @@
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#000000">
 </head>
-<body class="indexPage">
-  <!-- タイトル画像: ソースの指示通り維持 [1] -->
-  <img src="./images/neta.png" alt="ネタ">
-
-  <!-- 入力エリア: ソースのIDやクラスを維持 [1, 2] -->
-  <div class="inputWrapper">
-    <textarea id="jokeInput" placeholder="思いつきを書こう"></textarea>
-    <button id="submitButton">放つ</button>
+<body class="pastPage">
+  <!-- タイムライン上部バー [1-3] -->
+  <div class="topBar">
+    <div class="logoText" style="font-weight: bold; color: #fff; margin-left: 10px;">BARI</div>
+    <input type="text" id="searchInput" placeholder="検索ワードを入力">
   </div>
 
-  <!-- 過去ログへのボタン [2, 3] -->
-  <button id="pastButton">Baritter</button>
+  <!-- 投稿リストを表示するコンテナ [2, 4] -->
+  <ul id="jokeList"></ul>
 
-  <!-- トースト通知 [2, 4] -->
+  <!-- ローダー [3, 5, 6] -->
+  <div id="loader">読み込み中...</div>
+
+  <!-- Twitter風フローティングアクションボタン (新規: 投稿画面を呼び出す) -->
+  <button id="fab">+</button>
+
+  <!-- 投稿用オーバーレイ (旧index.htmlの全要素を内包) [7, 8] -->
+  <div id="postOverlay">
+    <div class="overlayHeader">
+      <button id="closeOverlay">×</button>
+    </div>
+    <div class="overlayBody">
+      <img src="./images/neta.png" alt="ネタ">
+      <div class="inputWrapper">
+        <textarea id="jokeInput" placeholder="思いつきを書こう"></textarea>
+        <button id="submitButton">放つ</button>
+      </div>
+      <!-- 元の「Baritter」ボタンの代わりにオーバーレイを閉じる運用になりますが、要素として維持したい場合はここに配置可能です -->
+    </div>
+  </div>
+
+  <!-- トースト通知 [7, 9, 10] -->
   <div id="toast">投稿が完了しました。</div>
 
-  <!-- 
-    Firebase SDK を使用する script.js を読み込むため、
-    type="module" を指定しています。 
-  -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
