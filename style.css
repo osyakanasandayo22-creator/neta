@@ -348,3 +348,22 @@ li span:first-child {
   color: #000;
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
+
+/* スマホ版（600px以下）の微調整 [3] */
+@media screen and (max-width: 600px) {
+  .logoText {
+    font-size: 14px; /* ロゴを少し小さく */
+    margin-left: 5px !important;
+  }
+  
+  #searchInput {
+    height: 36px;   /* 高さを抑える [2] */
+    font-size: 14px;
+    padding: 0 12px;
+  }
+
+  #loginBtn {
+    padding: 5px 10px; /* さらにコンパクトに */
+    font-size: 12px;
+  }
+}
