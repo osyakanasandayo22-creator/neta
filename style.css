@@ -102,13 +102,15 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   gap: 15px;
-  padding: 0 20px;
+  padding: 0 12px;
   background: rgba(15, 15, 15, 0.8);
   backdrop-filter: blur(15px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 1000;
   transition: transform 0.4s ease;
 }
+/* topBarの調整: スマホでの余白を最適化 */
+
 
 #searchInput {
   flex: 1;
@@ -323,4 +325,26 @@ li span:first-child {
   body { padding: 20px 10px; }
   body.pastPage { padding-top: 80px; }
   input, textarea, .replyTextarea { font-size: 16px !important; }
+}
+
+/* ログインボタンの独自デザイン */
+#loginBtn {
+  background: rgba(255, 255, 255, 0.05); /* わずかな透過白 */
+  backdrop-filter: blur(5px);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px; /* 角を丸めて洗練させる */
+  padding: 6px 15px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap; /* 改行を防ぐ */
+  flex-shrink: 0;      /* ボタンが潰れるのを防ぐ */
+}
+
+#loginBtn:hover {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
