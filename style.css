@@ -374,7 +374,7 @@ li span:first-child {
 }
 
 .user-menu {
-  display: none; /* 初期状態は非表示 */
+  display: none; /* 初期は非表示 */
   position: absolute;
   top: 50px;
   right: 0;
@@ -382,15 +382,18 @@ li span:first-child {
   background: rgba(15, 15, 15, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  backdrop-filter: blur(15px); /* ソース[2]の統一感 */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(15px);
   z-index: 2000;
-  overflow: hidden;
 }
-
-.user-menu.open {
-  display: block;
+.user-menu.open { display: block; }
+.menu-item {
+  padding: 12px 20px;
+  font-size: 14px;
+  color: #efefef;
+  cursor: pointer;
 }
+.menu-item:hover { background: rgba(255, 255, 255, 0.05); }
+#menuLogoutBtn { color: #ff2d55; border-top: 1px solid rgba(255, 255, 255, 0.05); }
 
 .menu-item {
   padding: 12px 20px;

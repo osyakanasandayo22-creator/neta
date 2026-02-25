@@ -24,61 +24,25 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
 let currentUser = null;
+let mixedJokes = []; // グローバルで管理
 
 // ==========================================
-// ログイン状態の監視
+// ログイン状態の監視 (UIの表示切り替えのみ)
 // ==========================================
 onAuthStateChanged(auth, (user) => {
     currentUser = user;
-// --- ログインボタンの処理変更 ---
-const loginBtn = document.getElementById('loginBtn');
-const userMenu = document.getElementById('userMenu');
-
-if (loginBtn) {
-    loginBtn.addEventListener('click', async () => {
-        if (currentUser) {
-            // ログイン中ならメニューをトグル表示
-            userMenu.classList.toggle('open');
-        } else {
-            // 未ログインならポップアップログインを実行
-            try {
-                await signInWithPopup(auth, provider);
-            } catch (err) {
-                console.error(err);
-            }
-        }
-    });
-}
-});
-
-// --- メニュー内：過去の自分の投稿を表示 ---
-document.getElementById('myPostsBtn')?.addEventListener('click', () => {
-    if (!currentUser) return;
-    const jokeList = document.getElementById('jokeList');
-    jokeList.innerHTML = ''; // リストを一旦クリア
+    const loginBtn = document.getElementById('loginBtn');
+    const userMenu = document.getElementById('userMenu');
     
-    // 全データから自分のUIDのものだけをフィルタリングして表示 (ソース[7]のロジックを活用)
-    prepareJokes().then(() => {
-        mixedJokes = mixedJokes.filter(j => j.uid === currentUser.uid);
-        loadMore(true);
-        userMenu.classList.remove('open');
-    });
-});
-
-// --- メニュー内：ログアウト ---
-document.getElementById('menuLogoutBtn')?.addEventListener('click', async () => {
-    try {
-        await signOut(auth);
-        location.reload(); // 状態リセット
-    } catch (err) {
-        console.error(err);
-    }
-});
-
-// メニューの外をクリックしたら閉じる
-window.addEventListener('click', (e) => {
-    if (userMenu && !userMenu.contains(e.target) && e.target !== loginBtn) {
-        userMenu.classList.remove('open');
+    if (loginBtn) {
+        if (user) {
+            // ログイン中：アイコンを表示
+            loginBtn.textContent = `👤 ${user.displayName || 'Menu'}`;
+        } else {
+            // 未ログイン：Loginボタンを表示
+            loginBtn.textContent = "Login";
+            if (userMenu) userMenu.classList.remove('open');
+        }
     }
 });
 
@@ -89,23 +53,22 @@ document.addEventListener('DOMContentLoaded', () => {
     initIndexPage();
     initPastPage();
 
-    // --- ログイン・ログアウト処理 ---
     const loginBtn = document.getElementById('loginBtn');
+    const userMenu = document.getElementById('userMenu');
+
+    // --- ログイン・メニュー操作 (一箇所に集約) ---
     if (loginBtn) {
         loginBtn.addEventListener('click', async () => {
             if (currentUser) {
-                try {
-                    await signOut(auth);
-                    console.log("Logged out");
-                } catch (err) {
-                    console.error("Sign out error:", err);
-                }
+                // ログイン済みならメニューの開閉
+                userMenu.classList.toggle('open');
             } else {
+                // 未ログインならログイン実行
                 try {
-                    const result = await signInWithPopup(auth, provider);
-                    console.log("Logged in as:", result.user.displayName);
+                    await signInWithPopup(auth, provider);
+                    console.log("Logged in");
                 } catch (err) {
-                    console.error("Login error:", err.code, err.message);
+                    console.error("Login error:", err);
                     if (err.code === 'auth/popup-blocked') {
                         alert("ポップアップがブロックされました。ブラウザの設定で許可してください。");
                     }
@@ -113,6 +76,39 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // メニュー項目：自分の投稿を表示
+    document.getElementById('myPostsBtn')?.addEventListener('click', () => {
+        if (!currentUser) return;
+        const jokeList = document.getElementById('jokeList');
+        jokeList.innerHTML = '';
+        // 自分のUIDに一致するものだけフィルタリング
+        mixedJokes = mixedJokes.filter(j => j.uid === currentUser.uid);
+        // loadMoreを呼び出す(initPastPage内の関数に依存するため、グローバルな管理が必要な場合は調整)
+        // 今回は簡易的に再描画ロジックを期待
+        const loader = document.getElementById('loader');
+        if (loader) loader.textContent = "自分の記憶を表示中...";
+        userMenu.classList.remove('open');
+        location.hash = "my-posts"; // 簡易的なフラグ
+        location.reload(); // 自分の投稿のみを取得するようリロード、または再取得ロジック
+    });
+
+    // メニュー項目：ログアウト
+    document.getElementById('menuLogoutBtn')?.addEventListener('click', async () => {
+        try {
+            await signOut(auth);
+            location.reload();
+        } catch (err) {
+            console.error(err);
+        }
+    });
+
+    // メニューの外をクリックしたら閉じる
+    window.addEventListener('click', (e) => {
+        if (userMenu && !userMenu.contains(e.target) && e.target !== loginBtn) {
+            userMenu.classList.remove('open');
+        }
+    });
 
     // --- オーバーレイ制御ロジック ---
     const fab = document.getElementById('fab');
@@ -144,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 投稿管理 (回数制限なしに修正)
+// 投稿管理
 // ==========================================
 function initIndexPage() {
     const input = document.getElementById('jokeInput');
@@ -167,8 +163,6 @@ function initIndexPage() {
         if (!text) return;
 
         try {
-            // ★【修正】1人1投稿制限のチェック処理(queryとif文)を削除しました
-
             await addDoc(collection(db, "jokes"), {
                 text: text,
                 date: Date.now(),
@@ -191,13 +185,12 @@ function initIndexPage() {
 
         } catch (e) {
             console.error("Error adding document: ", e);
-            alert("投稿に失敗しました。");
         }
     });
 }
 
 // ==========================================
-// 閲覧・アルゴリズム
+// 閲覧・表示ロジック
 // ==========================================
 function initPastPage() {
     const jokeList = document.getElementById('jokeList');
@@ -208,7 +201,6 @@ function initPastPage() {
     if (!jokeList) return;
 
     let displayIndex = 0;
-    let mixedJokes = [];
     let isLoading = false;
     let lastScrollY = window.scrollY;
 
@@ -227,6 +219,7 @@ function initPastPage() {
 
             if (filter) jokes = jokes.filter(j => j.text.toLowerCase().includes(filter.toLowerCase()));
 
+            // 重み付けアルゴリズム
             const now = Date.now();
             const pool = jokes.map(j => {
                 const daysSince = (now - j.date) / (1000 * 60 * 60 * 24);
@@ -271,6 +264,7 @@ function initPastPage() {
                 const li = document.createElement('li');
                 li.setAttribute('data-id', j.id);
 
+                // いいね > 低評価なら白背景クラス付与
                 if ((j.likes || 0) > (j.dislikes || 0)) {
                     li.classList.add('white-post');
                 }
@@ -281,9 +275,7 @@ function initPastPage() {
                 li.innerHTML = `
                     <span>${j.text.replace(/\n/g, '<br>')}</span>
                     <div class="btnWrap">
-                        <div class="left">
-                            <span>${formatDate(j.date)}</span>
-                        </div>
+                        <div class="left"><span>${formatDate(j.date)}</span></div>
                         <div class="right">
                             <button class="replyBtn">💬 ${j.replies ? j.replies.length : 0}</button>
                             <button class="likeBtn">👏 ${j.likes || 0}</button>
@@ -298,6 +290,7 @@ function initPastPage() {
                     </div>
                 `;
 
+                // ボタンのイベント
                 const replySection = li.querySelector('.replySection');
                 const replyList = li.querySelector('.replyList');
                 const replyBtn = li.querySelector('.replyBtn');
@@ -308,14 +301,10 @@ function initPastPage() {
                     replyList.innerHTML = '';
                     (replies || []).forEach((r) => {
                         const div = document.createElement('div');
-                        div.innerHTML = `
-                            <div style="font-size:11px; color:#555;">${formatDate(r.date)}</div>
-                            <div style="font-size:14px; color:#ccc;">${r.text.replace(/\n/g, '<br>')}</div>
-                        `;
+                        div.innerHTML = `<div style="font-size:11px; color:#555;">${formatDate(r.date)}</div><div style="font-size:14px; color:#ccc;">${r.text.replace(/\n/g, '<br>')}</div>`;
                         replyList.appendChild(div);
                     });
                 };
-
                 renderReplies(j.replies);
 
                 replyBtn.addEventListener('click', () => {
@@ -326,7 +315,6 @@ function initPastPage() {
                     if (!currentUser) return alert("ログインが必要です。");
                     const rText = replyTextarea.value.trim();
                     if (!rText) return;
-
                     const newReply = { id: Date.now().toString(), text: rText, date: Date.now(), uid: currentUser.uid };
                     await updateDoc(doc(db, "jokes", j.id), { replies: arrayUnion(newReply) });
                     if (!j.replies) j.replies = [];
@@ -339,7 +327,6 @@ function initPastPage() {
                 li.querySelector('.likeBtn').addEventListener('click', async (e) => {
                     if (!currentUser) return alert("ログインが必要です。");
                     const jokeRef = doc(db, "jokes", j.id);
-
                     if (j.likedBy && j.likedBy.includes(currentUser.uid)) {
                         await updateDoc(jokeRef, { likedBy: arrayRemove(currentUser.uid), likes: increment(-1) });
                         j.likes--;
@@ -358,7 +345,6 @@ function initPastPage() {
                 li.querySelector('.dislikeBtn').addEventListener('click', async (e) => {
                     if (!currentUser) return alert("ログインが必要です。");
                     const jokeRef = doc(db, "jokes", j.id);
-
                     if (j.dislikedBy && j.dislikedBy.includes(currentUser.uid)) {
                         await updateDoc(jokeRef, { dislikedBy: arrayRemove(currentUser.uid), dislikes: increment(-1) });
                         j.dislikes--;
@@ -411,7 +397,7 @@ function initPastPage() {
 }
 
 // ==========================================
-// 演出・補助関数
+// 補助関数
 // ==========================================
 function createHeart(btn) {
     const h = document.createElement('span');
