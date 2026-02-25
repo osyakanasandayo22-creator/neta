@@ -51,6 +51,21 @@ document.addEventListener('DOMContentLoaded', () => {
     initIndexPage();
     initPastPage();
 
+    // script.js の DOMContentLoaded 内に追加
+const logo = document.querySelector('.topBar .logoText');
+if (logo) {
+    logo.addEventListener('click', () => {
+        // 現在のURLにハッシュ（#my-postsなど）が含まれているか判定
+        if (window.location.hash) {
+            // 【別画面にいる場合】ハッシュを消してホームのURLへ遷移（＝ホームに戻る）
+            window.location.href = window.location.pathname;
+        } else {
+            // 【既にホームにいる場合】ページをリロードして最新状態にする
+            location.reload();
+        }
+    });
+}
+
     const loginBtn = document.getElementById('loginBtn');
     const userMenu = document.getElementById('userMenu');
 

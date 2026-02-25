@@ -448,3 +448,14 @@ li.white-post .replyBtn {
 li.white-post .delBtn {
   color: #888; /* 削除ボタン [3] */
 }
+
+/* style.css の .logoText に追加 */
+.logoText {
+  cursor: pointer; /* クリック可能であることを示す */
+  user-select: none; /* テキスト選択を防止 */
+  transition: opacity 0.3s ease;
+}
+
+.logoText:hover {
+  opacity: 0.7; /* ホバー時に少し薄くする演出 */
+}
