@@ -164,6 +164,22 @@ function initIndexPage() {
 
     if (!input || !submitButton) return;
 
+    // 100文字制限のメッセージ要素を用意
+    let limitMessage = document.getElementById('jokeLimitMessage');
+    if (!limitMessage) {
+        limitMessage = document.createElement('div');
+        limitMessage.id = 'jokeLimitMessage';
+        limitMessage.textContent = ''; // 初期は非表示扱い
+        limitMessage.style.fontSize = '12px';
+        limitMessage.style.color = '#ff7676';
+        limitMessage.style.marginTop = '4px';
+        limitMessage.style.display = 'none';
+        // ボタンの直前あたりに挿入
+        if (submitButton.parentElement) {
+            submitButton.parentElement.insertBefore(limitMessage, submitButton);
+        }
+    }
+
     function updateInputState() {
         const text = input.value || '';
         const len = text.length;
@@ -172,10 +188,18 @@ function initIndexPage() {
             input.classList.add('over-limit');
             submitButton.disabled = true;
             submitButton.classList.add('locked');
+            if (limitMessage) {
+                limitMessage.textContent = '言葉は100文字以内にしてください。';
+                limitMessage.style.display = 'block';
+            }
         } else {
             input.classList.remove('over-limit');
             submitButton.disabled = false;
             submitButton.classList.remove('locked');
+            if (limitMessage) {
+                limitMessage.textContent = '';
+                limitMessage.style.display = 'none';
+            }
         }
     }
 
