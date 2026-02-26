@@ -25,6 +25,7 @@ const provider = new GoogleAuthProvider();
 
 let currentUser = null;
 let mixedJokes = []; 
+let allJokes = [];
 
 // ==========================================
 // ログイン状態の監視
@@ -199,6 +200,7 @@ function initPastPage() {
     const searchInput = document.getElementById('searchInput');
     const topBar = document.querySelector('.topBar');
     const userMenu = document.getElementById('userMenu');
+    const notificationsBtn = document.getElementById('notificationsBtn');
 
     if (!jokeList) return;
 
@@ -209,6 +211,11 @@ function initPastPage() {
     function formatDate(value) {
         const d = new Date(value);
         return isNaN(d) ? "" : `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function trimText(text, maxLen = 20) {
+        const oneLine = (text || "").replace(/\s+/g, ' ');
+        return oneLine.length > maxLen ? oneLine.slice(0, maxLen) + '…' : oneLine;
     }
 
     // 自分の投稿ボタンのイベント（ここに追加）
@@ -232,6 +239,67 @@ function initPastPage() {
         loadMore(true);
     });
 
+    // 通知ボタン：自分の投稿のうち、評価（拍手/呪い）が付いたものを最新順で表示
+    notificationsBtn?.addEventListener('click', async () => {
+        if (!currentUser) return;
+
+        userMenu.classList.remove('open');
+
+        // まだ全ジョークを読み込んでいない場合は取得
+        if (!allJokes.length) {
+            await prepareJokes();
+        }
+
+        // 自分の投稿で、拍手または呪いが1件以上ついているものだけ
+        const myRated = allJokes
+            .filter(j => j.uid === currentUser.uid && ((j.likes || 0) > 0 || (j.dislikes || 0) > 0))
+            .map(j => ({
+                ...j,
+                lastRatedAt: j.lastRatedAt || j.date || 0
+            }))
+            .sort((a, b) => b.lastRatedAt - a.lastRatedAt);
+
+        jokeList.innerHTML = '';
+        displayIndex = 0;
+        if (loader) {
+            loader.style.display = 'block';
+            loader.textContent = myRated.length ? "あなたへの評価を表示中..." : "まだ評価された言葉はありません。";
+        }
+
+        myRated.forEach(j => {
+            const li = document.createElement('li');
+            li.classList.add('notification-item');
+
+            const likes = j.likes || 0;
+            const dislikes = j.dislikes || 0;
+
+            li.innerHTML = `
+                <div class="notification-main">
+                    <div class="notification-text">
+                        あなたの「${trimText(j.text, 24)}」に
+                        <span class="notif-like">${likes}件の拍手</span>、
+                        <span class="notif-dislike">${dislikes}件の呪い</span>
+                        がつきました。
+                    </div>
+                    <div class="notification-date">${formatDate(j.lastRatedAt)}</div>
+                </div>
+            `;
+
+            // 通知クリックで、その投稿だけをタイムライン部に表示
+            li.addEventListener('click', () => {
+                jokeList.innerHTML = '';
+                displayIndex = 0;
+                if (loader) {
+                    loader.style.display = 'none';
+                }
+                mixedJokes = [j];
+                loadMore(true);
+            });
+
+            jokeList.appendChild(li);
+        });
+    });
+
     async function prepareJokes(filter = '') {
         try {
             const querySnapshot = await getDocs(collection(db, "jokes"));
@@ -239,6 +307,7 @@ function initPastPage() {
             querySnapshot.forEach((doc) => {
                 jokes.push({ id: doc.id, ...doc.data() });
             });
+            allJokes = jokes;
 
             if (filter) jokes = jokes.filter(j => j.text.toLowerCase().includes(filter.toLowerCase()));
 
@@ -399,7 +468,7 @@ li.querySelector('.likeBtn').addEventListener('click', async (e) => {
         }
 
         // 新たに高評価をつける
-        await updateDoc(jokeRef, { likedBy: arrayUnion(currentUser.uid), likes: increment(1) });
+        await updateDoc(jokeRef, { likedBy: arrayUnion(currentUser.uid), likes: increment(1), lastRatedAt: Date.now() });
         j.likes = (j.likes || 0) + 1;
         if (!j.likedBy) j.likedBy = [];
         j.likedBy.push(currentUser.uid);
@@ -436,7 +505,7 @@ li.querySelector('.dislikeBtn').addEventListener('click', async (e) => {
         }
 
         // 新たに低評価をつける
-        await updateDoc(jokeRef, { dislikedBy: arrayUnion(currentUser.uid), dislikes: increment(1) });
+        await updateDoc(jokeRef, { dislikedBy: arrayUnion(currentUser.uid), dislikes: increment(1), lastRatedAt: Date.now() });
         j.dislikes = (j.dislikes || 0) + 1;
         if (!j.dislikedBy) j.dislikedBy = [];
         j.dislikedBy.push(currentUser.uid);
