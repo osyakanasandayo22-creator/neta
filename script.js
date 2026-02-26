@@ -70,6 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       #jokeInput {
         resize: none;
+        max-height: 40vh;
+        overflow-y: auto;
       }
       /* 100字を超えたときの全体カラー変更 */
       #jokeInput.over-limit {
