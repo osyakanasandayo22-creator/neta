@@ -79,6 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
         opacity: 0.5;
         cursor: not-allowed;
       }
+      /* 投稿の日付表示を小さく＆色を薄く */
+      .btnWrap .left .post-date {
+        font-size: 11px;
+        color: #888888;
+      }
     `;
     document.head.appendChild(style);
 
@@ -447,7 +452,7 @@ li.innerHTML = `
   <span>${j.text.replace(/\n/g, '<br>')}</span>
   <div class="btnWrap">
     <div class="left">
-      <span>${formatDate(j.date)}</span>
+      <span class="post-date">${formatDate(j.date)}</span>
     </div>
     <div class="right">
       <button class="replyBtn">💬 ${j.replies ? j.replies.length : 0}</button>
