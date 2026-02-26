@@ -275,6 +275,7 @@ function initPastPage() {
 // loadMore 関数内の nextItems.forEach ループ内
 const isOwner = currentUser && j.uid === currentUser.uid;
 
+// メニュー項目の生成
 // メニュー項目の生成（isOwnerの判定は既存のものを利用）
 let menuItemsHtml = `<div class="post-dropdown-item report-btn">通報</div>`;
 if (isOwner) {
