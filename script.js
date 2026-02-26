@@ -68,32 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
         user-select: text;
       }
 
-      /* 投稿入力のハイライト用レイヤー */
-      .inputWrapper {
-        position: relative;
-      }
-      #jokeInputHighlight {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        box-sizing: border-box;
-        color: #ddd;
-        pointer-events: none;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        z-index: 0;
-      }
       #jokeInput {
-        position: relative;
-        background: transparent;
-        color: transparent;        /* テキストはハイライト側で表示 */
-        caret-color: #ffffff;      /* キャレットだけ見えるようにする */
         resize: none;
-        z-index: 1;
       }
-      #jokeInputHighlight .overLimitText {
-        color: #7fa7ff;            /* 101字目以降を少し青みがかった色に */
+      /* 100字を超えたときの全体カラー変更 */
+      #jokeInput.over-limit {
+        color: #7fa7ff;
       }
       #submitButton.locked {
         opacity: 0.5;
@@ -184,58 +164,16 @@ function initIndexPage() {
 
     if (!input || !submitButton) return;
 
-    // 入力テキストのハイライト用レイヤーを準備
-    let highlightLayer = document.getElementById('jokeInputHighlight');
-    if (!highlightLayer && input.parentElement) {
-        highlightLayer = document.createElement('div');
-        highlightLayer.id = 'jokeInputHighlight';
-        input.parentElement.insertBefore(highlightLayer, input);
-    }
-
-    // テキスト位置がずれないように、textarea のスタイルをコピー
-    function syncHighlightStyle() {
-        if (!highlightLayer) return;
-        const cs = window.getComputedStyle(input);
-        const props = [
-            'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft',
-            'fontFamily', 'fontSize', 'lineHeight', 'letterSpacing',
-            'textAlign'
-        ];
-        props.forEach(p => {
-            highlightLayer.style[p] = cs[p];
-        });
-    }
-
-    function escapeHtml(str) {
-        return str
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-    }
-
     function updateInputState() {
-        syncHighlightStyle();
         const text = input.value || '';
         const len = text.length;
-        const first = text.slice(0, 100);
-        const rest = text.slice(100);
-
-        if (highlightLayer) {
-            const esc = (s) => escapeHtml(s).replace(/\n/g, '<br>');
-            let html = esc(first);
-            if (rest) {
-                html += `<span class="overLimitText">${esc(rest)}</span>`;
-            }
-            // テキストが空のときに高さを維持するためのスペース
-            highlightLayer.innerHTML = html || '&nbsp;';
-        }
 
         if (len > 100) {
+            input.classList.add('over-limit');
             submitButton.disabled = true;
             submitButton.classList.add('locked');
         } else {
+            input.classList.remove('over-limit');
             submitButton.disabled = false;
             submitButton.classList.remove('locked');
         }
