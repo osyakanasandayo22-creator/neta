@@ -1,8 +1,8 @@
 /* ==========================================
-Design Concept: Dark Underground / "BARI"
-========================================== */
+   Design Concept: Dark Underground / "BARI"
+   ========================================== */
 
-/* 基本設定 [11] */
+/* --- 基本設定 [1, 2] --- */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -19,26 +19,138 @@ body {
   flex-direction: column;
 }
 
-/* タイムライン表示用設定 [1] */
 body.pastPage {
   display: block;
   padding: 90px 20px 40px 20px;
 }
 
-/* タイトル画像 [8] */
-img {
-  max-width: 240px;
+/* --- ヘッダー・ロゴ [3, 4] --- */
+.topBar {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
-  margin-bottom: 40px;
-  transition: transform 0.5s ease;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 0 12px;
+  background: rgba(15, 15, 15, 0.8);
+  backdrop-filter: blur(15px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 1000;
+  transition: transform 0.4s ease;
 }
 
-img:hover {
-  transform: scale(1.05) rotate(-2deg);
+.logoText {
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.3s ease;
+  font-weight: bold;
 }
 
-/* 入力エリアのラッパー [8] */
+.logoText:hover {
+  opacity: 0.7;
+}
+
+/* --- 検索入力欄 [5, 6] --- */
+#searchInput {
+  flex: 1;
+  background: #202020;
+  border: 1px solid #333;
+  border-radius: 20px;
+  padding: 0 20px;
+  color: #fff;
+  height: 40px;
+  font-size: 16px;
+}
+
+#searchInput:focus {
+  border-color: #007acc;
+  outline: none;
+}
+
+/* --- ログインボタン・ユーザーメニュー [6-8] --- */
+#loginBtn {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(5px);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 6px 15px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+#loginBtn:hover {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.user-container {
+  position: relative;
+}
+
+.user-menu {
+  display: none;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 180px;
+  background: rgba(15, 15, 15, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(15px);
+  z-index: 2000;
+  overflow: hidden;
+}
+
+.user-menu.open {
+  display: block;
+}
+
+.menu-item {
+  padding: 12px 20px;
+  font-size: 14px;
+  color: #efefef;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+#menuLogoutBtn {
+  color: #ff2d55;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* --- 入力エリア・オーバーレイ [9-12] --- */
+#postOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top, #1a1a1a 0%, #0f0f0f 100%);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  padding: 20px;
+}
+
+#postOverlay.open {
+  transform: translateY(0);
+}
+
 .inputWrapper {
   width: 100%;
   max-width: 650px;
@@ -51,9 +163,9 @@ img:hover {
   flex-direction: column;
   gap: 15px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  margin: auto;
 }
 
-/* テキストエリア [13] */
 textarea {
   width: 100%;
   min-height: 120px;
@@ -66,12 +178,6 @@ textarea {
   padding: 10px;
 }
 
-textarea::placeholder {
-  color: #555;
-  font-style: italic;
-}
-
-/* メインボタン [13, 14] */
 #submitButton {
   align-self: flex-end;
   background: #fff;
@@ -92,43 +198,7 @@ textarea::placeholder {
   transform: translateY(-2px);
 }
 
-/* タイムライン UI [1, 2] */
-.topBar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 70px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 0 12px;
-  background: rgba(15, 15, 15, 0.8);
-  backdrop-filter: blur(15px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  z-index: 1000;
-  transition: transform 0.4s ease;
-}
-/* topBarの調整: スマホでの余白を最適化 */
-
-
-#searchInput {
-  flex: 1;
-  background: #202020;
-  border: 1px solid #333;
-  border-radius: 20px;
-  padding: 0 20px;
-  color: #fff;
-  height: 40px;
-  font-size: 16px;
-}
-
-#searchInput:focus {
-  border-color: #007acc;
-  outline: none;
-}
-
-/* 投稿カード [2, 15] */
+/* --- 投稿カード (タイムライン) [4, 5, 13, 14] --- */
 #jokeList {
   max-width: 600px;
   margin: 0 auto;
@@ -141,6 +211,7 @@ li {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  transition: background 0.3s;
 }
 
 li:hover {
@@ -168,305 +239,71 @@ li span:first-child {
 .right {
   display: flex;
   gap: 15px;
+  align-items: center;
 }
 
-/* 各種ボタン [9, 15, 16] */
-.likeBtn, .replyBtn {
+/* --- 高評価・低評価ボタン (画像化対応) [13, 14] --- */
+.likeBtn, .dislikeBtn, .replyBtn {
   background: transparent;
   border: none;
   color: #666;
   font-size: 14px;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   padding: 5px;
   cursor: pointer;
+  transition: color 0.3s;
 }
+
+.likeBtn .icon, .dislikeBtn .icon {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* 通常投稿 (黒背景) 用のアイコン設定 */
+.likeBtn .icon { background-image: url('images/#ffffff-縁取り釘.png'); }
+.likeBtn.active .icon { background-image: url('images/#ffffff-塗りつぶし釘.png'); }
+.dislikeBtn .icon { background-image: url('images/#ffffff-縁取り釘.png'); }
+.dislikeBtn.active .icon { background-image: url('images/#ffffff-塗りつぶし釘.png'); }
 
 .likeBtn:hover { color: #ff2d55; }
 .replyBtn:hover { color: #007acc; }
 
-.delBtn {
-  background: transparent;
-  border: none;
-  color: #333;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.delBtn:hover {
-  color: #fff;
-  background: #aa0000;
-  border-radius: 4px;
-}
-
-/* フローティングボタン (新規追加) */
-/* フローティングボタンのアップデート */
-#fab {
-  position: fixed;
-  bottom: 30px;
-  right: 25px;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  /* サイトの基本背景色に合わせた透過とぼかし */
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  color: #fff;
-  font-size: 32px;
-  font-weight: 300; /* 細めのフォントで洗練さを出す */
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 
-              inset 0 0 10px rgba(255, 255, 255, 0.05);
-  cursor: pointer;
-  z-index: 1100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  /* 常に浮遊しているようなアニメーション */
-  animation: fabFloat 3s ease-in-out infinite;
-}
-
-/* ホバー時のアクション */
-#fab:hover {
-  background: #fff;
-  color: #000;
-  transform: scale(1.1) rotate(90deg); /* 拡大して回転 */
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
-  animation-play-state: paused; /* ホバー時は浮遊を止める */
-}
-
-/* クリック時の微かな反応 */
-#fab:active {
-  transform: scale(0.9);
-}
-
-/* 浮遊アニメーションの定義 */
-@keyframes fabFloat {
-  0%, 100% { transform: translateY(0) rotate(0); }
-  50% { transform: translateY(-10px) rotate(5deg); }
-}
-
-/* 投稿用オーバーレイ (新規追加) */
-#postOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at top, #1a1a1a 0%, #0f0f0f 100%);
-  z-index: 2000;
-  display: flex;
-  flex-direction: column;
-  transform: translateY(100%);
-  transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-  padding: 20px;
-}
-
-#postOverlay.open { transform: translateY(0); }
-
-.overlayHeader { display: flex; justify-content: flex-end; }
-#closeOverlay { background: transparent; border: none; color: #fff; font-size: 40px; cursor: pointer; }
-.overlayBody { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-
-/* トースト通知 [5, 9] */
-#toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: #007acc;
-  color: #fff;
-  padding: 12px 25px;
-  border-radius: 50px;
-  font-weight: bold;
-  opacity: 0;
-  transition: all 0.4s;
-  z-index: 3000;
-}
-
-#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* ハート演出 [5] */
-.heart {
-  position: absolute;
-  pointer-events: none;
-  font-size: 24px;
-  z-index: 2000;
-  filter: drop-shadow(0 0 8px #ff2d55);
-  animation: darkFloat 1s ease-out forwards;
-}
-@keyframes darkFloat {
-  0% { transform: scale(0.5) translateY(0); opacity: 1; }
-  100% { transform: scale(1.5) translateY(-60px); opacity: 0; }
-}
-
-/* 返信セクション [12, 17-20] */
-.replySection {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  margin-top: 15px;
-  padding: 12px;
-  animation: slideDown 0.3s ease-out;
-}
-@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
-.replyList > div { border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding: 8px 0; }
-.replyTextarea { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #fff; padding: 8px; font-size: 16px; resize: none; }
-.replySubmit { background: #fff; color: #000; border: none; border-radius: 20px; padding: 6px 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-.replySubmit:hover { background: #007acc; color: #fff; }
-
-/* ローダー [5, 16] */
-#loader { text-align: center; padding: 40px; color: #444; font-size: 13px; }
-
-/* スマホ対応 [12, 16] */
-@media screen and (max-width: 600px) {
-  body { padding: 20px 10px; }
-  body.pastPage { padding-top: 80px; }
-  input, textarea, .replyTextarea { font-size: 16px !important; }
-}
-
-/* ログインボタンの独自デザイン */
-#loginBtn {
-  background: rgba(255, 255, 255, 0.05); /* わずかな透過白 */
-  backdrop-filter: blur(5px);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px; /* 角を丸めて洗練させる */
-  padding: 6px 15px;
-  font-size: 13px;
-  font-family: inherit;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap; /* 改行を防ぐ */
-  flex-shrink: 0;      /* ボタンが潰れるのを防ぐ */
-}
-
-#loginBtn:hover {
-  background: #fff;
-  color: #000;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-}
-
-/* スマホ版（600px以下）の微調整 [3] */
-@media screen and (max-width: 600px) {
-  .logoText {
-    font-size: 14px; /* ロゴを少し小さく */
-    margin-left: 5px !important;
-  }
-  
-  #searchInput {
-    height: 36px;   /* 高さを抑える [2] */
-    font-size: 14px;
-    padding: 0 12px;
-  }
-
-  #loginBtn {
-    padding: 5px 10px; /* さらにコンパクトに */
-    font-size: 12px;
-  }
-}
-
-/* ソース[4]の#loginBtn付近に追加 */
-.user-container {
-  position: relative;
-}
-
-.user-menu {
-  display: none; /* 初期は非表示 */
-  position: absolute;
-  top: 50px;
-  right: 0;
-  width: 180px;
-  background: rgba(15, 15, 15, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  backdrop-filter: blur(15px);
-  z-index: 2000;
-}
-.user-menu.open { display: block; }
-.menu-item {
-  padding: 12px 20px;
-  font-size: 14px;
-  color: #efefef;
-  cursor: pointer;
-}
-.menu-item:hover { background: rgba(255, 255, 255, 0.05); }
-#menuLogoutBtn { color: #ff2d55; border-top: 1px solid rgba(255, 255, 255, 0.05); }
-
-.menu-item {
-  padding: 12px 20px;
-  font-size: 14px;
-  color: #efefef;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.menu-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-#menuLogoutBtn {
-  color: #ff2d55; /* ログアウトは警告色 */
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-/* CSSに追加 */
-.dislikeBtn {
-  background: transparent;
-  border: none;
-  color: #666;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px;
-  cursor: pointer;
-}
-.dislikeBtn:hover {
-  color: #888; /* もしくは低評価らしい色 */
-}
-
-/* 白いデザイン用のスタイル定義 */
+/* --- 白背景投稿のスタイル (高評価時) [4, 14] --- */
 li.white-post {
-  background: rgba(255, 255, 255, 0.95); /* 白背景 [1] */
+  background: rgba(255, 255, 255, 0.95);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
 }
 
 li.white-post span:first-child {
-  color: #1a1a1a; /* 投稿文を黒に [2] */
+  color: #1a1a1a;
 }
 
 li.white-post .left span,
 li.white-post .likeBtn,
 li.white-post .dislikeBtn,
 li.white-post .replyBtn {
-  color: #444; /* ボタンや日付の文字色を暗く [2] */
+  color: #444;
 }
 
-li.white-post .delBtn {
-  color: #888; /* 削除ボタン [3] */
-}
+/* 白背景投稿用のアイコン切り替え */
+li.white-post .likeBtn .icon { background-image: url('images/#1e1e1e-縁取り釘.png'); }
+li.white-post .likeBtn.active .icon { background-image: url('images/#1e1e1e-塗りつぶし釘.png'); }
+li.white-post .dislikeBtn .icon { background-image: url('images/#1e1e1e-縁取り釘.png'); }
+li.white-post .dislikeBtn.active .icon { background-image: url('images/#1e1e1e-塗りつぶし釘.png'); }
 
-/* style.css の .logoText に追加 */
-.logoText {
-  cursor: pointer; /* クリック可能であることを示す */
-  user-select: none; /* テキスト選択を防止 */
-  transition: opacity 0.3s ease;
-}
-
-.logoText:hover {
-  opacity: 0.7; /* ホバー時に少し薄くする演出 */
-}
-
-/* 投稿メニューのコンテナ */
+/* --- 投稿メニュー (三点リーダー) [4, 15, 16] --- */
 .post-menu-container {
   position: relative;
   display: inline-block;
 }
 
-/* 縦の ... ボタン */
 .post-menu-btn {
   background: transparent;
   border: none;
@@ -481,7 +318,10 @@ li.white-post .delBtn {
   color: #fff;
 }
 
-/* メニューの中身（初期は非表示） */
+li.white-post .post-menu-btn:hover {
+  color: #000;
+}
+
 .post-dropdown {
   display: none;
   position: absolute;
@@ -501,7 +341,6 @@ li.white-post .delBtn {
   display: block;
 }
 
-/* メニュー内の各項目 */
 .post-dropdown-item {
   padding: 10px 15px;
   font-size: 14px;
@@ -515,8 +354,168 @@ li.white-post .delBtn {
   background: rgba(255, 255, 255, 0.05);
 }
 
-/* 削除項目は赤く */
 .post-dropdown-item.del-item {
   color: #ff2d55;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* --- フローティングボタン (FAB) [11, 17, 18] --- */
+#fab {
+  position: fixed;
+  bottom: 30px;
+  right: 25px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  font-size: 32px;
+  font-weight: 300;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: fabFloat 3s ease-in-out infinite;
+}
+
+#fab:hover {
+  background: #fff;
+  color: #000;
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+  animation-play-state: paused;
+}
+
+#fab:active {
+  transform: scale(0.9);
+}
+
+@keyframes fabFloat {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+/* --- 返信セクション [19, 20] --- */
+.replySection {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  margin-top: 15px;
+  padding: 12px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.replyList > div {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 8px 0;
+}
+
+.replyTextarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  padding: 8px;
+  font-size: 16px;
+  resize: none;
+  outline: none;
+}
+
+.replySubmit {
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.replySubmit:hover {
+  background: #007acc;
+  color: #fff;
+}
+
+/* --- 特殊演出・通知 [2, 12, 19, 20] --- */
+#toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #007acc;
+  color: #fff;
+  padding: 12px 25px;
+  border-radius: 50px;
+  font-weight: bold;
+  opacity: 0;
+  transition: all 0.4s;
+  z-index: 3000;
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.heart {
+  position: absolute;
+  pointer-events: none;
+  font-size: 24px;
+  z-index: 2000;
+  filter: drop-shadow(0 0 8px #ff2d55);
+  animation: darkFloat 1s ease-out forwards;
+}
+
+@keyframes darkFloat {
+  0% { transform: scale(0.5) translateY(0); opacity: 1; }
+  100% { transform: scale(1.5) translateY(-60px); opacity: 0; }
+}
+
+#loader {
+  text-align: center;
+  padding: 40px;
+  color: #444;
+  font-size: 13px;
+}
+
+/* --- レスポンシブ対応 [6, 20] --- */
+@media screen and (max-width: 600px) {
+  body {
+      padding: 20px 10px;
+  }
+  
+  body.pastPage {
+      padding-top: 80px;
+  }
+
+  .logoText {
+      font-size: 14px;
+      margin-left: 5px !important;
+  }
+
+  #searchInput {
+      height: 36px;
+      font-size: 14px;
+      padding: 0 12px;
+  }
+
+  #loginBtn {
+      padding: 5px 10px;
+      font-size: 12px;
+  }
+
+  input, textarea, .replyTextarea {
+      font-size: 16px !important;
+  }
 }

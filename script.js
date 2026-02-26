@@ -281,26 +281,37 @@ if (isOwner) {
     menuItemsHtml += `<div class="post-dropdown-item del-item delBtn">削除</div>`;
 }
 
+// loadMore 関数内の nextItems.forEach ループ内
+const isLiked = currentUser && j.likedBy && j.likedBy.includes(currentUser.uid);
+const isDisliked = currentUser && j.dislikedBy && j.dislikedBy.includes(currentUser.uid);
+
 li.innerHTML = `
-    <span>${j.text.replace(/\n/g, '<br>')}</span>
-    <div class="btnWrap">
-        <div class="left">
-            <span>${formatDate(j.date)}</span>
-        </div>
-        <div class="right">
-            <button class="replyBtn">💬 ${j.replies ? j.replies.length : 0}</button>
-            <button class="likeBtn">👏 ${j.likes || 0}</button>
-            <button class="dislikeBtn">👎 ${j.dislikes || 0}</button>
-            
-            <!-- 三点リーダーメニュー -->
-            <div class="post-menu-container">
-                <button class="post-menu-btn">⋮</button>
-                <div class="post-dropdown">
-                    ${menuItemsHtml}
-                </div>
-            </div>
-        </div>
+  <span>${j.text.replace(/\n/g, '<br>')}</span>
+  <div class="btnWrap">
+    <div class="left">
+      <span>${formatDate(j.date)}</span>
     </div>
+    <div class="right">
+      <button class="replyBtn">💬 ${j.replies ? j.replies.length : 0}</button>
+      
+      <!-- 高評価ボタン: activeクラスを動的に付与 -->
+      <button class="likeBtn ${isLiked ? 'active' : ''}">
+        <span class="icon"></span>
+        <span class="count">${j.likes || 0}</span>
+      </button>
+
+      <!-- 低評価ボタン: activeクラスを動的に付与 -->
+      <button class="dislikeBtn ${isDisliked ? 'active' : ''}">
+        <span class="icon"></span>
+        <span class="count">${j.dislikes || 0}</span>
+      </button>
+
+      <div class="post-menu-container">
+        <button class="post-menu-btn">⋮</button>
+        <div class="post-dropdown">${menuItemsHtml}</div>
+      </div>
+    </div>
+  </div>
     <!-- 返信セクション（これがないと li.querySelector('.replySection') でエラーになります） -->
     <div class="replySection" style="display:none;">
         <div class="replyList"></div>
@@ -342,41 +353,60 @@ li.innerHTML = `
                     replyBtn.textContent = `💬 ${j.replies.length}`;
                 });
 
-                li.querySelector('.likeBtn').addEventListener('click', async (e) => {
-                    if (!currentUser) return alert("ログインが必要です。");
-                    const jokeRef = doc(db, "jokes", j.id);
-                    if (j.likedBy && j.likedBy.includes(currentUser.uid)) {
-                        await updateDoc(jokeRef, { likedBy: arrayRemove(currentUser.uid), likes: increment(-1) });
-                        j.likes--;
-                        j.likedBy = j.likedBy.filter(id => id !== currentUser.uid);
-                    } else {
-                        await updateDoc(jokeRef, { likedBy: arrayUnion(currentUser.uid), likes: increment(1) });
-                        j.likes = (j.likes || 0) + 1;
-                        if (!j.likedBy) j.likedBy = [];
-                        j.likedBy.push(currentUser.uid);
-                        createHeart(e.target);
-                    }
-                    e.target.textContent = `👏 ${j.likes}`;
-                    updatePostStyle(li, j.likes, (j.dislikes || 0));
-                });
+// 高評価ボタンのイベント
+li.querySelector('.likeBtn').addEventListener('click', async (e) => {
+    if (!currentUser) return alert("ログインが必要です。");
+    const btn = e.currentTarget;
+    const countSpan = btn.querySelector('.count');
+    const jokeRef = doc(db, "jokes", j.id);
+  
+    if (j.likedBy && j.likedBy.includes(currentUser.uid)) {
+      await updateDoc(jokeRef, { likedBy: arrayRemove(currentUser.uid), likes: increment(-1) });
+      j.likes--;
+      j.likedBy = j.likedBy.filter(id => id !== currentUser.uid);
+      btn.classList.remove('active');
+    } else {
+      await updateDoc(jokeRef, { likedBy: arrayUnion(currentUser.uid), likes: increment(1) });
+      j.likes = (j.likes || 0) + 1;
+      if (!j.likedBy) j.likedBy = [];
+      j.likedBy.push(currentUser.uid);
+      createHeart(btn);
+      btn.classList.add('active');
+    }
+    countSpan.textContent = j.likes;
+    updatePostStyle(li, j.likes, (j.dislikes || 0));
+  });
+  
 
-                li.querySelector('.dislikeBtn').addEventListener('click', async (e) => {
-                    if (!currentUser) return alert("ログインが必要です。");
-                    const jokeRef = doc(db, "jokes", j.id);
-                    if (j.dislikedBy && j.dislikedBy.includes(currentUser.uid)) {
-                        await updateDoc(jokeRef, { dislikedBy: arrayRemove(currentUser.uid), dislikes: increment(-1) });
-                        j.dislikes--;
-                        j.dislikedBy = j.dislikedBy.filter(id => id !== currentUser.uid);
-                    } else {
-                        await updateDoc(jokeRef, { dislikedBy: arrayUnion(currentUser.uid), dislikes: increment(1) });
-                        j.dislikes = (j.dislikes || 0) + 1;
-                        if (!j.dislikedBy) j.dislikedBy = [];
-                        j.dislikedBy.push(currentUser.uid);
-                    }
-                    e.target.textContent = `👎 ${j.dislikes}`;
-                    updatePostStyle(li, (j.likes || 0), j.dislikes);
-                });
-
+                // 低評価ボタンのイベント処理
+li.querySelector('.dislikeBtn').addEventListener('click', async (e) => {
+    if (!currentUser) return alert("ログインが必要です。");
+    
+    const btn = e.currentTarget; // ボタン要素そのものを取得
+    const countSpan = btn.querySelector('.count'); // 数字を表示するspanを取得
+    const jokeRef = doc(db, "jokes", j.id);
+  
+    if (j.dislikedBy && j.dislikedBy.includes(currentUser.uid)) {
+      // すでに低評価済みの場合は解除
+      await updateDoc(jokeRef, { dislikedBy: arrayRemove(currentUser.uid), dislikes: increment(-1) });
+      j.dislikes--;
+      j.dislikedBy = j.dislikedBy.filter(id => id !== currentUser.uid);
+      btn.classList.remove('active'); // 未選択状態の画像に戻す
+    } else {
+      // 新たに低評価をつける
+      await updateDoc(jokeRef, { dislikedBy: arrayUnion(currentUser.uid), dislikes: increment(1) });
+      j.dislikes = (j.dislikes || 0) + 1;
+      if (!j.dislikedBy) j.dislikedBy = [];
+      j.dislikedBy.push(currentUser.uid);
+      btn.classList.add('active'); // 選択済み（塗りつぶし）の画像に切り替え
+    }
+    
+    // 数字部分のみを更新（アイコンのspanを消さないため）
+    countSpan.textContent = j.dislikes;
+    
+    // 投稿のスタイル（白背景にするか等）を更新
+    updatePostStyle(li, (j.likes || 0), j.dislikes);
+  });
 // --- メニューの開閉ロジック ---
 const menuBtn = li.querySelector('.post-menu-btn');
 const dropdown = li.querySelector('.post-dropdown');
