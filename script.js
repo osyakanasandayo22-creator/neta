@@ -457,23 +457,10 @@ function createHeart(btn) {
     setTimeout(() => h.remove(), 1000);
 }
 
-// [1][2] の updatePostStyle 関数を以下に置き換え
 function updatePostStyle(li, likes, dislikes) {
-  const total = (likes || 0) + (dislikes || 0);
-  
-  if (total > 0) {
-    // 比率に応じて動的背景クラスを適用
-    li.classList.add('dynamic-ratio');
-    // 低評価（左側・黒）の割合をパーセントで計算
-    const ratio = (dislikes / total) * 100;
-    // CSS変数 --split-point に値をセット
-    li.style.setProperty('--split-point', `${ratio}%`);
-  } else {
-    // 評価が0の場合は特殊なスタイルを解除
-    li.classList.remove('dynamic-ratio');
-    li.style.removeProperty('--split-point');
-  }
-
-  // 以前の「高評価が多い時に白くする」だけのクラスは干渉を防ぐため削除
-  li.classList.remove('white-post');
+    if (likes > dislikes) {
+        li.classList.add('white-post');
+    } else {
+        li.classList.remove('white-post');
+    }
 }
