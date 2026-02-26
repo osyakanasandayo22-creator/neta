@@ -82,9 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
         pointer-events: none;
         white-space: pre-wrap;
         word-wrap: break-word;
-        font-family: inherit;
-        font-size: inherit;
-        line-height: inherit;
         z-index: 0;
       }
       #jokeInput {
@@ -201,12 +198,9 @@ function initIndexPage() {
         const cs = window.getComputedStyle(input);
         const props = [
             'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft',
-            'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth',
             'fontFamily', 'fontSize', 'lineHeight', 'letterSpacing',
             'textAlign'
         ];
-        highlightLayer.style.top = cs.borderTopWidth;
-        highlightLayer.style.left = cs.borderLeftWidth;
         props.forEach(p => {
             highlightLayer.style[p] = cs[p];
         });
