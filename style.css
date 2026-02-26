@@ -257,19 +257,20 @@ li span:first-child {
 }
 
 .likeBtn .icon, .dislikeBtn .icon {
-  width: 20px;
-  height: 20px;
-  display: inline-block;
+  width: 22px;  /* 適切なサイズに調整 */
+  height: 22px;
+  display: inline-block; /* これがないとサイズが適用されません */
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  vertical-align: middle;
 }
 
 /* 通常投稿 (黒背景) 用のアイコン設定 */
-.likeBtn .icon { background-image: url('images/#f2f2f2-縁取り拍手.png'); }
-.likeBtn.active .icon { background-image: url('images/#f2f2f2-塗りつぶし拍手.png'); }
-.dislikeBtn .icon { background-image: url('images/#f2f2f2-縁取り釘.png'); }
-.dislikeBtn.active .icon { background-image: url('images/#f2f2f2-塗りつぶし釘.png'); }
+.likeBtn .icon { background-image: url('images/%23f2f2f2-縁取り拍手.png'); }
+.likeBtn.active .icon { background-image: url('images/%23f2f2f2-塗りつぶし拍手.png'); }
+.dislikeBtn .icon { background-image: url('images/%23f2f2f2-縁取り釘.png'); }
+.dislikeBtn.active .icon { background-image: url('images/%23f2f2f2-塗りつぶし釘.png'); }
 
 .likeBtn:hover { color: #ff2d55; }
 .replyBtn:hover { color: #007acc; }
@@ -293,10 +294,10 @@ li.white-post .replyBtn {
 }
 
 /* 白背景投稿用のアイコン切り替え */
-li.white-post .likeBtn .icon { background-image: url('images/#1e1e1e-縁取り拍手.png'); }
-li.white-post .likeBtn.active .icon { background-image: url('images/#1e1e1e-塗りつぶし拍手.png'); }
-li.white-post .dislikeBtn .icon { background-image: url('images/#1e1e1e-縁取り釘.png'); }
-li.white-post .dislikeBtn.active .icon { background-image: url('images/#1e1e1e-塗りつぶし釘.png'); }
+li.white-post .likeBtn .icon { background-image: url('images/%231e1e1e-縁取り拍手.png'); }
+li.white-post .likeBtn.active .icon { background-image: url('images/%231e1e1e-塗りつぶし拍手.png'); }
+li.white-post .dislikeBtn .icon { background-image: url('images/%231e1e1e-縁取り釘.png'); }
+li.white-post .dislikeBtn.active .icon { background-image: url('images/%231e1e1e-塗りつぶし釘.png'); }
 
 /* --- 投稿メニュー (三点リーダー) [4, 15, 16] --- */
 .post-menu-container {
