@@ -279,6 +279,9 @@ function initPastPage() {
     let displayIndex = 0;
     let isLoading = false;
     let lastScrollY = window.scrollY;
+    // 現在の表示モードを管理（タイムライン / 自分の投稿 / 検索結果 / 通知 など）
+    // 'timeline' | 'myPosts' | 'search' | 'notifications' | 'singlePost'
+    let currentView = 'timeline';
 
     function formatDate(value) {
         const d = new Date(value);
@@ -305,6 +308,7 @@ function initPastPage() {
         // 3. 表示をリセット
         jokeList.innerHTML = '';
         displayIndex = 0;
+        currentView = 'myPosts';
         
         // 4. 再描画
         if (loader) loader.textContent = "自分の言葉を表示中...";
@@ -316,6 +320,7 @@ function initPastPage() {
         if (!currentUser) return;
 
         userMenu.classList.remove('open');
+        currentView = 'notifications';
 
         // まだ全ジョークを読み込んでいない場合は取得
         if (!allJokes.length) {
@@ -364,6 +369,8 @@ function initPastPage() {
                 if (loader) {
                     loader.style.display = 'none';
                 }
+                // 通知から単一投稿ビューに遷移
+                currentView = 'singlePost';
                 mixedJokes = [j];
                 loadMore(true);
             });
@@ -642,13 +649,24 @@ if (isOwner) {
 
     searchInput.addEventListener('keydown', async (e) => {
         if (e.key === 'Enter') {
-            jokeList.innerHTML = ''; displayIndex = 0;
-            await prepareJokes(searchInput.value); loadMore(true);
+            jokeList.innerHTML = '';
+            displayIndex = 0;
+            currentView = 'search';
+            await prepareJokes(searchInput.value);
+            loadMore(true);
         }
     });
 
     window.addEventListener('scroll', () => {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) loadMore();
+        const atBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+        const canLoadMore =
+            currentView === 'timeline' ||
+            currentView === 'search' ||
+            currentView === 'myPosts';
+
+        if (canLoadMore && atBottom) {
+            loadMore();
+        }
 
         // スクロールしたら開いているメニューを閉じる（スマホ対応）
         if (userMenu) userMenu.classList.remove('open');
