@@ -67,6 +67,40 @@ document.addEventListener('DOMContentLoaded', () => {
         -ms-user-select: text;
         user-select: text;
       }
+
+      /* 投稿入力のハイライト用レイヤー */
+      .inputWrapper {
+        position: relative;
+      }
+      #jokeInputHighlight {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 8px 12px;
+        box-sizing: border-box;
+        color: #ddd;
+        pointer-events: none;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-family: inherit;
+        font-size: inherit;
+        line-height: inherit;
+      }
+      #jokeInput {
+        position: relative;
+        background: transparent;
+        color: transparent;        /* テキストはハイライト側で表示 */
+        caret-color: #ffffff;      /* キャレットだけ見えるようにする */
+        resize: none;
+      }
+      #jokeInputHighlight .overLimitText {
+        color: #7fa7ff;            /* 101字目以降を少し青みがかった色に */
+      }
+      #submitButton.locked {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
     `;
     document.head.appendChild(style);
 
@@ -152,16 +186,65 @@ function initIndexPage() {
 
     if (!input || !submitButton) return;
 
+    // 入力テキストのハイライト用レイヤーを準備
+    let highlightLayer = document.getElementById('jokeInputHighlight');
+    if (!highlightLayer && input.parentElement) {
+        highlightLayer = document.createElement('div');
+        highlightLayer.id = 'jokeInputHighlight';
+        input.parentElement.insertBefore(highlightLayer, input);
+    }
+
+    function escapeHtml(str) {
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function updateInputState() {
+        const text = input.value || '';
+        const len = text.length;
+        const first = text.slice(0, 100);
+        const rest = text.slice(100);
+
+        if (highlightLayer) {
+            const esc = (s) => escapeHtml(s).replace(/\n/g, '<br>');
+            let html = esc(first);
+            if (rest) {
+                html += `<span class="overLimitText">${esc(rest)}</span>`;
+            }
+            // テキストが空のときに高さを維持するためのスペース
+            highlightLayer.innerHTML = html || '&nbsp;';
+        }
+
+        if (len > 100) {
+            submitButton.disabled = true;
+            submitButton.classList.add('locked');
+        } else {
+            submitButton.disabled = false;
+            submitButton.classList.remove('locked');
+        }
+    }
+
     function adjustHeight(el) {
         el.style.height = 'auto';
         el.style.height = el.scrollHeight + 'px';
     }
 
-    input.addEventListener('input', () => adjustHeight(input));
+    input.addEventListener('input', () => {
+        adjustHeight(input);
+        updateInputState();
+    });
+
+    // 初期状態の反映
+    updateInputState();
 
     submitButton.addEventListener('click', async () => {
         if (!currentUser) return alert("ログインが必要です。");
         const text = input.value.trim();
+        if (text.length > 100) return; // 念のためガード
         if (!text) return;
 
         try {
