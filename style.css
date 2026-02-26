@@ -460,35 +460,40 @@ li.dynamic-ratio {
 }
 
 /* 1. 影響範囲を「テキストを持つ要素」のみに限定する */
+/* 1. テキスト部分のみに「背景とは逆の色」を適用する */
 li.dynamic-ratio > span,
 li.dynamic-ratio .left span,
 li.dynamic-ratio .likeBtn,
 li.dynamic-ratio .dislikeBtn,
 li.dynamic-ratio .replyBtn {
-    /* 親の分割位置と同じグラデーションを指定 */
+    /* 
+       背景の分割位置に合わせて「白（#f5f5f5） → 黒（#1a1a1a）」のグラデーションを作成。
+       これにより、黒背景の上には白、白背景の上には黒のテキストが表示されます。
+    */
     background: linear-gradient(
         to right, 
         #f5f5f5 var(--split-point, 50%), 
         #1a1a1a var(--split-point, 50%)
     );
 
-    /* 重要な修正：グラデーションを「投稿カード（li）」の幅に固定する */
-    /* background-size を 100% (親の幅) に設定し、背景位置を固定に近い状態にします */
-    background-size: 600px 100%; /* 最大幅に合わせる。スマホ等では 100vw 等で調整 */
-    background-clip: text;
+    /* テキストの形に背景を切り抜く */
     -webkit-background-clip: text;
+    background-clip: text;
     
-    /* テキストを透明にして背景色を出す */
+    /* テキスト自体を透明にして、背後のグラデーション（指定した色）を表示させる */
     color: transparent !important;
-    
-    /* 前回の反転処理を完全に解除 */
+
+    /* グラデーションを親要素（投稿カード）の幅に固定して位置ズレを防ぐ */
+    /* #jokeList の max-width: 600px に合わせています */
+    background-size: 600px 100%;
+    background-repeat: no-repeat;
+
+    /* 反転処理を無効化 */
     mix-blend-mode: normal !important;
 }
 
-/* 2. テキスト以外のアイコンやメニューボタンの表示を保護する */
-li.dynamic-ratio .post-menu-btn,
-li.dynamic-ratio .post-dropdown,
-li.dynamic-ratio .post-dropdown * {
+/* 2. アイコンや三点リーダーボタンなどが消えないように保護する */
+li.dynamic-ratio .post-menu-btn {
     color: inherit !important;
     background: transparent;
     -webkit-background-clip: initial;
@@ -496,8 +501,16 @@ li.dynamic-ratio .post-dropdown * {
     mix-blend-mode: normal !important;
 }
 
-/* 3. ボタンのコンテナ自体の色指定を解除し、中身のテキストに任せる */
+/* 3. ドロップダウンメニュー内のテキストは常に読みやすい色に固定 */
+li.dynamic-ratio .post-dropdown,
+li.dynamic-ratio .post-dropdown button {
+    color: #eee !important;
+    -webkit-background-clip: initial;
+    background-clip: initial;
+    mix-blend-mode: normal !important;
+}
+
+/* 4. コンテナ全体の反転設定を解除 */
 li.dynamic-ratio .btnWrap {
     mix-blend-mode: normal !important;
-    color: inherit;
 }
