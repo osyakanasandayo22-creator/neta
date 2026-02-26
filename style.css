@@ -554,7 +554,7 @@ li.white-post .post-menu-btn:hover {
 
 /* --- 3. ネタ画像のサイズ調整 --- */
 .overlayBody img {
-  max-width: 140px; /* 240px [4] から大幅に縮小 */
+  max-width: 240px; /* 240px [4] から大幅に縮小 */
   height: auto;
   margin-bottom: 20px; /* 下のテキストエリアとの間隔を詰める [4] */
   filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.1));
