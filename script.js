@@ -353,60 +353,77 @@ li.innerHTML = `
                     replyBtn.textContent = `💬 ${j.replies.length}`;
                 });
 
-// 高評価ボタンのイベント
+// 高評価ボタンのイベント処理 [1, 3]
 li.querySelector('.likeBtn').addEventListener('click', async (e) => {
     if (!currentUser) return alert("ログインが必要です。");
     const btn = e.currentTarget;
-    const countSpan = btn.querySelector('.count');
     const jokeRef = doc(db, "jokes", j.id);
-  
+    const dislikeBtn = li.querySelector('.dislikeBtn'); // 低評価ボタンを取得
+
     if (j.likedBy && j.likedBy.includes(currentUser.uid)) {
-      await updateDoc(jokeRef, { likedBy: arrayRemove(currentUser.uid), likes: increment(-1) });
-      j.likes--;
-      j.likedBy = j.likedBy.filter(id => id !== currentUser.uid);
-      btn.classList.remove('active');
+        // すでに高評価済みの場合は解除
+        await updateDoc(jokeRef, { likedBy: arrayRemove(currentUser.uid), likes: increment(-1) });
+        j.likes--;
+        j.likedBy = j.likedBy.filter(id => id !== currentUser.uid);
+        btn.classList.remove('active');
     } else {
-      await updateDoc(jokeRef, { likedBy: arrayUnion(currentUser.uid), likes: increment(1) });
-      j.likes = (j.likes || 0) + 1;
-      if (!j.likedBy) j.likedBy = [];
-      j.likedBy.push(currentUser.uid);
-      createHeart(btn);
-      btn.classList.add('active');
+        // 【追加】もし低評価を既にしていたら解除する
+        if (j.dislikedBy && j.dislikedBy.includes(currentUser.uid)) {
+            await updateDoc(jokeRef, { dislikedBy: arrayRemove(currentUser.uid), dislikes: increment(-1) });
+            j.dislikes--;
+            j.dislikedBy = j.dislikedBy.filter(id => id !== currentUser.uid);
+            dislikeBtn.classList.remove('active');
+            dislikeBtn.querySelector('.count').textContent = j.dislikes;
+        }
+
+        // 新たに高評価をつける
+        await updateDoc(jokeRef, { likedBy: arrayUnion(currentUser.uid), likes: increment(1) });
+        j.likes = (j.likes || 0) + 1;
+        if (!j.likedBy) j.likedBy = [];
+        j.likedBy.push(currentUser.uid);
+        createHeart(btn); [4]
+        btn.classList.add('active');
     }
-    countSpan.textContent = j.likes;
-    updatePostStyle(li, j.likes, (j.dislikes || 0));
-  });
+
+    btn.querySelector('.count').textContent = j.likes;
+    updatePostStyle(li, j.likes, (j.dislikes || 0)); [5]
+});
   
 
-                // 低評価ボタンのイベント処理
+// 低評価ボタンのイベント処理 [2, 3, 6]
 li.querySelector('.dislikeBtn').addEventListener('click', async (e) => {
     if (!currentUser) return alert("ログインが必要です。");
-    
-    const btn = e.currentTarget; // ボタン要素そのものを取得
-    const countSpan = btn.querySelector('.count'); // 数字を表示するspanを取得
+    const btn = e.currentTarget;
     const jokeRef = doc(db, "jokes", j.id);
-  
+    const likeBtn = li.querySelector('.likeBtn'); // 高評価ボタンを取得
+
     if (j.dislikedBy && j.dislikedBy.includes(currentUser.uid)) {
-      // すでに低評価済みの場合は解除
-      await updateDoc(jokeRef, { dislikedBy: arrayRemove(currentUser.uid), dislikes: increment(-1) });
-      j.dislikes--;
-      j.dislikedBy = j.dislikedBy.filter(id => id !== currentUser.uid);
-      btn.classList.remove('active'); // 未選択状態の画像に戻す
+        // すでに低評価済みの場合は解除
+        await updateDoc(jokeRef, { dislikedBy: arrayRemove(currentUser.uid), dislikes: increment(-1) });
+        j.dislikes--;
+        j.dislikedBy = j.dislikedBy.filter(id => id !== currentUser.uid);
+        btn.classList.remove('active');
     } else {
-      // 新たに低評価をつける
-      await updateDoc(jokeRef, { dislikedBy: arrayUnion(currentUser.uid), dislikes: increment(1) });
-      j.dislikes = (j.dislikes || 0) + 1;
-      if (!j.dislikedBy) j.dislikedBy = [];
-      j.dislikedBy.push(currentUser.uid);
-      btn.classList.add('active'); // 選択済み（塗りつぶし）の画像に切り替え
+        // 【追加】もし高評価を既にしていたら解除する
+        if (j.likedBy && j.likedBy.includes(currentUser.uid)) {
+            await updateDoc(jokeRef, { likedBy: arrayRemove(currentUser.uid), likes: increment(-1) });
+            j.likes--;
+            j.likedBy = j.likedBy.filter(id => id !== currentUser.uid);
+            likeBtn.classList.remove('active');
+            likeBtn.querySelector('.count').textContent = j.likes;
+        }
+
+        // 新たに低評価をつける
+        await updateDoc(jokeRef, { dislikedBy: arrayUnion(currentUser.uid), dislikes: increment(1) });
+        j.dislikes = (j.dislikes || 0) + 1;
+        if (!j.dislikedBy) j.dislikedBy = [];
+        j.dislikedBy.push(currentUser.uid);
+        btn.classList.add('active');
     }
-    
-    // 数字部分のみを更新（アイコンのspanを消さないため）
-    countSpan.textContent = j.dislikes;
-    
-    // 投稿のスタイル（白背景にするか等）を更新
-    updatePostStyle(li, (j.likes || 0), j.dislikes);
-  });
+
+    btn.querySelector('.count').textContent = j.dislikes;
+    updatePostStyle(li, (j.likes || 0), j.dislikes); [5]
+});
 // --- メニューの開閉ロジック ---
 const menuBtn = li.querySelector('.post-menu-btn');
 const dropdown = li.querySelector('.post-dropdown');
