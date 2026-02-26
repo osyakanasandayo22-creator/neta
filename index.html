@@ -22,7 +22,7 @@
   <div style="position: relative;">
       <button id="loginBtn">Login</button>
       <div id="userMenu" class="user-menu">
-          <div class="menu-item" id="myPostsBtn">過去の自分の言葉</div>
+          <div class="menu-item" id="myPostsBtn">自分の言葉</div>
           <div class="menu-item">通知 (Coming Soon)</div>
           <div class="menu-item" id="menuLogoutBtn">ログアウト</div>
       </div>
@@ -33,7 +33,7 @@
   <ul id="jokeList"></ul>
 
   <!-- ローダー [3, 5, 6] -->
-  <div id="loader">読み込み中...</div>
+  <div id="loader">用意をしています...</div>
 
   <!-- Twitter風フローティングアクションボタン (新規: 投稿画面を呼び出す) -->
   <button id="fab">+</button>
@@ -46,15 +46,15 @@
     <div class="overlayBody">
       <img src="./images/neta.png" alt="ネタ">
       <div class="inputWrapper">
-        <textarea id="jokeInput" placeholder="思いつきを書こう"></textarea>
-        <button id="submitButton">放つ</button>
+        <textarea id="jokeInput" placeholder="想いを伝えよう"></textarea>
+        <button id="submitButton">贈る</button>
       </div>
       <!-- 元の「Baritter」ボタンの代わりにオーバーレイを閉じる運用になりますが、要素として維持したい場合はここに配置可能です -->
     </div>
   </div>
 
   <!-- トースト通知 [7, 9, 10] -->
-  <div id="toast">投稿が完了しました。</div>
+  <div id="toast">贈りました！</div>
 
   <script type="module" src="script.js"></script>
 </body>
