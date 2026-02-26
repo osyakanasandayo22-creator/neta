@@ -577,6 +577,11 @@ if (isOwner) {
 
     window.addEventListener('scroll', () => {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) loadMore();
+
+        // スクロールしたら開いているメニューを閉じる（スマホ対応）
+        if (userMenu) userMenu.classList.remove('open');
+        document.querySelectorAll('.post-dropdown.open').forEach(d => d.classList.remove('open'));
+
         const curr = window.scrollY;
         topBar.style.transform = (curr === 0 || curr < lastScrollY) ? 'translateY(0)' : 'translateY(-100%)';
         lastScrollY = curr;
