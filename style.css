@@ -459,18 +459,31 @@ li.dynamic-ratio {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 単純反転ではなく、それぞれの場所で最適な色になるように調整 */
-li.dynamic-ratio > span, 
+/* 単純な反転ではなく、背景色と対照的な色（白背景の白、黒背景の黒）をテキストに適用する */
+li.dynamic-ratio > span,
 li.dynamic-ratio .btnWrap,
 li.dynamic-ratio .btnWrap :not(.post-dropdown, .post-dropdown *) {
-  /* 
-     中間色（#b1b1b1）を使用することで
-     - ダーク側：|#1a1a1a - #b1b1b1| = #979797（明るいグレー）
-     - ライト側：|#f5f5f5 - #b1b1b1| = #444444（濃いグレー）
-     となり、真っ黒・真っ白を避けつつ、太く見えるのを防ぎます。
-  */
-  color: #b1b1b1 !important; 
-  mix-blend-mode: difference;
+    /* 背景の分割位置に合わせ、テキストの色を「白 → 黒」の順で塗るグラデーションを作成 */
+    /* 左側（低評価/黒背景）には白背景の色 #f5f5f5、右側（高評価/白背景）には黒背景の色 #1a1a1a を指定 */
+    background: linear-gradient(
+        to right, 
+        #f5f5f5 var(--split-point, 50%), 
+        #1a1a1a var(--split-point, 50%)
+    );
+    
+    /* 背景（グラデーション）をテキストの形に切り抜く */
+    -webkit-background-clip: text;
+    background-clip: text;
+    
+    /* テキスト自体の色を透明にすることで、切り抜かれた背景色が見えるようにする */
+    color: transparent !important;
+
+    /* 以前の反転処理を完全に無効化 */
+    mix-blend-mode: normal !important;
+
+    /* 視認性向上のためのレンダリング最適化 [2] */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* メニュー内は反転の影響を完全に排除 */
