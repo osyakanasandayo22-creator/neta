@@ -54,8 +54,11 @@ body.pastPage {
 }
 
 /* --- 検索入力欄 [5, 6] --- */
+/* --- 検索入力欄 [1] --- */
 #searchInput {
   flex: 1;
+  max-width: 400px; /* ★追加: PCでの長さを制限（お好みで調整してください） */
+  margin: 0 auto;   /* ★追加: 中央に寄せる（左右の要素と適度に離れます） */
   background: #202020;
   border: 1px solid #333;
   border-radius: 20px;
@@ -506,19 +509,31 @@ li.white-post .post-menu-btn:hover {
   }
 
   #searchInput {
-      height: 36px;
-      font-size: 14px;
-      padding: 0 12px;
-  }
+    flex: 1;
+    max-width: none; /* ★追加: スマホでは余白を埋めてOK */
+    min-width: 0;    /* ★追加: 縮小を許可してボタンを押し出さないようにする */
+    height: 36px;
+    font-size: 14px;
+    padding: 0 12px;
+}
 
-  #loginBtn {
-      padding: 5px 10px;
-      font-size: 12px;
-  }
+#loginBtn {
+  padding: 5px 10px;
+  font-size: 12px;
+  max-width: 100px; /* ★追加: 名前の表示幅を制限 */
+  overflow: hidden;  /* ★追加: はみ出た文字を隠す */
+  text-overflow: ellipsis; /* ★追加: 長い名前を「...」にする */
+  white-space: nowrap;
+}
 
   input, textarea, .replyTextarea {
       font-size: 16px !important;
   }
+
+  .topBar {
+    gap: 8px;      /* ★追加: 要素間の隙間を狭くする（15pxから変更） */
+    padding: 0 8px; /* ★追加: 左右の余白を少し詰める */
+}
 }
 
 /* --- 1. 投稿フォーム全体のヘッダー調整 --- */
