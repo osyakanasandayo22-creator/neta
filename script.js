@@ -77,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
         top: 0;
         left: 0;
         width: 100%;
-        padding: 8px 12px;
         box-sizing: border-box;
         color: #ddd;
         pointer-events: none;
@@ -86,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         font-family: inherit;
         font-size: inherit;
         line-height: inherit;
+        z-index: 0;
       }
       #jokeInput {
         position: relative;
@@ -93,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         color: transparent;        /* テキストはハイライト側で表示 */
         caret-color: #ffffff;      /* キャレットだけ見えるようにする */
         resize: none;
+        z-index: 1;
       }
       #jokeInputHighlight .overLimitText {
         color: #7fa7ff;            /* 101字目以降を少し青みがかった色に */
@@ -194,6 +195,23 @@ function initIndexPage() {
         input.parentElement.insertBefore(highlightLayer, input);
     }
 
+    // テキスト位置がずれないように、textarea のスタイルをコピー
+    function syncHighlightStyle() {
+        if (!highlightLayer) return;
+        const cs = window.getComputedStyle(input);
+        const props = [
+            'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft',
+            'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth',
+            'fontFamily', 'fontSize', 'lineHeight', 'letterSpacing',
+            'textAlign'
+        ];
+        highlightLayer.style.top = cs.borderTopWidth;
+        highlightLayer.style.left = cs.borderLeftWidth;
+        props.forEach(p => {
+            highlightLayer.style[p] = cs[p];
+        });
+    }
+
     function escapeHtml(str) {
         return str
             .replace(/&/g, '&amp;')
@@ -204,6 +222,7 @@ function initIndexPage() {
     }
 
     function updateInputState() {
+        syncHighlightStyle();
         const text = input.value || '';
         const len = text.length;
         const first = text.slice(0, 100);
