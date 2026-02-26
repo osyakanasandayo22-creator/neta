@@ -1,8 +1,8 @@
 /* ==========================================
-Design Concept: Dark Underground / "BARI"
+   Design Concept: Dark Underground / "BARI"
 ========================================== */
 
-/* 基本設定 [11] */
+/* 基本設定 [3] */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -25,7 +25,7 @@ body.pastPage {
   padding: 90px 20px 40px 20px;
 }
 
-/* タイトル画像 [8] */
+/* タイトル画像 [4] */
 img {
   max-width: 240px;
   width: 100%;
@@ -38,7 +38,7 @@ img:hover {
   transform: scale(1.05) rotate(-2deg);
 }
 
-/* 入力エリアのラッパー [8] */
+/* 入力エリアのラッパー [4] */
 .inputWrapper {
   width: 100%;
   max-width: 650px;
@@ -53,7 +53,7 @@ img:hover {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* テキストエリア [13] */
+/* テキストエリア [5] */
 textarea {
   width: 100%;
   min-height: 120px;
@@ -71,7 +71,7 @@ textarea::placeholder {
   font-style: italic;
 }
 
-/* メインボタン [13, 14] */
+/* メインボタン [5, 6] */
 #submitButton {
   align-self: flex-end;
   background: #fff;
@@ -92,7 +92,7 @@ textarea::placeholder {
   transform: translateY(-2px);
 }
 
-/* タイムライン UI [1, 2] */
+/* タイムライン UI [1, 7] */
 .topBar {
   position: fixed;
   top: 0;
@@ -109,9 +109,8 @@ textarea::placeholder {
   z-index: 1000;
   transition: transform 0.4s ease;
 }
+
 /* topBarの調整: スマホでの余白を最適化 */
-
-
 #searchInput {
   flex: 1;
   background: #202020;
@@ -128,7 +127,7 @@ textarea::placeholder {
   outline: none;
 }
 
-/* 投稿カード [2, 15] */
+/* 投稿カード [7, 8] */
 #jokeList {
   max-width: 600px;
   margin: 0 auto;
@@ -170,7 +169,7 @@ li span:first-child {
   gap: 15px;
 }
 
-/* 各種ボタン [9, 15, 16] */
+/* 各種ボタン [8-10] */
 .likeBtn, .replyBtn {
   background: transparent;
   border: none;
@@ -200,8 +199,7 @@ li span:first-child {
   border-radius: 4px;
 }
 
-/* フローティングボタン (新規追加) */
-/* フローティングボタンのアップデート */
+/* フローティングボタン */
 #fab {
   position: fixed;
   bottom: 30px;
@@ -209,46 +207,40 @@ li span:first-child {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  /* サイトの基本背景色に合わせた透過とぼかし */
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   color: #fff;
   font-size: 32px;
-  font-weight: 300; /* 細めのフォントで洗練さを出す */
+  font-weight: 300;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 
-              inset 0 0 10px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.05);
   cursor: pointer;
   z-index: 1100;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  /* 常に浮遊しているようなアニメーション */
   animation: fabFloat 3s ease-in-out infinite;
 }
 
-/* ホバー時のアクション */
 #fab:hover {
   background: #fff;
   color: #000;
-  transform: scale(1.1) rotate(90deg); /* 拡大して回転 */
+  transform: scale(1.1) rotate(90deg);
   box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
-  animation-play-state: paused; /* ホバー時は浮遊を止める */
+  animation-play-state: paused;
 }
 
-/* クリック時の微かな反応 */
 #fab:active {
   transform: scale(0.9);
 }
 
-/* 浮遊アニメーションの定義 */
 @keyframes fabFloat {
   0%, 100% { transform: translateY(0) rotate(0); }
   50% { transform: translateY(-10px) rotate(5deg); }
 }
 
-/* 投稿用オーバーレイ (新規追加) */
+/* 投稿用オーバーレイ */
 #postOverlay {
   position: fixed;
   top: 0;
@@ -265,12 +257,11 @@ li span:first-child {
 }
 
 #postOverlay.open { transform: translateY(0); }
-
 .overlayHeader { display: flex; justify-content: flex-end; }
 #closeOverlay { background: transparent; border: none; color: #fff; font-size: 40px; cursor: pointer; }
 .overlayBody { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
-/* トースト通知 [5, 9] */
+/* トースト通知 [9, 11] */
 #toast {
   position: fixed;
   bottom: 30px;
@@ -288,7 +279,7 @@ li span:first-child {
 
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* ハート演出 [5] */
+/* ハート演出 [11] */
 .heart {
   position: absolute;
   pointer-events: none;
@@ -297,12 +288,13 @@ li span:first-child {
   filter: drop-shadow(0 0 8px #ff2d55);
   animation: darkFloat 1s ease-out forwards;
 }
+
 @keyframes darkFloat {
   0% { transform: scale(0.5) translateY(0); opacity: 1; }
   100% { transform: scale(1.5) translateY(-60px); opacity: 0; }
 }
 
-/* 返信セクション [12, 17-20] */
+/* 返信セクション [2, 12-15] */
 .replySection {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 8px;
@@ -310,17 +302,41 @@ li span:first-child {
   padding: 12px;
   animation: slideDown 0.3s ease-out;
 }
-@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+@keyframes slideDown { 
+  from { opacity: 0; transform: translateY(-10px); } 
+  to { opacity: 1; transform: translateY(0); } 
+}
 
 .replyList > div { border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding: 8px 0; }
-.replyTextarea { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #fff; padding: 8px; font-size: 16px; resize: none; }
-.replySubmit { background: #fff; color: #000; border: none; border-radius: 20px; padding: 6px 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+.replyTextarea { 
+  width: 100%; 
+  background: rgba(255, 255, 255, 0.05); 
+  border: 1px solid rgba(255, 255, 255, 0.1); 
+  border-radius: 8px; 
+  color: #fff; 
+  padding: 8px; 
+  font-size: 16px; 
+  resize: none; 
+}
+
+.replySubmit { 
+  background: #fff; 
+  color: #000; 
+  border: none; 
+  border-radius: 20px; 
+  padding: 6px 18px; 
+  font-weight: bold; 
+  cursor: pointer; 
+  margin-top: 10px; 
+}
+
 .replySubmit:hover { background: #007acc; color: #fff; }
 
-/* ローダー [5, 16] */
+/* ローダー [10, 11] */
 #loader { text-align: center; padding: 40px; color: #444; font-size: 13px; }
 
-/* スマホ対応 [12, 16] */
+/* スマホ対応 [10, 12] */
 @media screen and (max-width: 600px) {
   body { padding: 20px 10px; }
   body.pastPage { padding-top: 80px; }
@@ -329,18 +345,18 @@ li span:first-child {
 
 /* ログインボタンの独自デザイン */
 #loginBtn {
-  background: rgba(255, 255, 255, 0.05); /* わずかな透過白 */
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(5px);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px; /* 角を丸めて洗練させる */
+  border-radius: 20px;
   padding: 6px 15px;
   font-size: 13px;
   font-family: inherit;
   cursor: pointer;
   transition: all 0.3s ease;
-  white-space: nowrap; /* 改行を防ぐ */
-  flex-shrink: 0;      /* ボタンが潰れるのを防ぐ */
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 #loginBtn:hover {
@@ -349,32 +365,25 @@ li span:first-child {
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
-/* スマホ版（600px以下）の微調整 [3] */
 @media screen and (max-width: 600px) {
   .logoText {
-    font-size: 14px; /* ロゴを少し小さく */
+    font-size: 14px;
     margin-left: 5px !important;
   }
-  
   #searchInput {
-    height: 36px;   /* 高さを抑える [2] */
+    height: 36px;
     font-size: 14px;
     padding: 0 12px;
   }
-
   #loginBtn {
-    padding: 5px 10px; /* さらにコンパクトに */
+    padding: 5px 10px;
     font-size: 12px;
   }
 }
 
-/* ソース[4]の#loginBtn付近に追加 */
-.user-container {
-  position: relative;
-}
-
+.user-container { position: relative; }
 .user-menu {
-  display: none; /* 初期は非表示 */
+  display: none;
   position: absolute;
   top: 50px;
   right: 0;
@@ -385,16 +394,8 @@ li span:first-child {
   backdrop-filter: blur(15px);
   z-index: 2000;
 }
-.user-menu.open { display: block; }
-.menu-item {
-  padding: 12px 20px;
-  font-size: 14px;
-  color: #efefef;
-  cursor: pointer;
-}
-.menu-item:hover { background: rgba(255, 255, 255, 0.05); }
-#menuLogoutBtn { color: #ff2d55; border-top: 1px solid rgba(255, 255, 255, 0.05); }
 
+.user-menu.open { display: block; }
 .menu-item {
   padding: 12px 20px;
   font-size: 14px;
@@ -403,15 +404,10 @@ li span:first-child {
   transition: background 0.3s;
 }
 
-.menu-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
+.menu-item:hover { background: rgba(255, 255, 255, 0.05); }
+#menuLogoutBtn { color: #ff2d55; border-top: 1px solid rgba(255, 255, 255, 0.05); }
 
-#menuLogoutBtn {
-  color: #ff2d55; /* ログアウトは警告色 */
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-/* CSSに追加 */
+/* 低評価ボタン */
 .dislikeBtn {
   background: transparent;
   border: none;
@@ -423,100 +419,61 @@ li span:first-child {
   padding: 5px;
   cursor: pointer;
 }
-.dislikeBtn:hover {
-  color: #888; /* もしくは低評価らしい色 */
-}
+
+.dislikeBtn:hover { color: #888; }
 
 /* 白いデザイン用のスタイル定義 */
 li.white-post {
-  background: rgba(255, 255, 255, 0.95); /* 白背景 [1] */
+  background: rgba(255, 255, 255, 0.95);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
 }
 
-li.white-post span:first-child {
-  color: #1a1a1a; /* 投稿文を黒に [2] */
-}
-
+li.white-post span:first-child { color: #1a1a1a; }
 li.white-post .left span,
 li.white-post .likeBtn,
 li.white-post .dislikeBtn,
-li.white-post .replyBtn {
-  color: #444; /* ボタンや日付の文字色を暗く [2] */
-}
+li.white-post .replyBtn { color: #444; }
+li.white-post .delBtn { color: #888; }
 
-li.white-post .delBtn {
-  color: #888; /* 削除ボタン [3] */
-}
-
-/* style.css の .logoText に追加 */
 .logoText {
-  cursor: pointer; /* クリック可能であることを示す */
-  user-select: none; /* テキスト選択を防止 */
+  cursor: pointer;
+  user-select: none;
   transition: opacity 0.3s ease;
 }
 
-.logoText:hover {
-  opacity: 0.7; /* ホバー時に少し薄くする演出 */
-}
+.logoText:hover { opacity: 0.7; }
 
-/* 投稿メニューのコンテナ */
-.post-menu-container {
+/* ==========================================
+   追加機能：評価比率に応じた背景・文字反転設定
+========================================== */
+
+/* 
+  li要素にJSから CSS変数 --split-point を設定することを想定しています。
+  例: 高評価5, 低評価3なら --split-point: 37.5% (3/8)
+*/
+li.dynamic-ratio {
+  /* 左側が黒（低評価分）、右側が白（高評価分）のグラデーション */
+  background: linear-gradient(to right, #000 var(--split-point, 50%), #fff var(--split-point, 50%)) !important;
   position: relative;
-  display: inline-block;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background 0.5s ease;
 }
 
-/* 縦の ... ボタン */
-.post-menu-btn {
-  background: transparent;
-  border: none;
-  color: #666;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 0 5px;
-  transition: color 0.3s;
+/* 
+  mix-blend-mode: difference を使うための設定。
+  背景が #000 (黒) のとき、文字色 #fff (白) との差分は #fff (白) になります。
+  背景が #fff (白) のとき、文字色 #fff (白) との差分は #000 (黒) になります。
+  これにより、一文字の途中でも色が反転します。
+*/
+li.dynamic-ratio * {
+  color: #fff !important; 
+  mix-blend-mode: difference;
 }
 
-.post-menu-btn:hover {
-  color: #fff;
-}
-
-/* メニューの中身（初期は非表示） */
-.post-dropdown {
-  display: none;
-  position: absolute;
-  top: 30px;
-  right: 0;
-  width: 120px;
-  background: rgba(15, 15, 15, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  backdrop-filter: blur(15px);
-  z-index: 100;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-}
-
-.post-dropdown.open {
-  display: block;
-}
-
-/* メニュー内の各項目 */
-.post-dropdown-item {
-  padding: 10px 15px;
-  font-size: 14px;
-  color: #efefef;
-  cursor: pointer;
-  text-align: left;
-  transition: background 0.3s;
-}
-
-.post-dropdown-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-/* 削除項目は赤く */
-.post-dropdown-item.del-item {
-  color: #ff2d55;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+/* 
+  ホバー時の透過背景設定を無効化（グラデーションを優先するため）
+*/
+li.dynamic-ratio:hover {
+  background: linear-gradient(to right, #000 var(--split-point, 50%), #fff var(--split-point, 50%)) !important;
 }
