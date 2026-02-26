@@ -199,10 +199,15 @@ function initIndexPage() {
             submitButton.disabled = false;
             submitButton.classList.remove('locked');
             if (limitMessage) {
-                const rest = 100 - len;
-                limitMessage.textContent = `あと${rest}文字`;
-                limitMessage.style.color = '#cccccc';
-                limitMessage.style.display = 'block';
+                if (len >= 90) {
+                    const rest = 100 - len;
+                    limitMessage.textContent = `あと${rest}文字`;
+                    limitMessage.style.color = '#cccccc';
+                    limitMessage.style.display = 'block';
+                } else {
+                    limitMessage.textContent = '';
+                    limitMessage.style.display = 'none';
+                }
             }
         }
     }
