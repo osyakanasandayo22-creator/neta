@@ -496,7 +496,7 @@ if (isOwner) {
 // ==========================================
 function createHeart(btn) {
     const h = document.createElement('span');
-    h.className = 'heart'; h.textContent = '👏';
+    h.className = 'heart'; h.textContent = '+1';
     const r = btn.getBoundingClientRect();
     h.style.left = (r.left + r.width / 2 + window.scrollX - 10) + 'px';
     h.style.top = (r.top + window.scrollY - 20) + 'px';
