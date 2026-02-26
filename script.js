@@ -275,14 +275,14 @@ function initPastPage() {
 // loadMore 関数内の nextItems.forEach ループ内
 const isOwner = currentUser && j.uid === currentUser.uid;
 
-// メニュー項目の生成
+// メニュー項目の生成（isOwnerの判定は既存のものを利用）
 let menuItemsHtml = `<div class="post-dropdown-item report-btn">通報</div>`;
 if (isOwner) {
     menuItemsHtml += `<div class="post-dropdown-item del-item delBtn">削除</div>`;
 }
 
 li.innerHTML = `
-    ${j.text.replace(/\n/g, '<br>')}
+    <span>${j.text.replace(/\n/g, '<br>')}</span>
     <div class="btnWrap">
         <div class="left">
             <span>${formatDate(j.date)}</span>
@@ -292,7 +292,7 @@ li.innerHTML = `
             <button class="likeBtn">👏 ${j.likes || 0}</button>
             <button class="dislikeBtn">👎 ${j.dislikes || 0}</button>
             
-            <!-- 三点リーダーメニューの追加 -->
+            <!-- 三点リーダーメニュー -->
             <div class="post-menu-container">
                 <button class="post-menu-btn">⋮</button>
                 <div class="post-dropdown">
@@ -301,7 +301,12 @@ li.innerHTML = `
             </div>
         </div>
     </div>
-    <!-- 返信セクションなどは以下に続く（既存通り） -->
+    <!-- 返信セクション（これがないと li.querySelector('.replySection') でエラーになります） -->
+    <div class="replySection" style="display:none;">
+        <div class="replyList"></div>
+        <textarea class="replyTextarea" placeholder="記憶への返信..."></textarea>
+        <button class="replySubmit">送信</button>
+    </div>
 `;
 
                 const replySection = li.querySelector('.replySection');
