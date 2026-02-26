@@ -1,4 +1,4 @@
-const CACHE_NAME = 'BARI';
+const CACHE_NAME = 'Norito';
 const urlsToCache = [
   '/',
   '/index.html',
