@@ -275,8 +275,12 @@ function initPastPage() {
 // loadMore 関数内の nextItems.forEach ループ内
 const isOwner = currentUser && j.uid === currentUser.uid;
 
-// メニュー項目の生成（isOwnerの判定は既存のものを利用）
-let menuItemsHtml = `<div class="post-dropdown-item report-btn">通報</div>`;
+// メニュー項目の生成
+// 自分の投稿には「通報」は表示せず、他人の投稿だけに表示する
+let menuItemsHtml = '';
+if (!isOwner) {
+    menuItemsHtml += `<div class="post-dropdown-item report-btn">通報</div>`;
+}
 if (isOwner) {
     menuItemsHtml += `<div class="post-dropdown-item del-item delBtn">削除</div>`;
 }
@@ -442,12 +446,15 @@ window.addEventListener('click', () => {
     dropdown.classList.remove('open');
 });
 
-// --- 通報ボタンの処理 ---
-li.querySelector('.report-btn').addEventListener('click', () => {
-    alert("この言葉を報告しました。運営が確認いたします。");
-    dropdown.classList.remove('open');
-    // 注: 通報の実装はソース内に存在しないため、アラート表示のみとしています。
-});
+// --- 通報ボタンの処理（他人の投稿にのみ存在） ---
+const reportBtn = li.querySelector('.report-btn');
+if (reportBtn) {
+    reportBtn.addEventListener('click', () => {
+        alert("この言葉を報告しました。運営が確認いたします。");
+        dropdown.classList.remove('open');
+        // 注: 通報の実装はソース内に存在しないため、アラート表示のみとしています。
+    });
+}
 
 // --- 削除ボタンの処理 (所有者の場合のみ) ---
 if (isOwner) {
