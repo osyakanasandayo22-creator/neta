@@ -210,7 +210,7 @@ function initPastPage() {
         displayIndex = 0;
         
         // 4. 再描画
-        if (loader) loader.textContent = "自分の記憶を表示中...";
+        if (loader) loader.textContent = "自分の言葉を表示中...";
         loadMore(true);
     });
 
@@ -258,7 +258,7 @@ function initPastPage() {
 
         if (!isInitial) {
             loader.style.display = 'block';
-            loader.textContent = "記憶を深掘り中...";
+            loader.textContent = "ロード中...";
         }
 
         const executeLoad = () => {
@@ -315,7 +315,7 @@ li.innerHTML = `
     <!-- 返信セクション（これがないと li.querySelector('.replySection') でエラーになります） -->
     <div class="replySection" style="display:none;">
         <div class="replyList"></div>
-        <textarea class="replyTextarea" placeholder="記憶への返信..."></textarea>
+        <textarea class="replyTextarea" placeholder="投稿への返信..."></textarea>
         <button class="replySubmit">送信</button>
     </div>
 `;
@@ -427,7 +427,7 @@ window.addEventListener('click', () => {
 
 // --- 通報ボタンの処理 ---
 li.querySelector('.report-btn').addEventListener('click', () => {
-    alert("この投稿を通報しました。運営が確認いたします。");
+    alert("この言葉を報告しました。運営が確認いたします。");
     dropdown.classList.remove('open');
     // 注: 通報の実装はソース内に存在しないため、アラート表示のみとしています。
 });
@@ -435,7 +435,7 @@ li.querySelector('.report-btn').addEventListener('click', () => {
 // --- 削除ボタンの処理 (所有者の場合のみ) ---
 if (isOwner) {
     li.querySelector('.delBtn').addEventListener('click', async () => {
-        if (!confirm("この記憶を消去しますか？")) return;
+        if (!confirm("この言葉を消去しますか？")) return;
         try {
             await deleteDoc(doc(db, "jokes", j.id)); [7]
             li.remove(); [7]
@@ -450,7 +450,7 @@ if (isOwner) {
 
             displayIndex += 10;
             loader.style.display = (displayIndex >= mixedJokes.length) ? 'block' : 'none';
-            if (displayIndex >= mixedJokes.length) loader.textContent = "これ以上、記憶はありません";
+            if (displayIndex >= mixedJokes.length) loader.textContent = "これ以上、言葉はありません";
             isLoading = false;
         };
 
