@@ -459,3 +459,64 @@ li.white-post .delBtn {
 .logoText:hover {
   opacity: 0.7; /* ホバー時に少し薄くする演出 */
 }
+
+/* 投稿メニューのコンテナ */
+.post-menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* 縦の ... ボタン */
+.post-menu-btn {
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 5px;
+  transition: color 0.3s;
+}
+
+.post-menu-btn:hover {
+  color: #fff;
+}
+
+/* メニューの中身（初期は非表示） */
+.post-dropdown {
+  display: none;
+  position: absolute;
+  top: 30px;
+  right: 0;
+  width: 120px;
+  background: rgba(15, 15, 15, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  backdrop-filter: blur(15px);
+  z-index: 100;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.post-dropdown.open {
+  display: block;
+}
+
+/* メニュー内の各項目 */
+.post-dropdown-item {
+  padding: 10px 15px;
+  font-size: 14px;
+  color: #efefef;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.3s;
+}
+
+.post-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* 削除項目は赤く */
+.post-dropdown-item.del-item {
+  color: #ff2d55;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}

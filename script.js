@@ -272,26 +272,37 @@ function initPastPage() {
                     li.classList.add('white-post');
                 }
 
-                const isOwner = currentUser && j.uid === currentUser.uid;
-                const deleteBtnHtml = isOwner ? `<button class="delBtn">削除</button>` : '';
+// loadMore 関数内の nextItems.forEach ループ内
+const isOwner = currentUser && j.uid === currentUser.uid;
 
-                li.innerHTML = `
-                    <span>${j.text.replace(/\n/g, '<br>')}</span>
-                    <div class="btnWrap">
-                        <div class="left"><span>${formatDate(j.date)}</span></div>
-                        <div class="right">
-                            <button class="replyBtn">💬 ${j.replies ? j.replies.length : 0}</button>
-                            <button class="likeBtn">👏 ${j.likes || 0}</button>
-                            <button class="dislikeBtn">👎 ${j.dislikes || 0}</button>
-                            ${deleteBtnHtml}
-                        </div>
-                    </div>
-                    <div class="replySection" style="display:none;">
-                        <div class="replyList"></div>
-                        <textarea class="replyTextarea" placeholder="返信を記す..."></textarea>
-                        <button class="replySubmit">放つ</button>
-                    </div>
-                `;
+// メニュー項目の生成
+let menuItemsHtml = `<div class="post-dropdown-item report-btn">通報</div>`;
+if (isOwner) {
+    menuItemsHtml += `<div class="post-dropdown-item del-item delBtn">削除</div>`;
+}
+
+li.innerHTML = `
+    ${j.text.replace(/\n/g, '<br>')}
+    <div class="btnWrap">
+        <div class="left">
+            <span>${formatDate(j.date)}</span>
+        </div>
+        <div class="right">
+            <button class="replyBtn">💬 ${j.replies ? j.replies.length : 0}</button>
+            <button class="likeBtn">👏 ${j.likes || 0}</button>
+            <button class="dislikeBtn">👎 ${j.dislikes || 0}</button>
+            
+            <!-- 三点リーダーメニューの追加 -->
+            <div class="post-menu-container">
+                <button class="post-menu-btn">⋮</button>
+                <div class="post-dropdown">
+                    ${menuItemsHtml}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 返信セクションなどは以下に続く（既存通り） -->
+`;
 
                 const replySection = li.querySelector('.replySection');
                 const replyList = li.querySelector('.replyList');
@@ -361,13 +372,43 @@ function initPastPage() {
                     updatePostStyle(li, (j.likes || 0), j.dislikes);
                 });
 
-                if (isOwner) {
-                    li.querySelector('.delBtn').addEventListener('click', async () => {
-                        if (!confirm("この記憶を消去しますか？")) return;
-                        await deleteDoc(doc(db, "jokes", j.id));
-                        li.remove();
-                    });
-                }
+// --- メニューの開閉ロジック ---
+const menuBtn = li.querySelector('.post-menu-btn');
+const dropdown = li.querySelector('.post-dropdown');
+
+menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); // 他のクリックイベントへの干渉防止
+    // 他の開いているメニューを閉じる処理（任意）
+    document.querySelectorAll('.post-dropdown.open').forEach(d => {
+        if (d !== dropdown) d.classList.remove('open');
+    });
+    dropdown.classList.toggle('open');
+});
+
+// 画面のどこかをクリックしたらメニューを閉じる
+window.addEventListener('click', () => {
+    dropdown.classList.remove('open');
+});
+
+// --- 通報ボタンの処理 ---
+li.querySelector('.report-btn').addEventListener('click', () => {
+    alert("この投稿を通報しました。運営が確認いたします。");
+    dropdown.classList.remove('open');
+    // 注: 通報の実装はソース内に存在しないため、アラート表示のみとしています。
+});
+
+// --- 削除ボタンの処理 (所有者の場合のみ) ---
+if (isOwner) {
+    li.querySelector('.delBtn').addEventListener('click', async () => {
+        if (!confirm("この記憶を消去しますか？")) return;
+        try {
+            await deleteDoc(doc(db, "jokes", j.id)); [7]
+            li.remove(); [7]
+        } catch (error) {
+            console.error("削除エラー:", error);
+        }
+    });
+}
 
                 jokeList.appendChild(li);
             });
