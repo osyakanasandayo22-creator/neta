@@ -520,3 +520,53 @@ li.white-post .post-menu-btn:hover {
       font-size: 16px !important;
   }
 }
+
+/* --- 1. 投稿フォーム全体のヘッダー調整 --- */
+.overlayHeader {
+  display: flex;
+  justify-content: flex-end;
+  padding: 20px; /* 画面端から少し離す [1] */
+}
+
+/* --- 2. 閉じるボタンのリデザイン --- */
+#closeOverlay {
+  background: rgba(255, 255, 255, 0.05); /* わずかな透過白 [1] */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  width: 50px;  /* サイズを確保して押しやすく */
+  height: 50px;
+  border-radius: 50%; /* 円形にする */
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  backdrop-filter: blur(10px); /* BARIのコンセプトに合わせる [2] */
+}
+
+#closeOverlay:hover {
+  background: #ff2d55; /* 閉じる動作を連想させる赤系 [3] */
+  border-color: #ff2d55;
+  transform: rotate(90deg); /* 回転させて動きを出す [2] */
+  box-shadow: 0 0 15px rgba(255, 45, 85, 0.4);
+}
+
+/* --- 3. ネタ画像のサイズ調整 --- */
+.overlayBody img {
+  max-width: 140px; /* 240px [4] から大幅に縮小 */
+  height: auto;
+  margin-bottom: 20px; /* 下のテキストエリアとの間隔を詰める [4] */
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.1));
+  opacity: 0.9;
+}
+
+/* ついでにオーバーレイ全体の配置を微調整 */
+.overlayBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 50px; /* 少し上に持ち上げる [1] */
+}
