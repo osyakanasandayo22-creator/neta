@@ -162,13 +162,32 @@ body.theme-light .themeOption[aria-pressed="true"] {
 /* 白テーマでも投稿カードは黒テーマと同じ見え方にする
    - 高評価 > 低評価: .white-post（既存の白背景）
    - それ以外: 黒背景（= 従来の「黒くなる」側） */
-body.theme-light li:not(.white-post) {
+body.theme-light #jokeList > li:not(.white-post):not(.notification-item) {
   background: rgba(15, 15, 15, 0.92);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-body.theme-light li:not(.white-post):hover {
+body.theme-light #jokeList > li:not(.white-post):not(.notification-item):hover {
   background: rgba(25, 25, 25, 0.92);
+}
+
+/* 白テーマ: 通知リストにもテーマを適用 */
+body.theme-light #jokeList > li.notification-item {
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+body.theme-light #jokeList > li.notification-item:hover {
+  background: rgba(255, 255, 255, 0.98);
+}
+
+body.theme-light .notification-text {
+  color: #111;
+}
+
+body.theme-light .notification-date {
+  color: rgba(0, 0, 0, 0.55);
 }
 
 body.pastPage {
