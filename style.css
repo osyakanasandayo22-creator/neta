@@ -23,6 +23,81 @@ body.overlay-open {
   overflow: hidden;
 }
 
+/* ==========================================
+   Theme: Light (白テーマ)
+   影響範囲: 背景 / topBar / 投稿フォーム（postOverlay）
+   ※投稿カード内の色は触らない
+   ========================================== */
+body.theme-light {
+  background: radial-gradient(circle at top, #ffffff 0%, #f2f2f2 100%);
+  color: #111111;
+}
+
+body.theme-light .topBar {
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body.theme-light #searchInput {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  color: #111;
+}
+
+body.theme-light #searchInput::placeholder {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+body.theme-light #loginBtn {
+  background: rgba(0, 0, 0, 0.04);
+  color: #111;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+body.theme-light #loginBtn:hover {
+  background: #111;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.12);
+}
+
+body.theme-light .user-menu {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.theme-light .menu-item {
+  color: #111;
+}
+
+body.theme-light .menu-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+body.theme-light #postOverlay {
+  background: radial-gradient(circle at top, #ffffff 0%, #f2f2f2 100%);
+}
+
+body.theme-light .inputWrapper {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+body.theme-light textarea {
+  color: #111;
+}
+
+body.theme-light #submitButton {
+  background: #111;
+  color: #fff;
+}
+
+body.theme-light #submitButton:hover {
+  background: #007acc;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(0, 122, 204, 0.35);
+}
+
 body.pastPage {
   display: block;
   padding: 90px 20px 40px 20px;
@@ -241,6 +316,40 @@ body.pastPage {
 .settingsRowValue {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.55);
+}
+
+.settingsRowStatic {
+  cursor: default;
+}
+
+.settingsRowStatic:hover {
+  background: transparent;
+}
+
+.themeToggle {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.themeOption {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: #efefef;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.themeOption:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.themeOption[aria-pressed="true"] {
+  background: #fff;
+  color: #000;
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 .inputWrapper {

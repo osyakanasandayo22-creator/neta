@@ -15,7 +15,7 @@
 <!-- index.html の topBar 内に追加 -->
 <!-- topBar内 (ソース[3]付近) -->
 <div class="topBar">
-  <img src="images/logo.png" class="logoText" alt="logo">
+  <img id="topLogo" src="images/logo.png" class="logoText" alt="logo">
   <input type="text" id="searchInput" placeholder="言葉を見つける...">
   
   <!-- ログインボタンとメニューのコンテナ -->
@@ -45,7 +45,7 @@
       <button id="closeOverlay">×</button>
     </div>
     <div class="overlayBody">
-      <img src="./images/neta.png" alt="ネタ">
+      <img id="postNetaImage" src="images/neta.png" alt="ネタ">
       <div class="inputWrapper">
         <textarea id="jokeInput" placeholder="想いを伝えよう"></textarea>
         <button id="submitButton">贈る</button>
@@ -64,10 +64,13 @@
 
       <div class="settingsSection">
         <div class="settingsSectionTitle">表示</div>
-        <button type="button" id="themeSettingRow" class="settingsRow">
+        <div id="themeSettingRow" class="settingsRow settingsRowStatic">
           <span class="settingsRowLabel">テーマ</span>
-          <span class="settingsRowValue">準備中</span>
-        </button>
+          <div class="themeToggle" role="radiogroup" aria-label="テーマ">
+            <button type="button" class="themeOption" data-theme="dark" aria-pressed="true">黒</button>
+            <button type="button" class="themeOption" data-theme="light" aria-pressed="false">白</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

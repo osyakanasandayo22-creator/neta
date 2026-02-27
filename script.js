@@ -284,7 +284,56 @@ document.addEventListener('DOMContentLoaded', () => {
     const settingsBtn = document.getElementById('settingsBtn');
     const settingsOverlay = document.getElementById('settingsOverlay');
     const closeSettingsBtn = document.getElementById('closeSettings');
-    const themeSettingRow = document.getElementById('themeSettingRow');
+    const themeOptions = Array.from(document.querySelectorAll('.themeOption'));
+    const topLogo = document.getElementById('topLogo');
+    const postNetaImage = document.getElementById('postNetaImage');
+
+    const THEME_KEY = 'norito.theme';
+    const THEMES = { dark: 'dark', light: 'light' };
+
+    function _normalizeTheme(value) {
+        return value === THEMES.light ? THEMES.light : THEMES.dark;
+    }
+
+    function _setPressed(theme) {
+        themeOptions.forEach(btn => {
+            if (!(btn instanceof HTMLElement)) return;
+            const t = btn.getAttribute('data-theme');
+            btn.setAttribute('aria-pressed', String(t === theme));
+        });
+    }
+
+    function applyTheme(theme) {
+        const normalized = _normalizeTheme(theme);
+        document.body.classList.toggle('theme-light', normalized === THEMES.light);
+
+        // 画像差し替え
+        if (topLogo instanceof HTMLImageElement) {
+            topLogo.src = normalized === THEMES.light ? 'images/logo-black.png' : 'images/logo.png';
+        }
+        if (postNetaImage instanceof HTMLImageElement) {
+            postNetaImage.src = normalized === THEMES.light ? 'images/neta-black.png' : 'images/neta.png';
+        }
+
+        // モバイルのアドレスバー色も合わせる（任意）
+        const themeMeta = document.querySelector('meta[name="theme-color"]');
+        if (themeMeta) {
+            themeMeta.setAttribute('content', normalized === THEMES.light ? '#ffffff' : '#000000');
+        }
+
+        _setPressed(normalized);
+        try {
+            localStorage.setItem(THEME_KEY, normalized);
+        } catch { /* noop */ }
+    }
+
+    // 起動時反映
+    try {
+        const saved = localStorage.getItem(THEME_KEY);
+        applyTheme(_normalizeTheme(saved));
+    } catch {
+        applyTheme(THEMES.dark);
+    }
 
     let _settingsPrevActive = null;
     const onSettingsKeyDown = (e) => {
@@ -323,8 +372,12 @@ document.addEventListener('DOMContentLoaded', () => {
         openSettings();
     });
     closeSettingsBtn?.addEventListener('click', () => closeSettings());
-    themeSettingRow?.addEventListener('click', async () => {
-        await uiAlert("テーマ設定は準備中です。", { title: "設定" });
+
+    themeOptions.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const t = btn.getAttribute('data-theme');
+            applyTheme(_normalizeTheme(t));
+        });
     });
 
     const fab = document.getElementById('fab');

@@ -1,10 +1,13 @@
-const CACHE_NAME = 'Norito-v2';
+const CACHE_NAME = 'Norito-v3';
 const urlsToCache = [
   '/',
   '/index.html',
   '/style.css',
   '/script.js',
+  '/images/logo.png',
+  '/images/logo-black.png',
   '/images/neta.png',
+  '/images/neta-black.png',
   '/images/icon-192.png',
   '/images/icon-512.png'
 ];
