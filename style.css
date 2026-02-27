@@ -167,10 +167,6 @@ body.theme-light #jokeList > li:not(.white-post):not(.notification-item) {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-body.theme-light #jokeList > li:not(.white-post):not(.notification-item):hover {
-  background: rgba(25, 25, 25, 0.92);
-}
-
 /* 白テーマ: 通知リストにもテーマを適用 */
 body.theme-light #jokeList > li.notification-item {
   background: rgba(255, 255, 255, 0.94);
@@ -179,7 +175,9 @@ body.theme-light #jokeList > li.notification-item {
 }
 
 body.theme-light #jokeList > li.notification-item:hover {
-  background: rgba(255, 255, 255, 0.98);
+  background: rgba(245, 245, 245, 0.98);
+  border-bottom-color: rgba(0, 0, 0, 0.14);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10);
 }
 
 body.theme-light .notification-text {
@@ -508,7 +506,7 @@ textarea {
   list-style: none;
 }
 
-li {
+#jokeList > li {
   background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   padding: 20px;
@@ -517,8 +515,14 @@ li {
   transition: background 0.3s;
 }
 
-li:hover {
-  background: rgba(255, 255, 255, 0.04);
+#jokeList > li.notification-item {
+  cursor: pointer;
+}
+
+/* 投稿カードはクリックしても何も起きないため hover 演出を付けない。
+   hover 演出は通知カード（クリックで遷移するもの）のみに限定する。 */
+#jokeList > li.notification-item:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 li span:first-child {
