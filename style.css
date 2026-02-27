@@ -98,6 +98,66 @@ body.theme-light #submitButton:hover {
   box-shadow: 0 0 20px rgba(0, 122, 204, 0.35);
 }
 
+/* 白テーマ: オーバーレイの閉じるボタンを黒系に（白背景で埋もれないように） */
+body.theme-light #closeOverlay,
+body.theme-light #closeSettings {
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  color: #111;
+}
+
+body.theme-light #closeOverlay:hover,
+body.theme-light #closeSettings:hover {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.18);
+  transform: rotate(90deg);
+}
+
+/* 白テーマ: 設定画面にもテーマを適用 */
+body.theme-light #settingsOverlay {
+  background: radial-gradient(circle at top, #ffffff 0%, #f2f2f2 100%);
+}
+
+body.theme-light .settingsTitle {
+  color: #111;
+}
+
+body.theme-light .settingsSection {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+body.theme-light .settingsSectionTitle {
+  color: rgba(0, 0, 0, 0.55);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body.theme-light .settingsRowLabel {
+  color: #111;
+}
+
+body.theme-light .settingsRow:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+body.theme-light .themeOption {
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  background: rgba(0, 0, 0, 0.04);
+  color: #111;
+}
+
+body.theme-light .themeOption:hover {
+  background: rgba(0, 0, 0, 0.07);
+}
+
+body.theme-light .themeOption[aria-pressed="true"] {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
 /* 白テーマでも投稿カードは黒テーマと同じ見え方にする
    - 高評価 > 低評価: .white-post（既存の白背景）
    - それ以外: 黒背景（= 従来の「黒くなる」側） */

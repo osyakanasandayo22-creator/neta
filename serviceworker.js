@@ -1,4 +1,4 @@
-const CACHE_NAME = 'Norito-v4';
+const CACHE_NAME = 'Norito-v5';
 const urlsToCache = [
   '/',
   '/index.html',
