@@ -666,38 +666,7 @@ li.white-post .post-menu-btn:hover {
   100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0; }
 }
 
-/* 釘：ストンと打ち込み + 衝撃波 */
-.rate-fx--nail .rate-fx__nail {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4px;
-  height: 18px;
-  background: var(--fx-color);
-  border-radius: 3px;
-  transform: translate(-50%, -50%) translateY(-10px);
-  opacity: 0.95;
-  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--fx-color) 60%, transparent));
-  animation: nailDrop 420ms cubic-bezier(.15, .8, .15, 1) forwards;
-}
-
-.rate-fx--nail .rate-fx__nail::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: -2px;
-  width: 12px;
-  height: 5px;
-  background: var(--fx-color);
-  border-radius: 999px;
-  transform: translateX(-50%);
-}
-
-@keyframes nailDrop {
-  0%   { transform: translate(-50%, -50%) translateY(-14px); opacity: 0.95; }
-  60%  { transform: translate(-50%, -50%) translateY(6px); opacity: 0.95; }
-  100% { transform: translate(-50%, -50%) translateY(10px); opacity: 0; }
-}
+/* 釘：衝撃波だけ */
 
 .rate-fx--nail .rate-fx__ring {
   position: absolute;
@@ -722,7 +691,6 @@ li.white-post .post-menu-btn:hover {
   .dislikeBtn.fx-nail,
   .rate-fx--clap .rate-fx__spark,
   .rate-fx--clap .rate-fx__pop,
-  .rate-fx--nail .rate-fx__nail,
   .rate-fx--nail .rate-fx__ring {
     animation: none !important;
   }

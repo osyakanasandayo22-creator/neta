@@ -942,10 +942,6 @@ function spawnNailHit(btn) {
     fx.style.top = `${y}px`;
     fx.style.setProperty('--fx-color', color);
 
-    const nail = document.createElement('span');
-    nail.className = 'rate-fx__nail';
-    fx.appendChild(nail);
-
     const ring = document.createElement('span');
     ring.className = 'rate-fx__ring';
     fx.appendChild(ring);
