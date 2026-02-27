@@ -280,6 +280,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // 設定オーバーレイ
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsOverlay = document.getElementById('settingsOverlay');
+    const closeSettingsBtn = document.getElementById('closeSettings');
+    const themeSettingRow = document.getElementById('themeSettingRow');
+
+    let _settingsPrevActive = null;
+    const onSettingsKeyDown = (e) => {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            closeSettings();
+        }
+    };
+
+    function openSettings() {
+        if (!settingsOverlay) return;
+        _settingsPrevActive = document.activeElement;
+        if (userMenu) userMenu.classList.remove('open');
+        settingsOverlay.classList.add('open');
+        settingsOverlay.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('overlay-open');
+        window.addEventListener('keydown', onSettingsKeyDown, true);
+        closeSettingsBtn?.focus();
+    }
+
+    function closeSettings() {
+        if (!settingsOverlay) return;
+        settingsOverlay.classList.remove('open');
+        settingsOverlay.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('overlay-open');
+        window.removeEventListener('keydown', onSettingsKeyDown, true);
+        const el = _settingsPrevActive;
+        _settingsPrevActive = null;
+        if (el && typeof el.focus === 'function') {
+            el.focus();
+        }
+    }
+
+    settingsBtn?.addEventListener('click', () => {
+        if (!currentUser) return;
+        openSettings();
+    });
+    closeSettingsBtn?.addEventListener('click', () => closeSettings());
+    themeSettingRow?.addEventListener('click', async () => {
+        await uiAlert("テーマ設定は準備中です。", { title: "設定" });
+    });
+
     const fab = document.getElementById('fab');
     const overlay = document.getElementById('postOverlay');
     const closeBtn = document.getElementById('closeOverlay');

@@ -19,6 +19,10 @@ body {
   flex-direction: column;
 }
 
+body.overlay-open {
+  overflow: hidden;
+}
+
 body.pastPage {
   display: block;
   padding: 90px 20px 40px 20px;
