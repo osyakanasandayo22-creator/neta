@@ -527,6 +527,11 @@ function initPastPage() {
         const target = e.target instanceof Element ? e.target.closest('.hashtag') : null;
         if (!target) return;
 
+        // URLリンク（.url-link）は通常のリンク動作に任せる
+        if (target.classList.contains('url-link')) {
+            return;
+        }
+
         e.preventDefault();
         e.stopPropagation();
 
