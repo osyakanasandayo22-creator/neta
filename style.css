@@ -701,42 +701,27 @@ li.white-post .post-menu-btn:hover {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  /* ガラス感は維持。見やすさは“黒ティント”で確保（加工感の強い縁取りは使わない） */
-  background: rgba(255, 255, 255, 0.08);
-  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.02));
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   color: #fff;
-  font-size: 34px;
-  font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  font-size: 32px;
+  font-weight: 300;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.05);
   cursor: pointer;
   z-index: 1100;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: fixed;
-  overflow: hidden;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
-  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 180ms ease, background 180ms ease;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   animation: fabFloat 3s ease-in-out infinite;
 }
 
-#fab::before {
-  content: "";
-  position: absolute;
-  inset: 2px;
-  border-radius: inherit;
-  pointer-events: none;
-  background: radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 58%);
-}
-
 #fab:hover {
-  background: rgba(255, 255, 255, 0.12);
-  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.04));
-  transform: translateY(-2px) scale(1.06);
-  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.60), inset 0 1px 0 rgba(255, 255, 255, 0.20);
+  background: #fff;
+  color: #000;
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
   animation-play-state: paused;
 }
 
@@ -745,24 +730,8 @@ li.white-post .post-menu-btn:hover {
 }
 
 @keyframes fabFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-/* 白テーマでは“白背景の上で白ガラス”になりやすいので、ほんのり黒ティントに寄せる */
-body.theme-light #fab {
-  background: rgba(17, 17, 17, 0.18);
-  background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.06));
-  border: 1px solid rgba(0, 0, 0, 0.14);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.20);
-  color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-}
-
-body.theme-light #fab:hover {
-  background: rgba(17, 17, 17, 0.26);
-  background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.26), rgba(0, 0, 0, 0.08));
-  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-10px) rotate(5deg); }
 }
 
 /* --- 特殊演出・通知 [2, 12, 19, 20] --- */
