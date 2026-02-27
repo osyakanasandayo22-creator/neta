@@ -29,13 +29,14 @@ body.overlay-open {
    ※投稿カード内の色は触らない
    ========================================== */
 body.theme-light {
-  background: radial-gradient(circle at top, #ffffff 0%, #f2f2f2 100%);
+  background: radial-gradient(circle at top, #ededed 0%, #f6f6f6 55%, #ffffff 100%);
   color: #111111;
 }
 
 body.theme-light .topBar {
-  background: rgba(255, 255, 255, 0.88);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
 }
 
 body.theme-light #searchInput {
@@ -1084,17 +1085,19 @@ li.white-post .post-menu-btn:hover {
 }
 
 #closeOverlay:hover {
-  background: #ff2d55; /* 閉じる動作を連想させる赤系 [3] */
-  border-color: #ff2d55;
-  transform: rotate(90deg); /* 回転させて動きを出す [2] */
-  box-shadow: 0 0 15px rgba(255, 45, 85, 0.4);
+  background: #fff;
+  border-color: #fff;
+  color: #000;
+  transform: rotate(90deg);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.22);
 }
 
 #closeSettings:hover {
-  background: #ff2d55;
-  border-color: #ff2d55;
+  background: #fff;
+  border-color: #fff;
+  color: #000;
   transform: rotate(90deg);
-  box-shadow: 0 0 15px rgba(255, 45, 85, 0.4);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.22);
 }
 
 /* --- 3. ネタ画像のサイズ調整 --- */
