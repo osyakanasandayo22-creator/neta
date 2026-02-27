@@ -607,8 +607,9 @@ li.white-post .hashtag {
 .likeBtn:hover { color: #ff2d55; }
 .replyBtn:hover { color: #007acc; }
 
-/* --- 白背景投稿のスタイル (高評価時) [4, 14] --- */
-li.white-post {
+/* --- 白背景投稿のスタイル (高評価時) [4, 14] ---
+   NOTE: ベースが #jokeList > li なので、同等以上の詳細度にして上書きする */
+#jokeList > li.white-post {
   background: rgba(255, 255, 255, 0.95);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
