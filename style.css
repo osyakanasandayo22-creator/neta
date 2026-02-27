@@ -701,27 +701,45 @@ li.white-post .post-menu-btn:hover {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
+  /* 透け＋ぼかしは維持しつつ、中央の視認性を確保 */
+  background:
+    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0) 62%),
+    rgba(255, 255, 255, 0.06);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   color: #fff;
   font-size: 32px;
   font-weight: 300;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.05);
+  /* 明るい背景でも影が溶けないように「輪郭の影」を追加 */
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.38),
+    0 2px 8px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 0 10px rgba(255, 255, 255, 0.05);
   cursor: pointer;
   z-index: 1100;
   display: flex;
   align-items: center;
   justify-content: center;
+  /* 白背景に埋もれないよう「＋」に縁取りとハローを付ける */
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.88),
+    0 0 10px rgba(0, 0, 0, 0.45);
+  -webkit-text-stroke: 1px rgba(0, 0, 0, 0.55);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   animation: fabFloat 3s ease-in-out infinite;
 }
 
 #fab:hover {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.92);
   color: #000;
   transform: scale(1.1) rotate(90deg);
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 16px 34px rgba(0,  0,  0, 0.32),
+    0 0 25px rgba(255, 255, 255, 0.35);
+  text-shadow: none;
+  -webkit-text-stroke: 0px transparent;
   animation-play-state: paused;
 }
 
