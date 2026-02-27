@@ -203,6 +203,145 @@ body.pastPage {
   padding: 90px 20px 40px 20px;
 }
 
+/* --- 静的ページ（利用規約・ポリシー等） --- */
+body.staticPage {
+  display: block;
+  padding: 60px 20px 40px 20px;
+}
+
+.static-header {
+  max-width: 800px;
+  margin: 10px auto 24px;
+  text-align: center;
+}
+
+.static-logo {
+  font-size: 20px;
+  letter-spacing: 0.25em;
+  text-decoration: none;
+  text-transform: uppercase;
+  color: #e0e0e0;
+  opacity: 0.9;
+}
+
+.static-logo:hover {
+  opacity: 1;
+}
+
+.static-main {
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.legal-article {
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 24px 20px 28px;
+}
+
+.legal-article h1 {
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+
+.legal-article h2 {
+  font-size: 16px;
+  margin-top: 18px;
+  margin-bottom: 8px;
+}
+
+.legal-article p,
+.legal-article li {
+  font-size: 14px;
+  color: #d4d4d4;
+}
+
+.legal-article p {
+  margin-bottom: 10px;
+}
+
+.legal-article ul,
+.legal-article ol {
+  padding-left: 1.4em;
+  margin-bottom: 10px;
+}
+
+.legal-article a {
+  color: #7fa7ff;
+  text-decoration: underline;
+}
+
+/* フッター（共通） */
+.site-footer {
+  margin-top: 40px;
+  padding: 18px 20px 26px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 12px;
+  color: #888;
+}
+
+.site-footer-inner {
+  max-width: 820px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.site-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.site-footer-links a {
+  color: #b0b0b0;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.site-footer-links a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.site-footer-copy {
+  opacity: 0.7;
+}
+
+/* 白テーマでの静的ページ/フッター調整 */
+body.theme-light .static-logo {
+  color: #111;
+}
+
+body.theme-light .legal-article {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+body.theme-light .legal-article p,
+body.theme-light .legal-article li {
+  color: #222;
+}
+
+body.theme-light .legal-article a {
+  color: #0059b2;
+}
+
+body.theme-light .site-footer {
+  border-top-color: rgba(0, 0, 0, 0.12);
+  color: #666;
+}
+
+body.theme-light .site-footer-links a {
+  color: #555;
+}
+
+body.theme-light .site-footer-links a:hover {
+  color: #000;
+}
+
 /* --- ヘッダー・ロゴ [3, 4] --- */
 .topBar {
   position: fixed;
