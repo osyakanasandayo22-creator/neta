@@ -189,6 +189,53 @@ onAuthStateChanged(auth, (user) => {
 // 初期化・イベント登録
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
+    // ==========================================
+    // テーマ（黒 / 白）
+    // ==========================================
+    const THEME_STORAGE_KEY = 'nrt_theme';
+
+    function normalizeTheme(value) {
+        return value === 'light' ? 'light' : 'dark';
+    }
+
+    function applyTheme(theme) {
+        const t = normalizeTheme(theme);
+        document.body.classList.toggle('theme-light', t === 'light');
+
+        const label = document.getElementById('themeCurrentLabel');
+        if (label) label.textContent = (t === 'light') ? '白' : '黒';
+
+        document.querySelectorAll('[data-theme-choice]').forEach((btn) => {
+            if (!(btn instanceof HTMLButtonElement)) return;
+            const choice = normalizeTheme(btn.getAttribute('data-theme-choice'));
+            const active = choice === t;
+            btn.classList.toggle('is-active', active);
+            btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+
+        try {
+            // PWAのステータスバー色など（対応ブラウザのみ）
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', t === 'light' ? '#ffffff' : '#000000');
+        } catch {}
+    }
+
+    function loadTheme() {
+        try {
+            return normalizeTheme(localStorage.getItem(THEME_STORAGE_KEY));
+        } catch {
+            return 'dark';
+        }
+    }
+
+    function saveTheme(theme) {
+        try {
+            localStorage.setItem(THEME_STORAGE_KEY, normalizeTheme(theme));
+        } catch {}
+    }
+
+    applyTheme(loadTheme());
+
     initIndexPage();
     initPastPage();
 
@@ -272,6 +319,83 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             console.error(err);
         }
+    });
+
+    // ==========================================
+    // 設定画面（プロフィール欄 → 設定）
+    // ==========================================
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsOverlay = document.getElementById('settingsOverlay');
+    const settingsCloseBtn = document.getElementById('settingsCloseBtn');
+    const settingsBackBtn = document.getElementById('settingsBackBtn');
+    const settingsBackdrop = settingsOverlay?.querySelector('.settings-backdrop');
+
+    const settingsViewMain = document.getElementById('settingsViewMain');
+    const settingsViewTheme = document.getElementById('settingsViewTheme');
+    const themeSettingBtn = document.getElementById('themeSettingBtn');
+
+    function showSettingsView(view) {
+        const isTheme = view === 'theme';
+        settingsViewMain?.classList.toggle('settings-view--active', !isTheme);
+        settingsViewTheme?.classList.toggle('settings-view--active', isTheme);
+        if (settingsBackBtn) settingsBackBtn.style.visibility = isTheme ? 'visible' : 'hidden';
+    }
+
+    function openSettings() {
+        if (!settingsOverlay) return;
+        if (userMenu) userMenu.classList.remove('open');
+        showSettingsView('main');
+        settingsOverlay.classList.add('open');
+        settingsOverlay.setAttribute('aria-hidden', 'false');
+        applyTheme(loadTheme());
+        requestAnimationFrame(() => settingsCloseBtn?.focus());
+    }
+
+    function closeSettings() {
+        if (!settingsOverlay) return;
+        settingsOverlay.classList.remove('open');
+        settingsOverlay.setAttribute('aria-hidden', 'true');
+        showSettingsView('main');
+    }
+
+    settingsBtn?.addEventListener('click', () => {
+        openSettings();
+    });
+
+    settingsCloseBtn?.addEventListener('click', () => {
+        closeSettings();
+    });
+
+    settingsBackdrop?.addEventListener('click', () => {
+        closeSettings();
+    });
+
+    settingsBackBtn?.addEventListener('click', () => {
+        showSettingsView('main');
+        requestAnimationFrame(() => themeSettingBtn?.focus());
+    });
+
+    themeSettingBtn?.addEventListener('click', () => {
+        showSettingsView('theme');
+        const first = settingsViewTheme?.querySelector('[data-theme-choice]');
+        if (first instanceof HTMLElement) requestAnimationFrame(() => first.focus());
+    });
+
+    settingsOverlay?.addEventListener('click', (e) => {
+        const target = e.target instanceof Element ? e.target : null;
+        if (!target) return;
+        const btn = target.closest('[data-theme-choice]');
+        if (!btn) return;
+        const choice = normalizeTheme(btn.getAttribute('data-theme-choice'));
+        saveTheme(choice);
+        applyTheme(choice);
+    });
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        if (!settingsOverlay?.classList.contains('open')) return;
+        e.preventDefault();
+        closeSettings();
     });
 
     window.addEventListener('click', (e) => {
