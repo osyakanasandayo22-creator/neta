@@ -953,34 +953,6 @@ body.theme-light .settings-choice-btn.is-active {
   border-color: rgba(0, 0, 0, 0.12);
 }
 
-/* ライトテーマでも、投稿リスト部分の色は元のダーク配色を維持する */
-body.theme-light #jokeList li {
-  background: rgba(255, 255, 255, 0.02);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-body.theme-light #jokeList li:hover {
-  background: rgba(255, 255, 255, 0.04);
-}
-
-body.theme-light #jokeList li span:first-child {
-  color: #efefef;
-}
-
-body.theme-light #jokeList .left span {
-  color: #555;
-}
-
-body.theme-light #jokeList .likeBtn,
-body.theme-light #jokeList .dislikeBtn,
-body.theme-light #jokeList .replyBtn {
-  color: #666;
-}
-
-body.theme-light #jokeList .post-menu-btn:hover {
-  color: #fff;
-}
-
 /* --- 高評価/低評価の押下エフェクト（操作感） --- */
 .likeBtn.fx-clap,
 .dislikeBtn.fx-nail {
