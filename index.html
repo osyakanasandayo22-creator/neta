@@ -24,7 +24,6 @@
       <div id="userMenu" class="user-menu">
           <div class="menu-item" id="myPostsBtn">自分の言葉</div>
           <div class="menu-item" id="notificationsBtn">通知</div>
-          <div class="menu-item" id="settingsBtn">設定</div>
           <div class="menu-item" id="menuLogoutBtn">ログアウト</div>
       </div>
   </div>
@@ -67,38 +66,6 @@
         <div class="ui-modal-actions">
           <button id="uiModalCancel" type="button" class="ui-modal-btn ui-modal-btn-secondary">キャンセル</button>
           <button id="uiModalOk" type="button" class="ui-modal-btn ui-modal-btn-primary">OK</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 設定オーバーレイ -->
-  <div id="settingsOverlay" class="settings-overlay" aria-hidden="true">
-    <div class="settings-backdrop" data-settings-action="close"></div>
-    <div class="settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-      <div class="settings-header">
-        <button id="settingsBackBtn" class="settings-icon-btn" type="button" aria-label="戻る">←</button>
-        <div id="settingsTitle" class="settings-title">設定</div>
-        <button id="settingsCloseBtn" class="settings-icon-btn" type="button" aria-label="閉じる">×</button>
-      </div>
-
-      <div class="settings-body">
-        <div id="settingsViewMain" class="settings-view settings-view--active">
-          <button id="themeSettingBtn" class="settings-row" type="button">
-            <div class="settings-row-left">
-              <div class="settings-row-title">テーマ</div>
-              <div class="settings-row-desc" id="themeCurrentLabel">黒</div>
-            </div>
-            <div class="settings-row-right" aria-hidden="true">›</div>
-          </button>
-        </div>
-
-        <div id="settingsViewTheme" class="settings-view">
-          <div class="settings-section-title">テーマを選択</div>
-          <div class="settings-choice">
-            <button class="settings-choice-btn" type="button" data-theme-choice="dark">黒</button>
-            <button class="settings-choice-btn" type="button" data-theme-choice="light">白</button>
-          </div>
         </div>
       </div>
     </div>
