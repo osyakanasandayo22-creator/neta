@@ -645,23 +645,29 @@ function initPastPage() {
     });
 
     // 自分の投稿ボタンのイベント（ここに追加）
-    document.getElementById('myPostsBtn')?.addEventListener('click', () => {
+    document.getElementById('myPostsBtn')?.addEventListener('click', async () => {
         if (!currentUser) return;
-        
+
         // 1. メニューを閉じる
-        userMenu.classList.remove('open');
-        
-        // 2. 自分の投稿だけを抽出し、日付の降順（最新順）にソート
-        mixedJokes = mixedJokes
+        userMenu?.classList.remove('open');
+        document.querySelectorAll('.post-dropdown.open').forEach(d => d.classList.remove('open'));
+
+        // 2. データの母集団は mixedJokes ではなく allJokes（通知→単体表示の副作用を避ける）
+        if (!allJokes.length) {
+            await prepareJokes();
+        }
+
+        // 3. 自分の投稿だけを抽出し、日付の降順（最新順）にソート
+        mixedJokes = allJokes
             .filter(j => j.uid === currentUser.uid)
-            .sort((a, b) => b.date - a.date);
-        
-        // 3. 表示をリセット
+            .sort((a, b) => (b.date || 0) - (a.date || 0));
+
+        // 4. 表示をリセット
         jokeList.innerHTML = '';
         displayIndex = 0;
         currentView = 'myPosts';
-        
-        // 4. 再描画
+
+        // 5. 再描画
         if (loader) loader.textContent = "自分の言葉を表示中...";
         loadMore(true);
     });
