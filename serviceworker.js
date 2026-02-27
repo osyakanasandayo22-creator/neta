@@ -1,4 +1,4 @@
-const CACHE_NAME = 'Norito';
+const CACHE_NAME = 'Norito-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -11,6 +11,7 @@ const urlsToCache = [
 
 // インストール時にキャッシュする
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(urlsToCache);
@@ -41,4 +42,5 @@ self.addEventListener('activate', (event) => {
       )
     )
   );
+  self.clients.claim();
 });

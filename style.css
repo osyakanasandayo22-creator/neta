@@ -160,6 +160,89 @@ body.pastPage {
   transform: translateY(0);
 }
 
+/* --- 設定オーバーレイ（フルスクリーン） --- */
+#settingsOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top, #1a1a1a 0%, #0f0f0f 100%);
+  z-index: 2100;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  padding: 20px;
+}
+
+#settingsOverlay.open {
+  transform: translateY(0);
+}
+
+.settingsBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+  padding: 10px 0 30px 0;
+  gap: 18px;
+}
+
+.settingsTitle {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  margin-top: 8px;
+}
+
+.settingsSection {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.settingsSectionTitle {
+  padding: 12px 16px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  letter-spacing: 0.04em;
+}
+
+.settingsRow {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.settingsRow:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.settingsRowLabel {
+  font-size: 14px;
+  color: #efefef;
+}
+
+.settingsRowValue {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
 .inputWrapper {
   width: 100%;
   max-width: 650px;
@@ -803,10 +886,33 @@ li.white-post .post-menu-btn:hover {
   backdrop-filter: blur(10px); /* BARIのコンセプトに合わせる [2] */
 }
 
+#closeSettings {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  backdrop-filter: blur(10px);
+}
+
 #closeOverlay:hover {
   background: #ff2d55; /* 閉じる動作を連想させる赤系 [3] */
   border-color: #ff2d55;
   transform: rotate(90deg); /* 回転させて動きを出す [2] */
+  box-shadow: 0 0 15px rgba(255, 45, 85, 0.4);
+}
+
+#closeSettings:hover {
+  background: #ff2d55;
+  border-color: #ff2d55;
+  transform: rotate(90deg);
   box-shadow: 0 0 15px rgba(255, 45, 85, 0.4);
 }
 
