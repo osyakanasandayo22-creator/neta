@@ -56,6 +56,21 @@
   <!-- トースト通知 [7, 9, 10] -->
   <div id="toast">贈りました！</div>
 
+  <!-- サイト内モーダル（alert/confirmの置き換え） -->
+  <div id="uiModal" class="ui-modal" aria-hidden="true">
+    <div class="ui-modal-backdrop" data-ui-modal-action="cancel"></div>
+    <div class="ui-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="uiModalTitle" aria-describedby="uiModalMessage">
+      <div class="ui-modal-content">
+        <div id="uiModalTitle" class="ui-modal-title"></div>
+        <div id="uiModalMessage" class="ui-modal-message"></div>
+        <div class="ui-modal-actions">
+          <button id="uiModalCancel" type="button" class="ui-modal-btn ui-modal-btn-secondary">キャンセル</button>
+          <button id="uiModalOk" type="button" class="ui-modal-btn ui-modal-btn-primary">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="script.js"></script>
 </body>
 </html>

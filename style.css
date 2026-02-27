@@ -474,6 +474,118 @@ li.white-post .post-menu-btn:hover {
   transform: translateX(-50%) translateY(0);
 }
 
+/* --- サイト内モーダル（alert/confirm置き換え） --- */
+.ui-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 4000;
+}
+
+.ui-modal.open {
+  display: block;
+}
+
+.ui-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.ui-modal-dialog {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.ui-modal-content {
+  width: min(520px, calc(100vw - 40px));
+  background: rgba(15, 15, 15, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.65);
+  padding: 18px 18px 14px 18px;
+}
+
+.ui-modal-title {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #efefef;
+  margin-bottom: 10px;
+}
+
+.ui-modal-message {
+  font-size: 14px;
+  color: #cfcfcf;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin-bottom: 14px;
+}
+
+.ui-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.ui-modal-btn {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.ui-modal-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.ui-modal-btn:active {
+  transform: translateY(1px);
+}
+
+.ui-modal-btn-primary {
+  background: #fff;
+  color: #000;
+  border-color: rgba(255, 255, 255, 0.1);
+  font-weight: 800;
+}
+
+.ui-modal-btn-primary:hover {
+  background: #007acc;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(0, 122, 204, 0.45);
+}
+
+.ui-modal-btn-danger {
+  background: #ff2d55;
+  color: #fff;
+  border-color: rgba(255, 45, 85, 0.35);
+}
+
+.ui-modal-btn-danger:hover {
+  background: #ff2d55;
+  box-shadow: 0 0 20px rgba(255, 45, 85, 0.35);
+}
+
+.ui-modal-btn-secondary {
+  background: rgba(255, 255, 255, 0.04);
+  color: #e6e6e6;
+}
+
+.ui-modal-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .heart {
   position: absolute;
   pointer-events: none;

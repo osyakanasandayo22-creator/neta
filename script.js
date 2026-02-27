@@ -28,6 +28,146 @@ let mixedJokes = [];
 let allJokes = [];
 
 // ==========================================
+// サイト内ダイアログ（alert/confirmの置き換え）
+// ==========================================
+let _uiDialogChain = Promise.resolve();
+
+function _enqueueUiDialog(run) {
+    const next = _uiDialogChain.then(run, run);
+    _uiDialogChain = next.then(() => undefined, () => undefined);
+    return next;
+}
+
+function _ensureUiModalElements() {
+    const modal = document.getElementById('uiModal');
+    const titleEl = document.getElementById('uiModalTitle');
+    const msgEl = document.getElementById('uiModalMessage');
+    const okBtn = document.getElementById('uiModalOk');
+    const cancelBtn = document.getElementById('uiModalCancel');
+    const backdrop = modal?.querySelector('.ui-modal-backdrop');
+
+    if (!modal || !titleEl || !msgEl || !okBtn || !cancelBtn || !backdrop) {
+        throw new Error("uiModal elements not found. Check index.html.");
+    }
+
+    return { modal, titleEl, msgEl, okBtn, cancelBtn, backdrop };
+}
+
+function uiAlert(message, options = {}) {
+    return _enqueueUiDialog(() => {
+        const { modal, titleEl, msgEl, okBtn, cancelBtn, backdrop } = _ensureUiModalElements();
+        const {
+            title = '',
+            okText = 'OK'
+        } = options;
+
+        return new Promise((resolve) => {
+            const prevFocus = document.activeElement;
+
+            titleEl.textContent = title;
+            titleEl.style.display = title ? 'block' : 'none';
+            msgEl.textContent = message ?? '';
+
+            okBtn.textContent = okText;
+            okBtn.classList.remove('ui-modal-btn-danger');
+            okBtn.classList.add('ui-modal-btn-primary');
+
+            cancelBtn.style.display = 'none';
+
+            const close = () => {
+                modal.classList.remove('open');
+                modal.setAttribute('aria-hidden', 'true');
+                window.removeEventListener('keydown', onKeyDown, true);
+                backdrop.removeEventListener('click', onBackdrop);
+                okBtn.removeEventListener('click', onOk);
+                if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus();
+                resolve();
+            };
+
+            const onOk = () => close();
+            const onBackdrop = () => close();
+            const onKeyDown = (e) => {
+                if (e.key === 'Escape' || e.key === 'Enter') {
+                    e.preventDefault();
+                    close();
+                }
+            };
+
+            modal.classList.add('open');
+            modal.setAttribute('aria-hidden', 'false');
+            window.addEventListener('keydown', onKeyDown, true);
+            backdrop.addEventListener('click', onBackdrop);
+            okBtn.addEventListener('click', onOk);
+
+            requestAnimationFrame(() => okBtn.focus());
+        });
+    });
+}
+
+function uiConfirm(message, options = {}) {
+    return _enqueueUiDialog(() => {
+        const { modal, titleEl, msgEl, okBtn, cancelBtn, backdrop } = _ensureUiModalElements();
+        const {
+            title = '',
+            okText = 'はい',
+            cancelText = 'いいえ',
+            danger = false
+        } = options;
+
+        return new Promise((resolve) => {
+            const prevFocus = document.activeElement;
+
+            titleEl.textContent = title;
+            titleEl.style.display = title ? 'block' : 'none';
+            msgEl.textContent = message ?? '';
+
+            okBtn.textContent = okText;
+            okBtn.classList.add('ui-modal-btn-primary');
+            okBtn.classList.toggle('ui-modal-btn-danger', Boolean(danger));
+
+            cancelBtn.textContent = cancelText;
+            cancelBtn.style.display = 'inline-flex';
+
+            const close = (result) => {
+                modal.classList.remove('open');
+                modal.setAttribute('aria-hidden', 'true');
+                window.removeEventListener('keydown', onKeyDown, true);
+                backdrop.removeEventListener('click', onBackdrop);
+                okBtn.removeEventListener('click', onOk);
+                cancelBtn.removeEventListener('click', onCancel);
+                if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus();
+                resolve(Boolean(result));
+            };
+
+            const onOk = () => close(true);
+            const onCancel = () => close(false);
+            const onBackdrop = () => close(false);
+            const onKeyDown = (e) => {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    close(false);
+                    return;
+                }
+                if (e.key === 'Enter') {
+                    // Enterで誤爆しないよう、明示的にOK扱いにする
+                    e.preventDefault();
+                    close(true);
+                }
+            };
+
+            modal.classList.add('open');
+            modal.setAttribute('aria-hidden', 'false');
+            window.addEventListener('keydown', onKeyDown, true);
+            backdrop.addEventListener('click', onBackdrop);
+            okBtn.addEventListener('click', onOk);
+            cancelBtn.addEventListener('click', onCancel);
+
+            requestAnimationFrame(() => cancelBtn.focus());
+        });
+    });
+}
+
+// ==========================================
 // ログイン状態の監視
 // ==========================================
 onAuthStateChanged(auth, (user) => {
@@ -117,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch (err) {
                     console.error("Login error:", err);
                     if (err.code === 'auth/popup-blocked') {
-                        alert("ポップアップがブロックされました。ブラウザの設定で許可してください。");
+                        await uiAlert("ポップアップがブロックされました。ブラウザの設定で許可してください。", { title: "ログインできませんでした" });
                     }
                 }
             }
@@ -233,7 +373,10 @@ function initIndexPage() {
     updateInputState();
 
     submitButton.addEventListener('click', async () => {
-        if (!currentUser) return alert("ログインが必要です。");
+        if (!currentUser) {
+            await uiAlert("ログインが必要です。", { title: "操作できません" });
+            return;
+        }
         const text = input.value.trim();
         if (text.length > 100) return; // 念のためガード
         if (!text) return;
@@ -513,7 +656,10 @@ li.innerHTML = `
                 });
 
                 replySubmit.addEventListener('click', async () => {
-                    if (!currentUser) return alert("ログインが必要です。");
+                    if (!currentUser) {
+                        await uiAlert("ログインが必要です。", { title: "操作できません" });
+                        return;
+                    }
                     const rText = replyTextarea.value.trim();
                     if (!rText) return;
                     const newReply = { id: Date.now().toString(), text: rText, date: Date.now(), uid: currentUser.uid };
@@ -527,7 +673,10 @@ li.innerHTML = `
 
 // 高評価ボタンのイベント処理 [1, 3]
 li.querySelector('.likeBtn').addEventListener('click', async (e) => {
-    if (!currentUser) return alert("ログインが必要です。");
+    if (!currentUser) {
+        await uiAlert("ログインが必要です。", { title: "操作できません" });
+        return;
+    }
     const btn = e.currentTarget;
     const jokeRef = doc(db, "jokes", j.id);
     const dislikeBtn = li.querySelector('.dislikeBtn'); // 低評価ボタンを取得
@@ -553,18 +702,21 @@ li.querySelector('.likeBtn').addEventListener('click', async (e) => {
         j.likes = (j.likes || 0) + 1;
         if (!j.likedBy) j.likedBy = [];
         j.likedBy.push(currentUser.uid);
-        createHeart(btn); [4]
+        createHeart(btn);
         btn.classList.add('active');
     }
 
     btn.querySelector('.count').textContent = j.likes;
-    updatePostStyle(li, j.likes, (j.dislikes || 0)); [5]
+    updatePostStyle(li, j.likes, (j.dislikes || 0));
 });
   
 
 // 低評価ボタンのイベント処理 [2, 3, 6]
 li.querySelector('.dislikeBtn').addEventListener('click', async (e) => {
-    if (!currentUser) return alert("ログインが必要です。");
+    if (!currentUser) {
+        await uiAlert("ログインが必要です。", { title: "操作できません" });
+        return;
+    }
     const btn = e.currentTarget;
     const jokeRef = doc(db, "jokes", j.id);
     const likeBtn = li.querySelector('.likeBtn'); // 高評価ボタンを取得
@@ -594,7 +746,7 @@ li.querySelector('.dislikeBtn').addEventListener('click', async (e) => {
     }
 
     btn.querySelector('.count').textContent = j.dislikes;
-    updatePostStyle(li, (j.likes || 0), j.dislikes); [5]
+    updatePostStyle(li, (j.likes || 0), j.dislikes);
 });
 // --- メニューの開閉ロジック ---
 const menuBtn = li.querySelector('.post-menu-btn');
@@ -617,22 +769,62 @@ window.addEventListener('click', () => {
 // --- 通報ボタンの処理（他人の投稿にのみ存在） ---
 const reportBtn = li.querySelector('.report-btn');
 if (reportBtn) {
-    reportBtn.addEventListener('click', () => {
-        alert("この言葉を報告しました。運営が確認いたします。");
+    reportBtn.addEventListener('click', async () => {
         dropdown.classList.remove('open');
-        // 注: 通報の実装はソース内に存在しないため、アラート表示のみとしています。
+        if (!currentUser) {
+            await uiAlert("通報するにはログインが必要です。", { title: "操作できません" });
+            return;
+        }
+
+        const ok = await uiConfirm("この言葉を通報しますか？", {
+            title: "通報の確認",
+            okText: "通報する",
+            cancelText: "やめる"
+        });
+        if (!ok) return;
+
+        try {
+            const reportsRef = collection(db, "reports");
+            const snap = await getDocs(query(reportsRef, where("jokeId", "==", j.id)));
+            const already = snap.docs.some(d => d.data()?.reportedBy === currentUser.uid);
+            if (already) {
+                await uiAlert("この言葉はすでに通報済みです。", { title: "通報" });
+                return;
+            }
+
+            await addDoc(reportsRef, {
+                jokeId: j.id,
+                jokeText: j.text || "",
+                jokeUid: j.uid || null,
+                reportedBy: currentUser.uid,
+                reportedAt: Date.now()
+            });
+
+            await uiAlert("通報しました。運営が確認いたします。", { title: "通報" });
+        } catch (e) {
+            console.error("通報エラー:", e);
+            await uiAlert("通報に失敗しました。時間をおいてもう一度お試しください。", { title: "通報" });
+        }
     });
 }
 
 // --- 削除ボタンの処理 (所有者の場合のみ) ---
 if (isOwner) {
     li.querySelector('.delBtn').addEventListener('click', async () => {
-        if (!confirm("この言葉を消去しますか？")) return;
+        const ok = await uiConfirm("この言葉を消去しますか？", {
+            title: "削除の確認",
+            okText: "消去する",
+            cancelText: "やめる",
+            danger: true
+        });
+        if (!ok) return;
         try {
-            await deleteDoc(doc(db, "jokes", j.id)); [7]
-            li.remove(); [7]
+            await deleteDoc(doc(db, "jokes", j.id));
+            li.remove();
+            await uiAlert("消去しました。", { title: "削除" });
         } catch (error) {
             console.error("削除エラー:", error);
+            await uiAlert("消去に失敗しました。時間をおいてもう一度お試しください。", { title: "削除" });
         }
     });
 }
