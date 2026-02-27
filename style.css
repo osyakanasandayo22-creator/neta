@@ -842,26 +842,6 @@ body.theme-light #menuLogoutBtn {
   border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-body.theme-light #postOverlay {
-  background: radial-gradient(circle at top, #ffffff 0%, #f1f2f4 100%);
-}
-
-body.theme-light .inputWrapper {
-  background: rgba(255, 255, 255, 0.75);
-  border-color: rgba(0, 0, 0, 0.10);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-}
-
-body.theme-light textarea {
-  color: #111;
-}
-
-body.theme-light .replyTextarea {
-  background: rgba(0, 0, 0, 0.03);
-  border-color: rgba(0, 0, 0, 0.10);
-  color: #111;
-}
-
 body.theme-light .ui-modal-content {
   background: rgba(255, 255, 255, 0.98);
   border-color: rgba(0, 0, 0, 0.12);
@@ -950,6 +930,34 @@ body.theme-light .settings-choice-btn.is-active {
   background: #111;
   color: #fff;
   border-color: rgba(0, 0, 0, 0.12);
+}
+
+/* ライトテーマでも、投稿リスト部分の色は元のダーク配色を維持する */
+body.theme-light #jokeList li {
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body.theme-light #jokeList li:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+body.theme-light #jokeList li span:first-child {
+  color: #efefef;
+}
+
+body.theme-light #jokeList .left span {
+  color: #555;
+}
+
+body.theme-light #jokeList .likeBtn,
+body.theme-light #jokeList .dislikeBtn,
+body.theme-light #jokeList .replyBtn {
+  color: #666;
+}
+
+body.theme-light #jokeList .post-menu-btn:hover {
+  color: #fff;
 }
 
 /* --- 高評価/低評価の押下エフェクト（操作感） --- */
