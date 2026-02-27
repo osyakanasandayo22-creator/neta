@@ -862,41 +862,6 @@ body.theme-light .replyTextarea {
   color: #111;
 }
 
-body.theme-light li {
-  background: rgba(0, 0, 0, 0.02);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-body.theme-light li:hover {
-  background: rgba(0, 0, 0, 0.04);
-}
-
-body.theme-light li span:first-child {
-  color: #111;
-}
-
-body.theme-light .left span {
-  color: rgba(0, 0, 0, 0.55);
-}
-
-body.theme-light .post-menu-btn:hover {
-  color: #111;
-}
-
-body.theme-light .post-dropdown {
-  background: rgba(255, 255, 255, 0.98);
-  border-color: rgba(0, 0, 0, 0.12);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.18);
-}
-
-body.theme-light .post-dropdown-item {
-  color: #111;
-}
-
-body.theme-light .post-dropdown-item:hover {
-  background: rgba(0, 0, 0, 0.04);
-}
-
 body.theme-light .ui-modal-content {
   background: rgba(255, 255, 255, 0.98);
   border-color: rgba(0, 0, 0, 0.12);
