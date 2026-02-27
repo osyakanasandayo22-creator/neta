@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       #jokeInput,
       #searchInput,
-      .replyTextarea {
+      textarea {
         -webkit-user-select: text;
         -ms-user-select: text;
         user-select: text;
@@ -490,7 +490,6 @@ function initIndexPage() {
                 likedBy: [],
                 dislikes: 0,
                 dislikedBy: [],
-                replies: []
             });
 
             input.value = '';
@@ -745,8 +744,7 @@ function initPastPage() {
             const now = Date.now();
             const pool = jokes.map(j => {
                 const daysSince = (now - j.date) / (1000 * 60 * 60 * 24);
-                let replyBonus = (j.replies && j.replies.length > 0) ? 1.5 : 1.0;
-                let weight = Math.sqrt((j.likes || 0) + 1) * Math.sqrt(daysSince + 1) * replyBonus;
+                let weight = Math.sqrt((j.likes || 0) + 1) * Math.sqrt(daysSince + 1);
                 if (j.text.length > 30) weight *= 1.3;
                 return { ...j, weight: weight };
             });
@@ -814,8 +812,6 @@ li.innerHTML = `
       <span class="post-date">${formatDate(j.date)}</span>
     </div>
     <div class="right">
-      <button class="replyBtn">💬 ${j.replies ? j.replies.length : 0}</button>
-      
       <!-- 高評価ボタン: activeクラスを動的に付与 -->
       <button class="likeBtn ${isLiked ? 'active' : ''}">
         <span class="icon"></span>
@@ -834,49 +830,7 @@ li.innerHTML = `
       </div>
     </div>
   </div>
-    <!-- 返信セクション（これがないと li.querySelector('.replySection') でエラーになります） -->
-    <div class="replySection" style="display:none;">
-        <div class="replyList"></div>
-        <textarea class="replyTextarea" placeholder="投稿への返信..."></textarea>
-        <button class="replySubmit">送信</button>
-    </div>
 `;
-
-                const replySection = li.querySelector('.replySection');
-                const replyList = li.querySelector('.replyList');
-                const replyBtn = li.querySelector('.replyBtn');
-                const replySubmit = li.querySelector('.replySubmit');
-                const replyTextarea = li.querySelector('.replyTextarea');
-
-                const renderReplies = (replies) => {
-                    replyList.innerHTML = '';
-                    (replies || []).forEach((r) => {
-                        const div = document.createElement('div');
-                        div.innerHTML = `<div style="font-size:11px; color:#555;">${formatDate(r.date)}</div><div style="font-size:14px; color:#ccc;">${renderTextWithHashtags(r.text)}</div>`;
-                        replyList.appendChild(div);
-                    });
-                };
-                renderReplies(j.replies);
-
-                replyBtn.addEventListener('click', () => {
-                    replySection.style.display = replySection.style.display === 'none' ? 'block' : 'none';
-                });
-
-                replySubmit.addEventListener('click', async () => {
-                    if (!currentUser) {
-                        await uiAlert("ログインが必要です。", { title: "操作できません" });
-                        return;
-                    }
-                    const rText = replyTextarea.value.trim();
-                    if (!rText) return;
-                    const newReply = { id: Date.now().toString(), text: rText, date: Date.now(), uid: currentUser.uid };
-                    await updateDoc(doc(db, "jokes", j.id), { replies: arrayUnion(newReply) });
-                    if (!j.replies) j.replies = [];
-                    j.replies.push(newReply);
-                    renderReplies(j.replies);
-                    replyTextarea.value = '';
-                    replyBtn.textContent = `💬 ${j.replies.length}`;
-                });
 
 // 高評価ボタンのイベント処理 [1, 3]
 li.querySelector('.likeBtn').addEventListener('click', async (e) => {

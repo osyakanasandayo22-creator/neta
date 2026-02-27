@@ -700,53 +700,6 @@ li.white-post .post-menu-btn:hover {
   50% { transform: translateY(-10px) rotate(5deg); }
 }
 
-/* --- 返信セクション [19, 20] --- */
-.replySection {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  margin-top: 15px;
-  padding: 12px;
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.replyList > div {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 8px 0;
-}
-
-.replyTextarea {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  color: #fff;
-  padding: 8px;
-  font-size: 16px;
-  resize: none;
-  outline: none;
-}
-
-.replySubmit {
-  background: #fff;
-  color: #000;
-  border: none;
-  border-radius: 20px;
-  padding: 6px 18px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.replySubmit:hover {
-  background: #007acc;
-  color: #fff;
-}
-
 /* --- 特殊演出・通知 [2, 12, 19, 20] --- */
 #toast {
   position: fixed;
@@ -1030,7 +983,7 @@ li.white-post .post-menu-btn:hover {
   white-space: nowrap;
 }
 
-  input, textarea, .replyTextarea {
+  input, textarea {
       font-size: 16px !important;
   }
 
