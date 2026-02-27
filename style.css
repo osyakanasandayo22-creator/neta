@@ -190,6 +190,16 @@ body.theme-light .notification-date {
   color: rgba(0, 0, 0, 0.55);
 }
 
+body.theme-light .notif-like {
+  color: #d6002b;
+  font-weight: 700;
+}
+
+body.theme-light .notif-dislike {
+  color: #5a1a1a;
+  font-weight: 700;
+}
+
 body.pastPage {
   display: block;
   padding: 90px 20px 40px 20px;
