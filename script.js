@@ -702,7 +702,7 @@ li.querySelector('.likeBtn').addEventListener('click', async (e) => {
         j.likes = (j.likes || 0) + 1;
         if (!j.likedBy) j.likedBy = [];
         j.likedBy.push(currentUser.uid);
-        createHeart(btn);
+        playClapFx(btn);
         btn.classList.add('active');
     }
 
@@ -742,6 +742,7 @@ li.querySelector('.dislikeBtn').addEventListener('click', async (e) => {
         j.dislikes = (j.dislikes || 0) + 1;
         if (!j.dislikedBy) j.dislikedBy = [];
         j.dislikedBy.push(currentUser.uid);
+        playNailFx(btn);
         btn.classList.add('active');
     }
 
@@ -877,14 +878,80 @@ if (isOwner) {
 // ==========================================
 // 補助関数
 // ==========================================
-function createHeart(btn) {
-    const h = document.createElement('span');
-    h.className = 'heart'; h.textContent = '+1';
+function playClapFx(btn) {
+    pulseTempClass(btn, 'fx-clap', 340);
+    spawnClapSparks(btn);
+}
+
+function playNailFx(btn) {
+    pulseTempClass(btn, 'fx-nail', 300);
+    spawnNailHit(btn);
+}
+
+function pulseTempClass(el, className, durationMs) {
+    if (!el) return;
+    el.classList.remove(className);
+    // reflow to restart animation
+    void el.offsetWidth;
+    el.classList.add(className);
+    setTimeout(() => el.classList.remove(className), durationMs);
+}
+
+function getFxAnchor(btn) {
     const r = btn.getBoundingClientRect();
-    h.style.left = (r.left + r.width / 2 + window.scrollX - 10) + 'px';
-    h.style.top = (r.top + window.scrollY - 20) + 'px';
-    document.body.appendChild(h);
-    setTimeout(() => h.remove(), 1000);
+    const x = r.left + r.width / 2 + window.scrollX;
+    const y = r.top + r.height / 2 + window.scrollY;
+    return { x, y };
+}
+
+function spawnClapSparks(btn) {
+    const { x, y } = getFxAnchor(btn);
+    const color = getComputedStyle(btn).color || '#ff2d55';
+
+    const fx = document.createElement('span');
+    fx.className = 'rate-fx rate-fx--clap';
+    fx.style.left = `${x}px`;
+    fx.style.top = `${y}px`;
+    fx.style.setProperty('--fx-color', color);
+
+    const angles = [-70, -35, 0, 35, 70, 110];
+    angles.forEach((a) => {
+        const s = document.createElement('span');
+        s.className = 'rate-fx__spark';
+        s.style.setProperty('--rot', `${a}deg`);
+        s.style.setProperty('--dx', `${Math.cos((a * Math.PI) / 180) * 18}px`);
+        s.style.setProperty('--dy', `${Math.sin((a * Math.PI) / 180) * 18}px`);
+        fx.appendChild(s);
+    });
+
+    const pop = document.createElement('span');
+    pop.className = 'rate-fx__pop';
+    fx.appendChild(pop);
+
+    document.body.appendChild(fx);
+    setTimeout(() => fx.remove(), 520);
+}
+
+function spawnNailHit(btn) {
+    const { x, y } = getFxAnchor(btn);
+    const color = getComputedStyle(btn).color || '#b0b0b0';
+
+    const fx = document.createElement('span');
+    fx.className = 'rate-fx rate-fx--nail';
+    fx.style.left = `${x}px`;
+    fx.style.top = `${y}px`;
+    fx.style.setProperty('--fx-color', color);
+
+    const nail = document.createElement('span');
+    nail.className = 'rate-fx__nail';
+    fx.appendChild(nail);
+
+    const ring = document.createElement('span');
+    ring.className = 'rate-fx__ring';
+    fx.appendChild(ring);
+
+    document.body.appendChild(fx);
+    setTimeout(() => fx.remove(), 520);
 }
 
 function updatePostStyle(li, likes, dislikes) {

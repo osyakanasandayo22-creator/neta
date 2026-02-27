@@ -586,18 +586,146 @@ li.white-post .post-menu-btn:hover {
   background: rgba(255, 255, 255, 0.08);
 }
 
-.heart {
-  position: absolute;
-  pointer-events: none;
-  font-size: 24px;
-  z-index: 2000;
-  filter: drop-shadow(0 0 8px #ff2d55);
-  animation: darkFloat 1s ease-out forwards;
+/* --- 高評価/低評価の押下エフェクト（操作感） --- */
+.likeBtn.fx-clap,
+.dislikeBtn.fx-nail {
+  will-change: transform;
 }
 
-@keyframes darkFloat {
-  0% { transform: scale(0.5) translateY(0); opacity: 1; }
-  100% { transform: scale(1.5) translateY(-60px); opacity: 0; }
+.likeBtn.fx-clap {
+  animation: clapBtn 340ms cubic-bezier(.2, .8, .2, 1);
+  transform-origin: center;
+}
+
+@keyframes clapBtn {
+  0%   { transform: scale(1) rotate(0deg); }
+  28%  { transform: scale(1.12) rotate(-6deg); }
+  58%  { transform: scale(0.96) rotate(6deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.dislikeBtn.fx-nail {
+  animation: nailBtn 300ms cubic-bezier(.2, .8, .2, 1);
+  transform-origin: center;
+}
+
+@keyframes nailBtn {
+  0%   { transform: translateY(0) translateX(0); }
+  35%  { transform: translateY(3px) translateX(0); }
+  62%  { transform: translateY(1px) translateX(-1px); }
+  78%  { transform: translateY(1px) translateX(1px); }
+  100% { transform: translateY(0) translateX(0); }
+}
+
+.rate-fx {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 2000;
+  --fx-color: #ff2d55;
+}
+
+/* 拍手：パッと広がる線 + 小さな輪 */
+.rate-fx--clap .rate-fx__spark {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 10px;
+  height: 3px;
+  background: var(--fx-color);
+  border-radius: 999px;
+  opacity: 0;
+  transform: rotate(var(--rot)) translate(0, 0) scaleX(0.8);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--fx-color) 70%, transparent));
+  animation: clapSpark 420ms ease-out forwards;
+}
+
+@keyframes clapSpark {
+  0%   { opacity: 1; transform: rotate(var(--rot)) translate(0, 0) scaleX(0.65); }
+  100% { opacity: 0; transform: rotate(var(--rot)) translate(var(--dx), var(--dy)) scaleX(1.25); }
+}
+
+.rate-fx--clap .rate-fx__pop {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--fx-color);
+  border-radius: 999px;
+  transform: translate(-50%, -50%) scale(0.4);
+  opacity: 0.9;
+  animation: clapPop 420ms ease-out forwards;
+}
+
+@keyframes clapPop {
+  0%   { transform: translate(-50%, -50%) scale(0.35); opacity: 0.85; }
+  100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0; }
+}
+
+/* 釘：ストンと打ち込み + 衝撃波 */
+.rate-fx--nail .rate-fx__nail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 18px;
+  background: var(--fx-color);
+  border-radius: 3px;
+  transform: translate(-50%, -50%) translateY(-10px);
+  opacity: 0.95;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--fx-color) 60%, transparent));
+  animation: nailDrop 420ms cubic-bezier(.15, .8, .15, 1) forwards;
+}
+
+.rate-fx--nail .rate-fx__nail::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -2px;
+  width: 12px;
+  height: 5px;
+  background: var(--fx-color);
+  border-radius: 999px;
+  transform: translateX(-50%);
+}
+
+@keyframes nailDrop {
+  0%   { transform: translate(-50%, -50%) translateY(-14px); opacity: 0.95; }
+  60%  { transform: translate(-50%, -50%) translateY(6px); opacity: 0.95; }
+  100% { transform: translate(-50%, -50%) translateY(10px); opacity: 0; }
+}
+
+.rate-fx--nail .rate-fx__ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--fx-color);
+  border-radius: 999px;
+  transform: translate(-50%, -50%) scale(0.2);
+  opacity: 0.7;
+  animation: nailRing 420ms ease-out forwards;
+}
+
+@keyframes nailRing {
+  0%   { transform: translate(-50%, -50%) scale(0.2); opacity: 0.65; }
+  100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .likeBtn.fx-clap,
+  .dislikeBtn.fx-nail,
+  .rate-fx--clap .rate-fx__spark,
+  .rate-fx--clap .rate-fx__pop,
+  .rate-fx--nail .rate-fx__nail,
+  .rate-fx--nail .rate-fx__ring {
+    animation: none !important;
+  }
 }
 
 #loader {
