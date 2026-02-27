@@ -842,6 +842,27 @@ body.theme-light #menuLogoutBtn {
   border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
+/* 投稿フォームはライトテーマで明るくする */
+body.theme-light #postOverlay {
+  background: radial-gradient(circle at top, #ffffff 0%, #f1f2f4 100%);
+}
+
+body.theme-light .inputWrapper {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(0, 0, 0, 0.10);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+body.theme-light textarea {
+  color: #111;
+}
+
+body.theme-light .replyTextarea {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.10);
+  color: #111;
+}
+
 body.theme-light .ui-modal-content {
   background: rgba(255, 255, 255, 0.98);
   border-color: rgba(0, 0, 0, 0.12);
