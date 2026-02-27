@@ -438,6 +438,64 @@ function initPastPage() {
         return oneLine.length > maxLen ? oneLine.slice(0, maxLen) + '…' : oneLine;
     }
 
+    const HASHTAG_RE = (() => {
+        // Unicode対応（対応していない環境向けにフォールバック）
+        try {
+            return /#[\p{L}\p{N}_]+/gu;
+        } catch {
+            return /#[A-Za-z0-9_一-龠ぁ-んァ-ヶー]+/g;
+        }
+    })();
+
+    function escapeHtml(str) {
+        return String(str ?? '').replace(/[&<>"']/g, (ch) => {
+            switch (ch) {
+                case '&': return '&amp;';
+                case '<': return '&lt;';
+                case '>': return '&gt;';
+                case '"': return '&quot;';
+                case "'": return '&#39;';
+                default: return ch;
+            }
+        });
+    }
+
+    function renderTextWithHashtags(text) {
+        const escaped = escapeHtml(text);
+        const withBr = escaped.replace(/\n/g, '<br>');
+        return withBr.replace(HASHTAG_RE, (m) => {
+            const q = encodeURIComponent(m);
+            return `<a href="#" class="hashtag" data-query="${q}">${m}</a>`;
+        });
+    }
+
+    async function runSearch(filter) {
+        jokeList.innerHTML = '';
+        displayIndex = 0;
+        currentView = 'search';
+        if (searchInput) searchInput.value = filter ?? '';
+        await prepareJokes(filter ?? '');
+        loadMore(true);
+    }
+
+    // #タグクリックで検索（動的生成なので委譲）
+    jokeList.addEventListener('click', (e) => {
+        const target = e.target instanceof Element ? e.target.closest('.hashtag') : null;
+        if (!target) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const q = target.getAttribute('data-query') || '';
+        const decoded = q ? decodeURIComponent(q) : '';
+        if (!decoded) return;
+
+        if (userMenu) userMenu.classList.remove('open');
+        document.querySelectorAll('.post-dropdown.open').forEach(d => d.classList.remove('open'));
+
+        runSearch(decoded);
+    });
+
     // 自分の投稿ボタンのイベント（ここに追加）
     document.getElementById('myPostsBtn')?.addEventListener('click', () => {
         if (!currentUser) return;
@@ -601,7 +659,7 @@ const isLiked = currentUser && j.likedBy && j.likedBy.includes(currentUser.uid);
 const isDisliked = currentUser && j.dislikedBy && j.dislikedBy.includes(currentUser.uid);
 
 li.innerHTML = `
-  <span>${j.text.replace(/\n/g, '<br>')}</span>
+  <span>${renderTextWithHashtags(j.text)}</span>
   <div class="btnWrap">
     <div class="left">
       <span class="post-date">${formatDate(j.date)}</span>
@@ -645,7 +703,7 @@ li.innerHTML = `
                     replyList.innerHTML = '';
                     (replies || []).forEach((r) => {
                         const div = document.createElement('div');
-                        div.innerHTML = `<div style="font-size:11px; color:#555;">${formatDate(r.date)}</div><div style="font-size:14px; color:#ccc;">${r.text.replace(/\n/g, '<br>')}</div>`;
+                        div.innerHTML = `<div style="font-size:11px; color:#555;">${formatDate(r.date)}</div><div style="font-size:14px; color:#ccc;">${renderTextWithHashtags(r.text)}</div>`;
                         replyList.appendChild(div);
                     });
                 };
@@ -842,13 +900,9 @@ if (isOwner) {
         isInitial ? executeLoad() : setTimeout(executeLoad, 500);
     }
 
-    searchInput.addEventListener('keydown', async (e) => {
+    searchInput?.addEventListener('keydown', async (e) => {
         if (e.key === 'Enter') {
-            jokeList.innerHTML = '';
-            displayIndex = 0;
-            currentView = 'search';
-            await prepareJokes(searchInput.value);
-            loadMore(true);
+            await runSearch(searchInput.value);
         }
     });
 

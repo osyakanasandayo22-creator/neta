@@ -230,6 +230,24 @@ li span:first-child {
   white-space: pre-wrap;
 }
 
+/* --- ハッシュタグ（投稿内リンク） --- */
+.hashtag {
+  color: #ff3b30;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.hashtag:hover,
+.hashtag:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+
+li.white-post .hashtag {
+  color: #ff2d55;
+}
+
 .btnWrap {
   display: flex;
   justify-content: space-between;
