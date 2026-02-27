@@ -24,6 +24,7 @@
       <div id="userMenu" class="user-menu">
           <div class="menu-item" id="myPostsBtn">自分の言葉</div>
           <div class="menu-item" id="notificationsBtn">通知</div>
+          <div class="menu-item" id="settingsBtn">設定</div>
           <div class="menu-item" id="menuLogoutBtn">ログアウト</div>
       </div>
   </div>
@@ -50,6 +51,24 @@
         <button id="submitButton">贈る</button>
       </div>
       <!-- 元の「Baritter」ボタンの代わりにオーバーレイを閉じる運用になりますが、要素として維持したい場合はここに配置可能です -->
+    </div>
+  </div>
+
+  <!-- 設定オーバーレイ（フルスクリーン） -->
+  <div id="settingsOverlay" aria-hidden="true">
+    <div class="overlayHeader">
+      <button id="closeSettings" aria-label="設定を閉じる">×</button>
+    </div>
+    <div class="settingsBody">
+      <div class="settingsTitle">設定</div>
+
+      <div class="settingsSection">
+        <div class="settingsSectionTitle">表示</div>
+        <button type="button" id="themeSettingRow" class="settingsRow">
+          <span class="settingsRowLabel">テーマ</span>
+          <span class="settingsRowValue">準備中</span>
+        </button>
+      </div>
     </div>
   </div>
 
