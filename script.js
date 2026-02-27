@@ -447,6 +447,18 @@ function initPastPage() {
         }
     })();
 
+    // URL検出用（簡易版）
+    const URL_RE = /https?:\/\/[^\s]+/g;
+
+    // URL または #ハッシュタグ を一括で見つける正規表現
+    const TOKEN_RE = (() => {
+        try {
+            return /(https?:\/\/[^\s]+|#[\p{L}\p{N}_]+)/gu;
+        } catch {
+            return /(https?:\/\/[^\s]+|#[A-Za-z0-9_一-龠ぁ-んァ-ヶー]+)/g;
+        }
+    })();
+
     function escapeHtml(str) {
         return String(str ?? '').replace(/[&<>"']/g, (ch) => {
             switch (ch) {
@@ -461,12 +473,44 @@ function initPastPage() {
     }
 
     function renderTextWithHashtags(text) {
-        const escaped = escapeHtml(text);
-        const withBr = escaped.replace(/\n/g, '<br>');
-        return withBr.replace(HASHTAG_RE, (m) => {
-            const q = encodeURIComponent(m);
-            return `<a href="#" class="hashtag" data-query="${q}">${m}</a>`;
-        });
+        const raw = String(text ?? '');
+        let result = '';
+        let lastIndex = 0;
+
+        // URLまたはハッシュタグを順番に処理しながらHTMLを組み立てる
+        let match;
+        while ((match = TOKEN_RE.exec(raw)) !== null) {
+            const index = match.index;
+            const token = match[0];
+
+            // トークン前の通常テキスト部分
+            const plain = raw.slice(lastIndex, index);
+            if (plain) {
+                result += escapeHtml(plain).replace(/\n/g, '<br>');
+            }
+
+            // トークン部分（URLかハッシュタグ）
+            if (URL_RE.test(token)) {
+                // URL → クリックで外部へ飛べるリンク、文字色は # と同じように .hashtag クラスを流用
+                const safeUrl = escapeHtml(token);
+                result += `<a href="${safeUrl}" class="hashtag url-link" target="_blank" rel="noopener noreferrer">${safeUrl}</a>`;
+            } else {
+                // ハッシュタグ
+                const q = encodeURIComponent(token);
+                const safeTag = escapeHtml(token);
+                result += `<a href="#" class="hashtag" data-query="${q}">${safeTag}</a>`;
+            }
+
+            lastIndex = index + token.length;
+        }
+
+        // 最後のトークン以降の残りテキスト
+        const rest = raw.slice(lastIndex);
+        if (rest) {
+            result += escapeHtml(rest).replace(/\n/g, '<br>');
+        }
+
+        return result;
     }
 
     async function runSearch(filter) {
