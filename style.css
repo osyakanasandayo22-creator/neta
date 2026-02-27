@@ -233,7 +233,6 @@ li span:first-child {
 /* --- ハッシュタグ（投稿内リンク） --- */
 .hashtag {
   color: #ff3b30;
-  font-weight: 700;
   text-decoration: none;
   cursor: pointer;
 }
@@ -246,6 +245,14 @@ li span:first-child {
 
 li.white-post .hashtag {
   color: #ff2d55;
+}
+
+/* PC版では赤文字が太く潰れて見えないように少し細くする */
+@media screen and (min-width: 601px) {
+  .hashtag {
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
 }
 
 .btnWrap {
