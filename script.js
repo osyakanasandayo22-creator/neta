@@ -748,9 +748,25 @@ function initPastPage() {
             if (filter) jokes = jokes.filter(j => j.text.toLowerCase().includes(filter.toLowerCase()));
 
             const now = Date.now();
+            const ONE_WEEK_DAYS = 7;
+            const DECAY_RATE = 0.4; // 1週間を過ぎた後の指数減衰の強さ
+
             const pool = jokes.map(j => {
+                const likes = j.likes || 0;
+                const dislikes = j.dislikes || 0;
                 const daysSince = (now - j.date) / (1000 * 60 * 60 * 24);
-                let weight = Math.sqrt((j.likes || 0) + 1) * Math.sqrt(daysSince + 1);
+
+                // 高評価が多いほど・高評価と低評価が拮抗しているほどスコアアップ
+                const total = likes + dislikes;
+                const balance = total > 0 ? 1 - Math.abs(likes - dislikes) / total : 0; // 拮抗度 0〜1
+                const engagement = (1 + likes) * (1 + balance); // 高評価多め or 拮抗で優先
+
+                // 贈られてから1週間以内は優先、以降は指数関数的に減衰
+                const timeFactor = daysSince <= ONE_WEEK_DAYS
+                    ? 1
+                    : Math.exp(-DECAY_RATE * (daysSince - ONE_WEEK_DAYS));
+
+                let weight = engagement * timeFactor;
                 if (j.text.length > 30) weight *= 1.3;
                 return { ...j, weight: weight };
             });
