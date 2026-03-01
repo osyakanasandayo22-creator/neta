@@ -281,6 +281,187 @@ body.staticPage {
   text-decoration: underline;
 }
 
+/* --- お問い合わせフォーム --- */
+.contact-article .contact-lead {
+  margin-bottom: 20px;
+}
+
+.contact-message {
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.contact-success {
+  background: rgba(80, 180, 100, 0.2);
+  border: 1px solid rgba(80, 180, 100, 0.5);
+  color: #a8e6a0;
+}
+
+.contact-error {
+  background: rgba(220, 80, 80, 0.2);
+  border: 1px solid rgba(220, 80, 80, 0.5);
+  color: #ffb0b0;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.contact-field label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.contact-optional {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.contact-required {
+  color: #ff7676;
+}
+
+.contact-input,
+.contact-select,
+.contact-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-family: inherit;
+  font-size: 14px;
+  color: #e0e0e0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.contact-input::placeholder,
+.contact-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.contact-input:focus,
+.contact-select:focus,
+.contact-textarea:focus {
+  outline: none;
+  border-color: rgba(184, 212, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.contact-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.contact-char-count {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: right;
+}
+
+.contact-field-error {
+  font-size: 12px;
+  color: #ff9090;
+}
+
+.contact-actions {
+  margin-top: 8px;
+}
+
+.contact-submit {
+  padding: 14px 28px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background: #2a6bb5;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.contact-submit:hover:not(:disabled) {
+  background: #3a7bc8;
+}
+
+.contact-submit:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.contact-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 白テーマ: お問い合わせフォーム */
+body.theme-light .contact-success {
+  background: rgba(80, 180, 100, 0.15);
+  border-color: rgba(80, 180, 100, 0.4);
+  color: #1a6b1a;
+}
+
+body.theme-light .contact-error {
+  background: rgba(220, 80, 80, 0.15);
+  border-color: rgba(220, 80, 80, 0.4);
+  color: #b03030;
+}
+
+body.theme-light .contact-field label {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+body.theme-light .contact-optional {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+body.theme-light .contact-input,
+body.theme-light .contact-select,
+body.theme-light .contact-textarea {
+  color: #111;
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.18);
+}
+
+body.theme-light .contact-input::placeholder,
+body.theme-light .contact-textarea::placeholder {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+body.theme-light .contact-input:focus,
+body.theme-light .contact-select:focus,
+body.theme-light .contact-textarea:focus {
+  border-color: rgba(0, 90, 180, 0.5);
+  background: rgba(0, 0, 0, 0.06);
+}
+
+body.theme-light .contact-char-count {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+body.theme-light .contact-field-error {
+  color: #c03030;
+}
+
+body.theme-light .contact-submit {
+  background: #111;
+  color: #fff;
+}
+
+body.theme-light .contact-submit:hover:not(:disabled) {
+  background: #333;
+}
+
 /* フッター（共通） */
 .site-footer {
   margin-top: 40px;

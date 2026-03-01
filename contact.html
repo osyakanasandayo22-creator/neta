@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>お問い合わせ | Norito</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,800;1,400&family=Noto+Sans+JP:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="staticPage">
+  <header class="static-header">
+    <a href="index.html" class="static-logo">NORITO</a>
+  </header>
+
+  <main class="static-main">
+    <article class="legal-article contact-article">
+      <h1>お問い合わせ</h1>
+      <p class="contact-lead">ご質問・ご要望・不具合の報告などは以下のフォームからお送りください。内容を確認のうえ、ご登録のメールアドレスに返信いたします。</p>
+
+      <div id="contactSuccess" class="contact-message contact-success" role="alert" aria-live="polite" hidden>
+        送信しました。お問い合わせありがとうございます。
+      </div>
+      <div id="contactError" class="contact-message contact-error" role="alert" aria-live="polite" hidden></div>
+
+      <form id="contactForm" class="contact-form" novalidate>
+        <div class="contact-field">
+          <label for="contactName">お名前 <span class="contact-optional">（任意）</span></label>
+          <input type="text" id="contactName" name="name" class="contact-input" placeholder="山田 太郎" autocomplete="name">
+        </div>
+        <div class="contact-field">
+          <label for="contactEmail">メールアドレス <span class="contact-required">*</span></label>
+          <input type="email" id="contactEmail" name="email" class="contact-input" placeholder="example@example.com" required autocomplete="email">
+          <span id="contactEmailError" class="contact-field-error" aria-live="polite"></span>
+        </div>
+        <div class="contact-field">
+          <label for="contactCategory">お問い合わせ種別</label>
+          <select id="contactCategory" name="category" class="contact-select">
+            <option value="general">ご質問・その他</option>
+            <option value="bug">不具合の報告</option>
+            <option value="request">ご要望</option>
+            <option value="other">その他</option>
+          </select>
+        </div>
+        <div class="contact-field">
+          <label for="contactBody">お問い合わせ内容 <span class="contact-required">*</span></label>
+          <textarea id="contactBody" name="body" class="contact-textarea" rows="6" placeholder="お問い合わせ内容をご記入ください（5000文字以内）" required maxlength="5000"></textarea>
+          <span class="contact-char-count"><span id="contactCharCount">0</span> / 5000</span>
+          <span id="contactBodyError" class="contact-field-error" aria-live="polite"></span>
+        </div>
+        <div class="contact-actions">
+          <button type="submit" id="contactSubmit" class="contact-submit">送信する</button>
+        </div>
+      </form>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <div class="site-footer-links">
+        <a href="terms.html">利用規約</a>
+        <a href="privacy.html">プライバシーポリシー</a>
+        <a href="legal.html">特定商取引法に基づく表記 / 運営者情報</a>
+        <a href="cookies.html">Cookieポリシー</a>
+        <a href="contact.html">お問い合わせ</a>
+      </div>
+      <div class="site-footer-copy">
+        &copy; 2026 Norito
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCtI2PRlZ9pN_ZB7aD60iKQvVEraQGSf6o",
+      authDomain: "bari-11449.firebaseapp.com",
+      projectId: "bari-11449",
+      storageBucket: "bari-11449.firebasestorage.app",
+      messagingSenderId: "875722454310",
+      appId: "1:875722454310:web:22ad7e5dbe27d70d5cbde7",
+      measurementId: "G-98KQQ913QV"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const form = document.getElementById('contactForm');
+    const successEl = document.getElementById('contactSuccess');
+    const errorEl = document.getElementById('contactError');
+    const emailError = document.getElementById('contactEmailError');
+    const bodyError = document.getElementById('contactBodyError');
+    const submitBtn = document.getElementById('contactSubmit');
+    const charCount = document.getElementById('contactCharCount');
+    const bodyInput = document.getElementById('contactBody');
+
+    function showSuccess() {
+      errorEl.hidden = true;
+      successEl.hidden = false;
+      successEl.focus({ preventScroll: true });
+    }
+    function showError(msg) {
+      successEl.hidden = true;
+      errorEl.hidden = false;
+      errorEl.textContent = msg || '送信に失敗しました。しばらくしてから再度お試しください。';
+      errorEl.focus({ preventScroll: true });
+    }
+    function clearMessages() {
+      successEl.hidden = true;
+      errorEl.hidden = true;
+      emailError.textContent = '';
+      bodyError.textContent = '';
+    }
+
+    if (bodyInput) {
+      bodyInput.addEventListener('input', () => {
+        charCount.textContent = (bodyInput.value || '').length;
+      });
+      charCount.textContent = (bodyInput.value || '').length;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearMessages();
+
+      const name = (document.getElementById('contactName').value || '').trim();
+      const email = (document.getElementById('contactEmail').value || '').trim();
+      const category = document.getElementById('contactCategory').value || 'general';
+      const body = (document.getElementById('contactBody').value || '').trim();
+
+      let valid = true;
+      if (!email) {
+        emailError.textContent = 'メールアドレスを入力してください。';
+        valid = false;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        emailError.textContent = '有効なメールアドレスを入力してください。';
+        valid = false;
+      }
+      if (!body) {
+        bodyError.textContent = 'お問い合わせ内容を入力してください。';
+        valid = false;
+      }
+      if (!valid) {
+        showError('入力内容をご確認ください。');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = '送信中...';
+
+      try {
+        const user = auth.currentUser;
+        await addDoc(collection(db, 'contacts'), {
+          name: name || null,
+          email,
+          category,
+          body,
+          createdAt: Date.now(),
+          uid: user ? user.uid : null,
+          userEmail: user ? user.email : null
+        });
+        showSuccess();
+        form.reset();
+        if (charCount) charCount.textContent = '0';
+      } catch (err) {
+        console.error('Contact submit error:', err);
+        showError('送信に失敗しました。しばらくしてから再度お試しください。');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '送信する';
+      }
+    });
+  </script>
+</body>
+</html>
